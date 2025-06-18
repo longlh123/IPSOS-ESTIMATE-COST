@@ -327,25 +327,15 @@ class ProjectModel(QObject):
         if province not in self.samples:
             self.samples[province] = {}
 
-        # Calculate daily supervisor target if needed
-        sample_size = audience_data.get("sample_size", 0)
-        target_for_interviewers = audience_data.get("target_for_interviewers", 2)
-        interviewers_per_supervisor = self.settings.get("interviewers_per_supervisor", 8)
-
-        if target_for_interviewers > 0 and interviewers_per_supervisor > 0:
-            daily_sup_target = round(sample_size / target_for_interviewers / interviewers_per_supervisor, 2)
-        else:
-            daily_sup_target = 0.0
-
         # Build updated audience info (ensure default fallbacks)
         updated_data = {
             "name": audience_name,
             "sample_type": sample_type,
-            "sample_size": sample_size,
-            "price": audience_data.get("price", 0),
-            "price_growth": audience_data.get("price_growth", 100.0),
-            "target_for_interviewers": target_for_interviewers,
-            "daily_sup_target": daily_sup_target,
+            "sample_size": audience_data.get("sample_size", 0),
+            "extra_rate": audience_data.get("extra_rate", 0),
+            "pricing": audience_data.get("pricing", {}),
+            "target_for_interviewer": audience_data.get("target_for_interviewer", 2),
+            "daily_sup_target": audience_data.get("daily_sup_target"),
             "gender": audience_data.get("gender", "Both"),
             "age_range": audience_data.get("age_range", [0, 0]),
             "income_range": audience_data.get("income_range", [0, 0]),

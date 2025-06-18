@@ -48,18 +48,18 @@
           0,
           0
         ],
-        "name": "Người dùng Sản phẩm bánh Snack",
+        "name": "Người dùng Sản phẩm về bánh kẹo nói chung",
         "pricing": [
           {
             "comment": {},
-            "price": 115000,
-            "price_growth": 100,
+            "price": 84000,
+            "price_growth": 0,
             "type": "recruit"
           },
           {
             "comment": {},
-            "price": 41000,
-            "price_growth": 100,
+            "price": 25000,
+            "price_growth": 0,
             "type": "location"
           }
         ],
@@ -169,45 +169,48 @@
   },
   "samples": {
     "Hà Nội": {
-      "Main - Người dùng Sản phẩm bánh Snack": {
-        "age_range": [
-          0,
-          0
-        ],
-        "comment": {},
-        "complexity": "Standard",
-        "daily_sup_target": 6.25,
-        "description": "",
-        "extra_rate": 5,
-        "gender": "Both",
-        "id": null,
-        "incident_rate": 100,
-        "income_range": [
-          0,
-          0
-        ],
-        "name": "Người dùng Sản phẩm bánh Snack",
+      "Main - Người dùng Sản phẩm về bánh kẹo nói chung": {
+        "name": "Người dùng Sản phẩm về bánh kẹo nói chung",
+        "sample_type": "Main",
+        "sample_size": 100,
         "pricing": [
           {
-            "comment": {},
-            "price": 115000,
-            "price_growth": 100,
+            "comment": {
+              "price_growth": "fdasf asdf asfa"
+            },
+            "price": 84000,
+            "price_growth": 5.0,
             "type": "recruit"
           },
           {
             "comment": {},
-            "price": 41000,
-            "price_growth": 100,
+            "price": 25000,
+            "price_growth": 0,
             "type": "location"
           }
         ],
-        "sample_size": 100,
-        "sample_type": "Main",
-        "target_for_interviewer": 2
+        "target_for_interviewer": 2,
+        "daily_sup_target": 4.25,
+        "gender": "Both",
+        "age_range": [
+          0,
+          0
+        ],
+        "income_range": [
+          0,
+          0
+        ],
+        "incident_rate": 100,
+        "complexity": "Standard",
+        "description": "",
+        "comment": {
+          "target_for_interviewer": "fdas afds fasd",
+          "daily_sup_target": "fads fadsf adsf asd"
+        }
       }
     },
     "Hồ Chí Minh": {
-      "Main - Người dùng Sản phẩm bánh Snack": {
+      "Main - Người dùng Sản phẩm về bánh kẹo nói chung": {
         "age_range": [
           0,
           0
@@ -224,18 +227,18 @@
           0,
           0
         ],
-        "name": "Người dùng Sản phẩm bánh Snack",
+        "name": "Người dùng Sản phẩm về bánh kẹo nói chung",
         "pricing": [
           {
             "comment": {},
-            "price": 115000,
-            "price_growth": 100,
+            "price": 84000,
+            "price_growth": 0,
             "type": "recruit"
           },
           {
             "comment": {},
-            "price": 41000,
-            "price_growth": 100,
+            "price": 25000,
+            "price_growth": 0,
             "type": "location"
           }
         ],

@@ -285,18 +285,18 @@ class TargetAudienceDialog(QDialog):
         price_info = []
         
         if sample_type == "Pilot":
-            price_info = self.make_price_entry(pricing.get("pilot", 0), 100, target_for_interviewers, "pilot")
+            price_info = self.make_price_entry(pricing.get("pilot", 0), 0, target_for_interviewers, "pilot")
         elif sample_type == "Non":
-            price_info = self.make_price_entry(pricing.get("non", 0), 100, target_for_interviewers, "non")
+            price_info = self.make_price_entry(pricing.get("non", 0), 0, target_for_interviewers, "non")
         elif sample_type == "Main":
             price_info = [
-                self.make_price_entry(pricing.get("main", {}).get("recruit", 0), 100, "recruit"),
-                self.make_price_entry(pricing.get("main", {}).get("location", 0), 100, "location")
+                self.make_price_entry(pricing.get("main", {}).get("recruit", 0), 0, "recruit"),
+                self.make_price_entry(pricing.get("main", {}).get("location", 0), 0, "location")
             ]
         elif sample_type == "Booster":
             price_info = [
-                self.make_price_entry(pricing.get("booster", {}).get("recruit", 0), 100, "recruit"),
-                self.make_price_entry(pricing.get("booster", {}).get("location", 0), 100, "location")
+                self.make_price_entry(pricing.get("booster", {}).get("recruit", 0), 0, "recruit"),
+                self.make_price_entry(pricing.get("booster", {}).get("location", 0), 0, "location")
             ]
 
         return price_info

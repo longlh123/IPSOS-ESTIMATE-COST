@@ -304,7 +304,7 @@ class SamplesTable(QTableWidget):
                 extra_rate = audience_data.get("extra_rate", 0)
                 price = price_item.get("price", 0.0)
                 price_growth = price_item.get("price_growth", 0.0)
-                interviewer_target = audience_data.get("target_for_interviewers", 0)
+                interviewer_target = audience_data.get("target_for_interviewer", 0)
                 daily_sup_target = audience_data.get("daily_sup_target", 0.0)
                 comment = audience_data.get("comment", {})
                 price_comment = price_item.get("comment", {})
@@ -320,15 +320,15 @@ class SamplesTable(QTableWidget):
                 # Sample Type (Column 1)
                 sample_type_label = sample_type if price_item["type"] in SAMPLE_TYPES else f'{sample_type} ({utils.proper(price_item.get("type", ""))})'
                 
-                type_item = QTableWidgetItem(sample_type_label)
-                type_item.setFlags(type_item.flags() & ~Qt.ItemIsEditable)
-                self.setItem(row_index, 1, type_item)
+                sample_type_item = QTableWidgetItem(sample_type_label)
+                sample_type_item.setData(Qt.UserRole, utils.proper(price_item.get("type", "")))  # Store full price item data
+                sample_type_item.setFlags(sample_type_item.flags() & ~Qt.ItemIsEditable)
+                self.setItem(row_index, 1, sample_type_item)
                 
                 # Price (Column 1)
                 price_value_item = QTableWidgetItem(str(f"{price:,}"))
-                price_value_item.setData(Qt.UserRole, price_item)  # Store full price item data
                 price_value_item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
-                price_value_item.setFlags(type_item.flags() & ~Qt.ItemIsEditable)
+                price_value_item.setFlags(price_value_item.flags() & ~Qt.ItemIsEditable)
                 self.setItem(row_index, 2, price_value_item)
 
                 # Sample Size (Column 2)
@@ -387,6 +387,9 @@ class SamplesTable(QTableWidget):
                 comment_text = self.format_comment(comment)
                 price_comment_text = self.format_comment(price_comment)
 
+                if price_comment_text: 
+                    comment_text += "; " + price_comment_text
+
                 comment_item = QTableWidgetItem(comment_text)
                 comment_item.setFlags(comment_item.flags() & ~Qt.ItemIsEditable)
                 comment_item.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)
@@ -395,8 +398,11 @@ class SamplesTable(QTableWidget):
                 tooltip_text = self.format_comment_tooltip(comment)
                 price_tooltip_text = self.format_comment_tooltip(price_comment)
 
+                if price_tooltip_text:
+                    tooltip_text += "<hr>" + price_tooltip_text
+
                 # Set tooltip with full comment text if available
-                comment_item.setToolTip(tooltip_text)
+                comment_item.setToolTip(f"<div style='white-space:pre-wrap; max-width:400px;'>{tooltip_text}</div>")
                 comment_item.setBackground(QColor(255, 255, 220))  # Light yellow background for comments
                 
                 self.setItem(row_index, 8, comment_item)
@@ -446,12 +452,9 @@ class SamplesTable(QTableWidget):
             tooltip_parts.append(f"<b>{titles.get(key, key).capitalize()}:</b><br> {value}")
 
         tooltip_text = "<hr>".join(tooltip_parts) if tooltip_parts else ""
+
+        return tooltip_text;
         
-        if not tooltip_text:
-            return ""
-        else:
-            return f"<div style='white-space:pre-wrap; max-width:400px;'>{tooltip_text}</div>"
-    
     def resizeRowsToContents(self):
         """Resize rows to fit content better, especially for rows with comments."""
         for row in range(self.rowCount()):
@@ -471,9 +474,8 @@ class SamplesTable(QTableWidget):
             row (int): Row index to edit
         """
         # Get data for this row
-        audience_item = self.item(row, 0)
-        audience_data = audience_item.data(Qt.UserRole)
-        price_item_data = self.item(row, 2).data(Qt.UserRole)
+        audience_data = self.item(row, 0).data(Qt.UserRole)
+        sample_type_data = self.item(row, 1).data(Qt.UserRole)
         
         # Get interviewers per supervisor setting
         interviewers_per_supervisor = self.project_model.settings.get("interviewers_per_supervisor", 8)
@@ -482,7 +484,7 @@ class SamplesTable(QTableWidget):
         dialog = SampleEditDialog(
             self.province,
             audience_data,
-            price_item_data,
+            sample_type_data,
             interviewers_per_supervisor,
             self
         )

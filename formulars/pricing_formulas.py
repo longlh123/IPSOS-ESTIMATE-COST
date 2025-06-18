@@ -11,3 +11,10 @@ def calculate_daily_sup_target(sample_size, target_for_interviewer, interviewers
         return round(sample_size / target_for_interviewer / interviewers_per_supervisor, 2)
     return 0.0
 
+def has_custom_daily_sup_target(daily_sup_target, sample_size, target_for_interviewer, interviewers_per_supervisor):
+    """Check if the daily supervisor target has been customized."""
+    calculated_daily_sup_target = calculate_daily_sup_target(sample_size, target_for_interviewer, interviewers_per_supervisor)
+
+    if abs(daily_sup_target - calculated_daily_sup_target) > 0.001:
+        return True
+    return False
