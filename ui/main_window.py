@@ -418,12 +418,12 @@ class MainWindow(QMainWindow):
         """Calculate and display hierarchical project cost results."""
         try:
             # Calculate hierarchical costs
-            # cost_data = self.project_model.calculate_hierarchical_project_cost()
+            cost_data = self.project_model.calculate_hierarchical_project_cost()
             
-            with open("config/f2f_cost_hierarchy.json", "r", encoding="utf-8") as file:
-                hierarchy_data = json.load(file)
+            # with open("config/f2f_cost_hierarchy.json", "r", encoding="utf-8") as file:
+            #     hierarchy_data = json.load(file)
             
-            cost_data = self.project_model.calculate_estimated_costs(hierarchy_data, duration_minutes=10)
+            # cost_data = self.project_model.calculate_estimated_costs(hierarchy_data, duration_minutes=10)
 
             # Show results dialog
             from ui.dialogs.hierarchical_cost_results_dialog import HierarchicalCostResultsDialog
