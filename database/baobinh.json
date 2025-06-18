@@ -1,0 +1,66 @@
+{
+  "general": {
+    "internal_job": "2025-054",
+    "symphony": "999999",
+    "project_name": "BAOBINH",
+    "project_type": "F2F/D2D",
+    "clients": [
+      "KHÁCH HÀNG KHÁC"
+    ],
+    "platform": "iField",
+    "sampling_method": "Random sampling",
+    "interview_methods": [
+      "CAPI"
+    ],
+    "type_of_quota_control": "Parallel Fixed Quota",
+    "quota_description": [],
+    "service_line": "",
+    "industries": [],
+    "provinces": [],
+    "target_audiences": [],
+    "sample_types": [],
+    "interview_length": 0,
+    "questionnaire_length": 0,
+    "project_objectives": "- Người có dùng các sản phẩm chăm sóc sức khỏe, bao gồm: bao cao su, băng keo cá nhân, miếng dán giảm đau (Salonpas, Tiger balm, Fujisip), khẩu trang y tế các loại, vitamin các loại, thực phẩm chức năng,…..\n- Tâm lý người tiêu dùng/ Psychographics:\nNgười tiêu dùng chú trọng đến sức khỏe, nhạy cảm với giá cả và mong đợi sản phẩm có chất lượng cao cấp\nChấp nhận giải pháp sức khỏe hiện đại và thảo dược truyền thống\nƯa thích thiết kế mang nhiều thông tin và hấp dẫn, có xu hướng mua sản phẩm được gợi ý bởi dược sĩ, KOLs, bạn bè và gia đình",
+    "hut_test_products": 0,
+    "hut_usage_duration": 0,
+    "clt_test_products": 0,
+    "clt_respondent_visits": 0,
+    "clt_sample_size_per_day": 0,
+    "showcard_page_count": 0,
+    "dropcard_page_count": 0,
+    "color_page_count": 0,
+    "laminated_page_count": 0,
+    "scripting": false,
+    "data_processing": false,
+    "coding": false,
+    "open_ended_main_count": 0,
+    "open_ended_booster_count": 0
+  },
+  "settings": {
+    "interviewers_per_supervisor": 8,
+    "bw_photo_fee": 250,
+    "color_photo_fee": 5000,
+    "lamination_fee": 4000,
+    "dropcard_fee": 1000,
+    "parking_fee": 5000,
+    "distant_district_fee": 5000,
+    "travel_junior_hotel": 500000,
+    "travel_junior_food": 500000,
+    "travel_senior_hotel": 1000000,
+    "travel_senior_food": 800000,
+    "travel_manager_hotel": 2000000,
+    "travel_manager_food": 1000000,
+    "travel_director_hotel": 3000000,
+    "travel_director_food": 1200000
+  },
+  "samples": {},
+  "qc_methods": [],
+  "conditions": {
+    "age_ranges": [],
+    "sex": "male/female",
+    "income_ranges": []
+  },
+  "travel": {},
+  "assignments": []
+}

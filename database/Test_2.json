@@ -1,0 +1,107 @@
+{
+  "general": {
+    "internal_job": "2024-123",
+    "symphony": "323232",
+    "project_name": "fadf",
+    "project_type": "F2F/D2D",
+    "sampling_method": "",
+    "resp_classification": "L1",
+    "interview_length": 45,
+    "questionnaire_length": 0,
+    "open_ended_count": 3,
+    "interview_methods": [
+      "PAPI",
+      "CATI"
+    ],
+    "service_line": "",
+    "industries": [],
+    "provinces": [
+      "An Giang",
+      "Bà Rịa - Vũng Tàu"
+    ],
+    "target_audiences": [
+      "Bac si San (30-45)"
+    ],
+    "sample_types": [
+      "Main",
+      "Boosters"
+    ],
+    "platform": "iField",
+    "hut_test_products": 0,
+    "hut_usage_duration": 0,
+    "clt_test_products": 0,
+    "clt_respondent_visits": 0,
+    "clt_sample_size_per_day": 0,
+    "showcard_page_count": 0,
+    "dropcard_page_count": 0,
+    "color_page_count": 0,
+    "laminated_page_count": 0
+  },
+  "settings": {
+    "interviewers_per_supervisor": 8,
+    "bw_photo_fee": 250,
+    "color_photo_fee": 5000,
+    "lamination_fee": 4000,
+    "dropcard_fee": 1000,
+    "parking_fee": 5000,
+    "distant_district_fee": 5000,
+    "travel_junior_hotel": 500000,
+    "travel_junior_food": 500000,
+    "travel_senior_hotel": 1000000,
+    "travel_senior_food": 800000,
+    "travel_manager_hotel": 2000000,
+    "travel_manager_food": 1000000,
+    "travel_director_hotel": 3000000,
+    "travel_director_food": 1200000
+  },
+  "samples": {
+    "An Giang": {
+      "Bac si San (30-45)": {
+        "Main": {
+          "sample_size": 100,
+          "price_growth": 0.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 0.1,
+          "comment": {
+            "price_growth": "fsdahkf afsadfas",
+            "interviewer_target": "fdasf afdsa fadsf",
+            "daily_sup_target": "fdsafadsf fasdf asdf asd"
+          }
+        },
+        "Boosters": {
+          "sample_size": 100,
+          "price_growth": 0.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 6.25,
+          "comment": {}
+        }
+      }
+    },
+    "Bà Rịa - Vũng Tàu": {
+      "Bac si San (30-45)": {
+        "Main": {
+          "sample_size": 100,
+          "price_growth": 0.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 6.25,
+          "comment": {}
+        },
+        "Boosters": {
+          "sample_size": 100,
+          "price_growth": 0.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 6.25,
+          "comment": {}
+        }
+      }
+    }
+  },
+  "qc_methods": [],
+  "conditions": {
+    "age_ranges": [],
+    "sex": "male/female",
+    "income_ranges": []
+  },
+  "travel": {},
+  "assignments": []
+}

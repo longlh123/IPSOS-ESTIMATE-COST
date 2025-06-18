@@ -1,0 +1,311 @@
+{
+  "general": {
+    "internal_job": "2025-029",
+    "symphony": "99999999",
+    "project_name": "CHIZU",
+    "project_type": "CLT",
+    "clients": [
+      "TÂN HIỆP PHÁT"
+    ],
+    "project_objectives": "Mục tiêu: Đánh giá sản phẩm bánh snack.\nĐối tượng:\nGiới tính: nam (50%), nữ (50%)\nTuổi: 18-25 (50%), 26-34 (50%)\nClass: AB (tỉ lệ theo population)\nBUMO:\n50% người dùng nhãn hiệu Slide với tần suất ít nhất 1 lần/ 2 tuần\n50% người dùng nhãn hiệu snack khoai tây vị phô mai khác (Pringles/Jacker hoặc Mr Potato) với tần suất ít nhất 1 lần/ 2 tuần \nLà người có nhận biết snack nhãn hiệu Lays và không từ chối mua nhãn hiệu này.\nLà người không từ chối sử dụng snack khoai tây vị phô mai.\n",
+    "platform": "iField",
+    "interview_methods": [
+      "CAPI"
+    ],
+    "sampling_method": "Random sampling",
+    "recruit_method": [
+      "FW free find/ FW connection"
+    ],
+    "type_of_quota_control": "No Quota",
+    "quota_description": [],
+    "service_line": "INNO",
+    "provinces": [
+      "Hà Nội",
+      "Hồ Chí Minh"
+    ],
+    "sample_types": [
+      "Main",
+      "Pilot"
+    ],
+    "industries": [
+      "Thực phẩm - Đồ ăn nhẹ"
+    ],
+    "target_audiences": [
+      {
+        "age_range": [
+          0,
+          0
+        ],
+        "comment": {},
+        "complexity": "Standard",
+        "daily_sup_target": 0,
+        "description": "",
+        "extra_rate": 5,
+        "gender": "Both",
+        "id": null,
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Người dùng Sản phẩm bánh Snack",
+        "pricing": [
+          {
+            "comment": {},
+            "price": 115000,
+            "price_growth": 100,
+            "type": "recruit"
+          },
+          {
+            "comment": {},
+            "price": 41000,
+            "price_growth": 100,
+            "type": "location"
+          }
+        ],
+        "sample_size": 100,
+        "sample_type": "Main",
+        "target_for_interviewer": 2
+      }
+    ],
+    "interview_length": 60,
+    "questionnaire_length": 4,
+    "hut_test_products": 0,
+    "hut_usage_duration": 0,
+    "clt_test_products": 0,
+    "clt_respondent_visits": 0,
+    "clt_sample_size_per_day": 0,
+    "clt_desk_interviewers_count": 0,
+    "clt_provincial_desk_interviewers_count": 0,
+    "clt_failure_rate": 0,
+    "clt_device_type": "Tablet >= 9 inch",
+    "clt_sample_recruit_idi": 0,
+    "clt_dan_mau": false,
+    "clt_dan_mau_days": 0,
+    "clt_assistant_setup_days": 1,
+    "clt_tablet_usage_duration": "<= 15 phút",
+    "bw_page_count": 0,
+    "showphoto_page_count": 0,
+    "showcard_page_count": 0,
+    "dropcard_page_count": 0,
+    "color_page_count": 0,
+    "decal_page_count": 0,
+    "laminated_page_count": 0,
+    "scripting": true,
+    "data_processing": true,
+    "coding": true,
+    "open_ended_main_count": 8,
+    "open_ended_booster_count": 0,
+    "data_processing_method": [
+      "TOPLINE",
+      "SPSS"
+    ]
+  },
+  "settings": {
+    "interviewers_per_supervisor": 8,
+    "parking_fee": 5000,
+    "distant_district_fee": 5000,
+    "stationary": {
+      "Hồ Chí Minh": {
+        "bw_photo_fee": 350,
+        "showphoto_fee": 2500,
+        "showcard_fee": 4000,
+        "decal_fee": 3500,
+        "color_photo_fee": 2500,
+        "lamination_fee": 6000,
+        "dropcard_fee": 9000
+      },
+      "Hà Nội": {
+        "bw_photo_fee": 400,
+        "showphoto_fee": 3000,
+        "showcard_fee": 6000,
+        "decal_fee": 2500,
+        "color_photo_fee": 3000,
+        "lamination_fee": 5000,
+        "dropcard_fee": 9000
+      },
+      "Đà Nẵng": {
+        "bw_photo_fee": 450,
+        "showphoto_fee": 2500,
+        "showcard_fee": 4000,
+        "decal_fee": 3500,
+        "color_photo_fee": 3500,
+        "lamination_fee": 7000,
+        "dropcard_fee": 9000
+      },
+      "Cần Thơ": {
+        "bw_photo_fee": 400,
+        "showphoto_fee": 2500,
+        "showcard_fee": 3500,
+        "decal_fee": 3500,
+        "color_photo_fee": 2500,
+        "lamination_fee": 6000,
+        "dropcard_fee": 9000
+      },
+      "Others": {
+        "bw_photo_fee": 350,
+        "showphoto_fee": 2500,
+        "showcard_fee": 4000,
+        "decal_fee": 3500,
+        "color_photo_fee": 2500,
+        "lamination_fee": 6000,
+        "dropcard_fee": 9000
+      }
+    },
+    "transportation": {
+      "Others": {
+        "flight": 1000000,
+        "train": 400000
+      }
+    },
+    "travel_junior_hotel": 500000,
+    "travel_junior_food": 500000,
+    "travel_senior_hotel": 1000000,
+    "travel_senior_food": 800000,
+    "travel_manager_hotel": 2000000,
+    "travel_manager_food": 1000000,
+    "travel_director_hotel": 3000000,
+    "travel_director_food": 1200000
+  },
+  "samples": {
+    "Hà Nội": {
+      "Main - Người dùng Sản phẩm bánh Snack": {
+        "age_range": [
+          0,
+          0
+        ],
+        "comment": {},
+        "complexity": "Standard",
+        "daily_sup_target": 6.25,
+        "description": "",
+        "extra_rate": 5,
+        "gender": "Both",
+        "id": null,
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Người dùng Sản phẩm bánh Snack",
+        "pricing": [
+          {
+            "comment": {},
+            "price": 115000,
+            "price_growth": 100,
+            "type": "recruit"
+          },
+          {
+            "comment": {},
+            "price": 41000,
+            "price_growth": 100,
+            "type": "location"
+          }
+        ],
+        "sample_size": 100,
+        "sample_type": "Main",
+        "target_for_interviewer": 2
+      }
+    },
+    "Hồ Chí Minh": {
+      "Main - Người dùng Sản phẩm bánh Snack": {
+        "age_range": [
+          0,
+          0
+        ],
+        "comment": {},
+        "complexity": "Standard",
+        "daily_sup_target": 6.25,
+        "description": "",
+        "extra_rate": 5,
+        "gender": "Both",
+        "id": null,
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Người dùng Sản phẩm bánh Snack",
+        "pricing": [
+          {
+            "comment": {},
+            "price": 115000,
+            "price_growth": 100,
+            "type": "recruit"
+          },
+          {
+            "comment": {},
+            "price": 41000,
+            "price_growth": 100,
+            "type": "location"
+          }
+        ],
+        "sample_size": 100,
+        "sample_type": "Main",
+        "target_for_interviewer": 2
+      }
+    }
+  },
+  "qc_methods": [],
+  "travel": {
+    "Hà Nội": {
+      "fulltime": {
+        "travel_days": 0,
+        "travel_nights": 0,
+        "assigned_people": []
+      },
+      "parttime": {
+        "supervisor": {
+          "distant": 0,
+          "nearby": 0,
+          "recruit_distant": 0,
+          "recruit_nearby": 0,
+          "ngoi_ban_distant": 0,
+          "ngoi_ban_nearby": 0
+        },
+        "interviewer": {
+          "distant": 0,
+          "nearby": 0,
+          "recruit_distant": 0,
+          "recruit_nearby": 0,
+          "ngoi_ban_distant": 0,
+          "ngoi_ban_nearby": 0
+        },
+        "qc": {
+          "distant": 0,
+          "nearby": 0
+        }
+      }
+    },
+    "Hồ Chí Minh": {
+      "fulltime": {
+        "travel_days": 0,
+        "travel_nights": 0,
+        "assigned_people": []
+      },
+      "parttime": {
+        "supervisor": {
+          "distant": 0,
+          "nearby": 0,
+          "recruit_distant": 0,
+          "recruit_nearby": 0,
+          "ngoi_ban_distant": 0,
+          "ngoi_ban_nearby": 0
+        },
+        "interviewer": {
+          "distant": 0,
+          "nearby": 0,
+          "recruit_distant": 0,
+          "recruit_nearby": 0,
+          "ngoi_ban_distant": 0,
+          "ngoi_ban_nearby": 0
+        },
+        "qc": {
+          "distant": 0,
+          "nearby": 0
+        }
+      }
+    }
+  },
+  "assignments": [],
+  "additional_costs": []
+}

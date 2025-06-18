@@ -1,0 +1,247 @@
+{
+  "general": {
+    "internal_job": "2024-123",
+    "symphony": "",
+    "project_name": "TEST_1",
+    "project_type": "",
+    "sampling_method": "",
+    "resp_classification": "",
+    "interview_length": 45,
+    "questionnaire_length": 0,
+    "open_ended_count": 5,
+    "interview_methods": [
+      "PAPI",
+      "CATI"
+    ],
+    "service_line": "Doctor - Rare disease",
+    "industries": [],
+    "provinces": [
+      "An Giang",
+      "Bà Rịa - Vũng Tàu",
+      "Bắc Giang"
+    ],
+    "target_audiences": [
+      "Bác sĩ chuyên khoa",
+      "Bác sĩ đa khoa"
+    ],
+    "sample_types": [
+      "Main",
+      "Boosters",
+      "Non",
+      "Pilot"
+    ],
+    "hut_test_products": 0,
+    "hut_usage_duration": 0,
+    "clt_test_products": 0,
+    "clt_respondent_visits": 0,
+    "clt_sample_size_per_day": 0,
+    "showcard_page_count": 0,
+    "dropcard_page_count": 0,
+    "color_page_count": 0,
+    "laminated_page_count": 0
+  },
+  "settings": {
+    "interviewers_per_supervisor": 8
+  },
+  "samples": {
+    "An Giang": {
+      "Bác sĩ chuyên khoa": {
+        "Main": {
+          "sample_size": 0,
+          "price_growth": 0.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 0.0,
+          "comment": {}
+        },
+        "Boosters": {
+          "sample_size": 0,
+          "price_growth": 0.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 0.0,
+          "comment": {}
+        },
+        "Non": {
+          "sample_size": 0,
+          "price_growth": 0.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 0.0,
+          "comment": {}
+        },
+        "Pilot": {
+          "sample_size": 0,
+          "price_growth": 0.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 0.0,
+          "comment": {}
+        }
+      },
+      "Bác sĩ đa khoa": {
+        "Main": {
+          "sample_size": 0,
+          "price_growth": 0.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 0.0,
+          "comment": {}
+        },
+        "Boosters": {
+          "sample_size": 0,
+          "price_growth": 0.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 0.0,
+          "comment": {}
+        },
+        "Non": {
+          "sample_size": 0,
+          "price_growth": 0.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 0.0,
+          "comment": {}
+        },
+        "Pilot": {
+          "sample_size": 0,
+          "price_growth": 0.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 0.0,
+          "comment": {}
+        }
+      }
+    },
+    "Bà Rịa - Vũng Tàu": {
+      "Bác sĩ chuyên khoa": {
+        "Main": {
+          "sample_size": 0,
+          "price_growth": 0.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 0.0,
+          "comment": {}
+        },
+        "Boosters": {
+          "sample_size": 0,
+          "price_growth": 0.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 0.0,
+          "comment": {}
+        },
+        "Non": {
+          "sample_size": 0,
+          "price_growth": 0.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 0.0,
+          "comment": {}
+        },
+        "Pilot": {
+          "sample_size": 0,
+          "price_growth": 0.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 0.0,
+          "comment": {}
+        }
+      },
+      "Bác sĩ đa khoa": {
+        "Main": {
+          "sample_size": 0,
+          "price_growth": 0.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 0.0,
+          "comment": {}
+        },
+        "Boosters": {
+          "sample_size": 0,
+          "price_growth": 0.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 0.0,
+          "comment": {}
+        },
+        "Non": {
+          "sample_size": 0,
+          "price_growth": 0.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 0.0,
+          "comment": {}
+        },
+        "Pilot": {
+          "sample_size": 0,
+          "price_growth": 0.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 0.0,
+          "comment": {}
+        }
+      }
+    },
+    "Bắc Giang": {
+      "Bác sĩ chuyên khoa": {
+        "Main": {
+          "sample_size": 0,
+          "price_growth": 0.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 0.0,
+          "comment": {}
+        },
+        "Boosters": {
+          "sample_size": 0,
+          "price_growth": 0.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 0.0,
+          "comment": {}
+        },
+        "Non": {
+          "sample_size": 0,
+          "price_growth": 0.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 0.0,
+          "comment": {}
+        },
+        "Pilot": {
+          "sample_size": 0,
+          "price_growth": 0.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 0.0,
+          "comment": {}
+        }
+      },
+      "Bác sĩ đa khoa": {
+        "Main": {
+          "sample_size": 0,
+          "price_growth": 0.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 0.0,
+          "comment": {}
+        },
+        "Boosters": {
+          "sample_size": 0,
+          "price_growth": 0.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 0.0,
+          "comment": {}
+        },
+        "Non": {
+          "sample_size": 0,
+          "price_growth": 0.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 0.0,
+          "comment": {}
+        },
+        "Pilot": {
+          "sample_size": 0,
+          "price_growth": 0.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 0.0,
+          "comment": {}
+        }
+      }
+    }
+  },
+  "qc_methods": [
+    {
+      "team": "FW",
+      "method": "QC tai nha",
+      "rate": 10.0
+    }
+  ],
+  "conditions": {
+    "age_ranges": [],
+    "sex": "male/female",
+    "income_ranges": []
+  },
+  "element_costs": {}
+}

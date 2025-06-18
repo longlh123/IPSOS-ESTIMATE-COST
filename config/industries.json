@@ -1,0 +1,146 @@
+{
+    "Bác sĩ" : {
+        "ID0000001" : {"target_audience": "Bác sĩ Đa Khoa","gender": "Both","age_group_from": 0,"age_group_to": 100,"household_income_from": 0,"household_income_to": 100,"description": "","price": 300000,"price_booster": 300000,"price_pilot": 300000,"price_non": 300000,"target_for_interviewers": 2, "daily_sup_target": 0 },
+        "ID0000002" : {"target_audience": "Bác Sĩ Tư Vấn","gender": "Both","age_group_from": 0,"age_group_to": 100,"household_income_from": 0,"household_income_to": 100,"description": "","price": 120000,"price_booster": 120000,"price_pilot": 120000,"price_non": 120000,"target_for_interviewers": 2, "daily_sup_target": 0 },
+        "ID0000003" : {"target_audience": "Bác sĩ chuyên khoa Hô Hấp","gender": "Both","age_group_from": 0,"age_group_to": 100,"household_income_from": 0,"household_income_to": 100,"description": "","price": 300000,"price_booster": 300000,"price_pilot": 300000,"price_non": 300000,"target_for_interviewers": 2, "daily_sup_target": 0 },
+        "ID0000004" : {"target_audience": "Bác sĩ chuyên khoa Ngoại lồng ngực","gender": "Both","age_group_from": 0,"age_group_to": 100,"household_income_from": 0,"household_income_to": 100,"description": "","price": 300000,"price_booster": 300000,"price_pilot": 300000,"price_non": 300000,"target_for_interviewers": 2, "daily_sup_target": 0 },
+        "ID0000005" : {"target_audience": "Bác sĩ chuyên khoa Sản","gender": "Both","age_group_from": 0,"age_group_to": 100,"household_income_from": 0,"household_income_to": 100,"description": "","price": 84520,"price_booster": 84520,"price_pilot": 84520,"price_non": 84520,"target_for_interviewers": 2, "daily_sup_target": 0 },
+        "ID0000006" : {"target_audience": "Bác sĩ chuyên khoa Tai Mũi Họng","gender": "Both","age_group_from": 0,"age_group_to": 100,"household_income_from": 0,"household_income_to": 100,"description": "","price": 300000,"price_booster": 300000,"price_pilot": 300000,"price_non": 300000,"target_for_interviewers": 2, "daily_sup_target": 0 },
+        "ID0000007" : {"target_audience": "Bác sĩ Chuyên khoa Thận","gender": "Both","age_group_from": 0,"age_group_to": 100,"household_income_from": 0,"household_income_to": 100,"description": "","price": 400000,"price_booster": 400000,"price_pilot": 400000,"price_non": 400000,"target_for_interviewers": 2, "daily_sup_target": 0 },
+        "ID0000008" : {"target_audience": "Bác sĩ Chuyên khoa Tiêm Chủng","gender": "Both","age_group_from": 0,"age_group_to": 100,"household_income_from": 0,"household_income_to": 100,"description": "","price": 84520,"price_booster": 84520,"price_pilot": 84520,"price_non": 84520,"target_for_interviewers": 2, "daily_sup_target": 0 },
+        "ID0000009" : {"target_audience": "Bác sĩ Chuyên khoaTiết niệu","gender": "Both","age_group_from": 0,"age_group_to": 100,"household_income_from": 0,"household_income_to": 100,"description": "","price": 400000,"price_booster": 400000,"price_pilot": 400000,"price_non": 400000,"target_for_interviewers": 2, "daily_sup_target": 0 },
+        "ID0000010" : {"target_audience": "Bác sĩ Nội khoa","gender": "Both","age_group_from": 0,"age_group_to": 100,"household_income_from": 0,"household_income_to": 100,"description": "","price": 350000,"price_booster": 350000,"price_pilot": 350000,"price_non": 350000,"target_for_interviewers": 2, "daily_sup_target": 0 },
+        "ID0000011" : {"target_audience": "Bác sĩ Nội tổng quát","gender": "Both","age_group_from": 0,"age_group_to": 100,"household_income_from": 0,"household_income_to": 100,"description": "","price": 350000,"price_booster": 350000,"price_pilot": 350000,"price_non": 350000,"target_for_interviewers": 2, "daily_sup_target": 0 }
+    },
+    "Dược sĩ": {
+        "ID0000001" : {"target_audience": "Dược sĩ","gender": "Both","age_group_from": 0,"age_group_to": 100,"household_income_from": 0,"household_income_to": 100,"description": "","price": 300000,"price_booster": 300000,"price_pilot": 300000,"price_non": 300000,"target_for_interviewers": 2, "daily_sup_target": 0}
+    },
+    "Bệnh nhân": {
+        "ID0000001" : {"target_audience": "Bệnh Nhân","gender": "Both","age_group_from": 0,"age_group_to": 100,"household_income_from": 0,"household_income_to": 100,"description": "","price": 66000,"price_booster": 66000,"price_pilot": 66000,"price_non": 66000,"target_for_interviewers": 2, "daily_sup_target": 0},
+        "ID0000002" : {"target_audience": "Bệnh cảm/ ho/ xoang/ xổ mũi/ viêm họng (bệnh hô hấp)","gender": "Both","age_group_from": 0,"age_group_to": 100,"household_income_from": 0,"household_income_to": 100,"description": "","price": 85000,"price_booster": 85000,"price_pilot": 85000,"price_non": 85000,"target_for_interviewers": 2, "daily_sup_target": 0},
+        "ID0000003" : {"target_audience": "Bệnh ung thư phổi","gender": "Both","age_group_from": 0,"age_group_to": 100,"household_income_from": 0,"household_income_to": 100,"description": "","price": 400000,"price_booster": 400000,"price_pilot": 400000,"price_non": 400000,"target_for_interviewers": 2, "daily_sup_target": 0},
+        "ID0000004" : {
+            "target_audience": "Người mắc bệnh Nhiễm Nấm Âm Đạo",
+            "gender": "Both",
+            "age_group_from": 0,
+            "age_group_to": 100,
+            "household_income_from": 0,
+            "household_income_to": 100,
+            "description": "",
+            "incident_rate" : 100,
+            "price": 350000,
+            "price_booster": 350000,
+            "price_pilot": 350000,
+            "price_non": 350000,
+            "target_for_interviewers": 2,
+            "daily_sup_target": 0
+        },
+        "ID0000005" : {
+            "target_audience": "Người mắc bệnh Viêm Âm Đạo do Vi Khuẩn",
+            "gender": "Both",
+            "age_group_from": 0,
+            "age_group_to": 100,
+            "household_income_from": 0,
+            "household_income_to": 100,
+            "description": "",
+            "incident_rate" : 100,
+            "price": 350000,
+            "price_booster": 350000,
+            "price_pilot": 350000,
+            "price_non": 350000,
+            "target_for_interviewers": 2,
+            "daily_sup_target": 0
+        },
+        "ID0000006" : {
+            "target_audience": "Người mắc bệnh Nhiễm Trùng Đường Tiết Niệu",
+            "gender": "Both",
+            "age_group_from": 0,
+            "age_group_to": 100,
+            "household_income_from": 0,
+            "household_income_to": 100,
+            "description": "",
+            "incident_rate" : 100,
+            "price": 350000,
+            "price_booster": 350000,
+            "price_pilot": 350000,
+            "price_non": 350000,
+            "target_for_interviewers": 2,
+            "daily_sup_target": 0
+        }
+    },
+    "Thuốc" : {
+        "ID0000001" : {
+            "target_audience": "Thuốc (nói chung)",
+            "gender": "Both",
+            "age_group_from": 0,
+            "age_group_to": 100,
+            "household_income_from": 0,
+            "household_income_to": 100,
+            "description": "",
+            "incident_rate" : 100,
+            "price": 350000,
+            "price_booster": 350000,
+            "price_pilot": 350000,
+            "price_non": 350000,
+            "target_for_interviewers": 2,
+            "daily_sup_target": 0
+        },
+        "ID0000002" : {"target_audience": "Thuốc điều trị viêm mũi dị ứng","gender": "Both","age_group_from": 0,"age_group_to": 100,"household_income_from": 0,"household_income_to": 100,"description": "","price": 142500,"price_booster": 142500,"price_pilot": 142500,"price_non": 142500,"target_for_interviewers": 2, "daily_sup_target": 0},
+        "ID0000003" : {"target_audience": "Thuốc tránh thai","gender": "Both","age_group_from": 0,"age_group_to": 100,"household_income_from": 0,"household_income_to": 100,"description": "","price": 85000,"price_booster": 85000,"price_pilot": 85000,"price_non": 85000,"target_for_interviewers": 2, "daily_sup_target": 0}
+    },
+    "Chuỗi cửa hàng": {
+        "ID0000001" : {"target_audience": "Chuỗi Pharmacity","gender": "Both","age_group_from": 0,"age_group_to": 100,"household_income_from": 0,"household_income_to": 100,"description": "","price": 300000,"price_booster": 300000,"price_pilot": 300000,"price_non": 300000,"target_for_interviewers": 2, "daily_sup_target": 0}
+    },
+    "Sản phẩm sữa": {
+        "ID0000001" : {"target_audience": "Sữa Bột","gender": "Both","age_group_from": 0,"age_group_to": 100,"household_income_from": 0,"household_income_to": 100,"description": "","price": 115000,"price_booster": 115000,"price_pilot": 115000,"price_non": 115000,"target_for_interviewers": 2, "daily_sup_target": 0}
+    },
+    "Thực phẩm - Đồ ăn nhẹ" : {
+        "default" : {
+            "target_audience": "Người dùng Sản phẩm về bánh kẹo nói chung",
+            "gender": "Both", 
+            "age_group_from": 0, 
+            "age_group_to": 100, 
+            "household_income_from": 0,
+            "household_income_to": 100,
+            "description": "", 
+            "pricing" : {
+                "pilot" : 120000,
+                "non" : 15000,
+                "main" : {
+                    "recruit" : 84000,
+                    "location" : 25000
+                },
+                "booster" : {
+                    "recruit" : 84000,
+                    "location" : 25000
+                }
+            },
+            "target_for_interviewer": 2, 
+            "daily_sup_target": 0
+        },
+        "ID0000001" : {
+            "target_audience": "Người dùng Sản phẩm bánh Snack",
+            "gender": "Both", 
+            "age_group_from": 0, 
+            "age_group_to": 100, 
+            "household_income_from": 0,
+            "household_income_to": 100,
+            "description": "",
+            "pricing" : {
+                "pilot" : 120000,
+                "non" : 15000,
+                "main" : {
+                    "recruit" : 115000,
+                    "location" : 41000
+                },
+                "booster" : {
+                    "recruit" : 115000,
+                    "location" : 41000
+                }
+            },
+            "target_for_interviewer": 2, 
+            "daily_sup_target": 0
+        }
+    }
+
+}

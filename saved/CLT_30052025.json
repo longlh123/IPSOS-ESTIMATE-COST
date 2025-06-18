@@ -1,0 +1,349 @@
+{
+  "general": {
+    "internal_job": "",
+    "symphony": "",
+    "project_name": "",
+    "project_type": "CLT",
+    "sampling_method": "Random sampling",
+    "resp_classification": "L1",
+    "interview_length": 0,
+    "questionnaire_length": 0,
+    "open_ended_count": 3,
+    "interview_methods": [],
+    "service_line": "",
+    "industries": [],
+    "provinces": [
+      "An Giang",
+      "Bà Rịa - Vũng Tàu"
+    ],
+    "target_audiences": [
+      "Bác sĩ chuyên khoa",
+      "Bác sĩ đa khoa"
+    ],
+    "sample_types": [
+      "Main",
+      "Boosters",
+      "Non",
+      "Pilot"
+    ],
+    "platform": "iField",
+    "hut_test_products": 0,
+    "hut_usage_duration": 0,
+    "clt_test_products": 3,
+    "clt_respondent_visits": 2,
+    "clt_sample_size_per_day": 50,
+    "clt_desk_interviewers_count": 3,
+    "clt_provincial_desk_interviewers_count": 4,
+    "clt_failure_rate": 15,
+    "clt_device_type": "Tablet >= 9 inch",
+    "clt_sample_recruit_idi": 50,
+    "clt_dan_mau": true,
+    "clt_dan_mau_days": 3,
+    "clt_assistant_setup_days": 1,
+    "bw_page_count": 0,
+    "showphoto_page_count": 0,
+    "showcard_page_count": 1,
+    "dropcard_page_count": 2,
+    "color_page_count": 3,
+    "decal_page_count": 0,
+    "laminated_page_count": 4
+  },
+  "settings": {
+    "interviewers_per_supervisor": 8,
+    "parking_fee": 5000,
+    "distant_district_fee": 5000,
+    "stationary": {
+      "Hồ Chí Minh": {
+        "bw_photo_fee": 350,
+        "showphoto_fee": 2500,
+        "showcard_fee": 4000,
+        "decal_fee": 3500,
+        "color_photo_fee": 2500,
+        "lamination_fee": 6000,
+        "dropcard_fee": 9000
+      },
+      "Hà Nội": {
+        "bw_photo_fee": 400,
+        "showphoto_fee": 3000,
+        "showcard_fee": 6000,
+        "decal_fee": 2500,
+        "color_photo_fee": 3000,
+        "lamination_fee": 5000,
+        "dropcard_fee": 9000
+      },
+      "Đà Nẵng": {
+        "bw_photo_fee": 450,
+        "showphoto_fee": 2500,
+        "showcard_fee": 4000,
+        "decal_fee": 3500,
+        "color_photo_fee": 3500,
+        "lamination_fee": 7000,
+        "dropcard_fee": 9000
+      },
+      "Cần Thơ": {
+        "bw_photo_fee": 400,
+        "showphoto_fee": 2500,
+        "showcard_fee": 3500,
+        "decal_fee": 3500,
+        "color_photo_fee": 2500,
+        "lamination_fee": 6000,
+        "dropcard_fee": 9000
+      },
+      "Others": {
+        "bw_photo_fee": 350,
+        "showphoto_fee": 2500,
+        "showcard_fee": 4000,
+        "decal_fee": 3500,
+        "color_photo_fee": 2500,
+        "lamination_fee": 6000,
+        "dropcard_fee": 9000
+      }
+    },
+    "transportation": {
+      "Others": {
+        "flight": 1000000,
+        "train": 400000
+      }
+    },
+    "travel_junior_hotel": 500000,
+    "travel_junior_food": 500000,
+    "travel_senior_hotel": 1000000,
+    "travel_senior_food": 800000,
+    "travel_manager_hotel": 2000000,
+    "travel_manager_food": 1000000,
+    "travel_director_hotel": 3000000,
+    "travel_director_food": 1200000,
+    "bw_photo_fee": 250,
+    "color_photo_fee": 5000,
+    "lamination_fee": 4000,
+    "dropcard_fee": 1000
+  },
+  "samples": {
+    "An Giang": {
+      "Bác sĩ chuyên khoa": {
+        "Main": {
+          "sample_size": 100,
+          "price_growth": 150.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 6.25,
+          "comment": {
+            "price_growth": "khó"
+          }
+        },
+        "Boosters": {
+          "sample_size": 200,
+          "price_growth": 150.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 12.5,
+          "comment": {
+            "price_growth": "khó"
+          }
+        },
+        "Non": {
+          "sample_size": 300,
+          "price_growth": 150.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 18.75,
+          "comment": {
+            "price_growth": "khó"
+          }
+        },
+        "Pilot": {
+          "sample_size": 400,
+          "price_growth": 150.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 25.0,
+          "comment": {
+            "price_growth": "khó"
+          }
+        }
+      },
+      "Bác sĩ đa khoa": {
+        "Main": {
+          "sample_size": 1000,
+          "price_growth": 100.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 62.5,
+          "comment": {}
+        },
+        "Boosters": {
+          "sample_size": 2000,
+          "price_growth": 100.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 125.0,
+          "comment": {}
+        },
+        "Non": {
+          "sample_size": 3000,
+          "price_growth": 100.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 187.5,
+          "comment": {}
+        },
+        "Pilot": {
+          "sample_size": 4000,
+          "price_growth": 100.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 250.0,
+          "comment": {}
+        }
+      }
+    },
+    "Bà Rịa - Vũng Tàu": {
+      "Bác sĩ chuyên khoa": {
+        "Main": {
+          "sample_size": 0,
+          "price_growth": 150.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 0.0,
+          "comment": {
+            "price_growth": "khó"
+          }
+        },
+        "Boosters": {
+          "sample_size": 0,
+          "price_growth": 150.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 0.0,
+          "comment": {
+            "price_growth": "khó"
+          }
+        },
+        "Non": {
+          "sample_size": 0,
+          "price_growth": 150.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 0.0,
+          "comment": {
+            "price_growth": "khó"
+          }
+        },
+        "Pilot": {
+          "sample_size": 0,
+          "price_growth": 150.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 0.0,
+          "comment": {
+            "price_growth": "khó"
+          }
+        }
+      },
+      "Bác sĩ đa khoa": {
+        "Main": {
+          "sample_size": 0,
+          "price_growth": 100.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 0.0,
+          "comment": {}
+        },
+        "Boosters": {
+          "sample_size": 0,
+          "price_growth": 100.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 0.0,
+          "comment": {}
+        },
+        "Non": {
+          "sample_size": 0,
+          "price_growth": 100.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 0.0,
+          "comment": {}
+        },
+        "Pilot": {
+          "sample_size": 0,
+          "price_growth": 100.0,
+          "interviewer_target": 2,
+          "daily_sup_target": 0.0,
+          "comment": {}
+        }
+      }
+    }
+  },
+  "qc_methods": [
+    {
+      "team": "QC",
+      "method": "QC tại nhà",
+      "rate": 10.0
+    },
+    {
+      "team": "DP",
+      "method": "QC Coding",
+      "rate": 10.0
+    }
+  ],
+  "conditions": {
+    "age_ranges": [],
+    "sex": "male/female",
+    "income_ranges": []
+  },
+  "travel": {
+    "An Giang": {
+      "fulltime": {
+        "travel_days": 2,
+        "assigned_people": [
+          "1@gmail.com",
+          "3@gmail.com"
+        ]
+      },
+      "parttime": {
+        "supervisor": {
+          "distant": 2,
+          "nearby": 3
+        },
+        "interviewer": {
+          "distant": 4,
+          "nearby": 5
+        },
+        "qc": {
+          "distant": 6,
+          "nearby": 7
+        }
+      },
+      "interviewer": {
+        "distant": 8,
+        "nearby": 9
+      },
+      "qc": {
+        "distant": 10,
+        "nearby": 11
+      }
+    }
+  },
+  "assignments": [
+    {
+      "level": "Junior",
+      "email": "1@gmail.com"
+    },
+    {
+      "level": "Senior",
+      "email": "2@gmail.com"
+    },
+    {
+      "level": "Manager",
+      "email": "3@gmail.com"
+    },
+    {
+      "level": "Director",
+      "email": "4@gmail.com"
+    }
+  ],
+  "additional_costs": [
+    {
+      "category": "DP",
+      "name": "chi phí coding",
+      "unit_price": 1111.0,
+      "quantity": 20.0,
+      "description": "",
+      "is_dp_coding": true
+    },
+    {
+      "category": "INTERVIEWER",
+      "name": "chi phí khác test",
+      "unit_price": 1111.0,
+      "quantity": 20.0,
+      "description": "",
+      "is_dp_coding": false
+    }
+  ]
+}

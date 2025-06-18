@@ -1,0 +1,884 @@
+{
+  "general": {
+    "internal_job": "2025-001",
+    "symphony": "",
+    "project_name": "",
+    "project_type": "CLT",
+    "clients": [
+      "PEPSI"
+    ],
+    "project_objectives": "",
+    "platform": "iField",
+    "interview_methods": [
+      "CAPI",
+      "CATI"
+    ],
+    "sampling_method": "Purposive sampling",
+    "recruit_method": [],
+    "type_of_quota_control": "",
+    "quota_description": [],
+    "service_line": "CEX",
+    "provinces": [
+      "An Giang",
+      "Bà Rịa - Vũng Tàu"
+    ],
+    "sample_types": [
+      "Main",
+      "Boosters",
+      "Pilot",
+      "Extra for Main",
+      "Extra for Boosters"
+    ],
+    "industries": [
+      "Bác sĩ"
+    ],
+    "target_audiences": [
+      {
+        "age_range": [
+          0,
+          0
+        ],
+        "complexity": "Standard",
+        "daily_sup_target": 0,
+        "description": "",
+        "gender": "Both",
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Đối tượng A",
+        "price": 300000,
+        "sample_size": 20,
+        "sample_type": "Main",
+        "target_for_interviewers": 2
+      },
+      {
+        "age_range": [
+          0,
+          0
+        ],
+        "complexity": "Standard",
+        "daily_sup_target": 0,
+        "description": "",
+        "gender": "Both",
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Đối tượng B",
+        "price": 300000,
+        "sample_size": 25,
+        "sample_type": "Main",
+        "target_for_interviewers": 2
+      },
+      {
+        "age_range": [
+          0,
+          0
+        ],
+        "complexity": "Standard",
+        "daily_sup_target": 0,
+        "description": "",
+        "gender": "Both",
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Đối tượng A",
+        "price": 300000,
+        "sample_size": 10,
+        "sample_type": "Boosters",
+        "target_for_interviewers": 2
+      },
+      {
+        "age_range": [
+          0,
+          0
+        ],
+        "complexity": "Standard",
+        "daily_sup_target": 0,
+        "description": "",
+        "gender": "Both",
+        "incident_rate": 80,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Đối tượng B",
+        "price": 300000,
+        "sample_size": 15,
+        "sample_type": "Boosters",
+        "target_for_interviewers": 2
+      },
+      {
+        "age_range": [
+          0,
+          0
+        ],
+        "complexity": "Standard",
+        "daily_sup_target": 0,
+        "description": "",
+        "gender": "Both",
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Đối tượng A",
+        "price": 300000,
+        "sample_size": 5,
+        "sample_type": "Extra for Main",
+        "target_for_interviewers": 2
+      },
+      {
+        "age_range": [
+          0,
+          0
+        ],
+        "complexity": "Standard",
+        "daily_sup_target": 0,
+        "description": "",
+        "gender": "Both",
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Đối tượng A",
+        "price": 300000,
+        "sample_size": 8,
+        "sample_type": "Extra for Boosters",
+        "target_for_interviewers": 2
+      },
+      {
+        "age_range": [
+          0,
+          0
+        ],
+        "complexity": "Standard",
+        "daily_sup_target": 0,
+        "description": "",
+        "gender": "Both",
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Đối tượng B",
+        "price": 300000,
+        "sample_size": 4,
+        "sample_type": "Extra for Main",
+        "target_for_interviewers": 2
+      },
+      {
+        "age_range": [
+          0,
+          0
+        ],
+        "complexity": "Standard",
+        "daily_sup_target": 0,
+        "description": "",
+        "gender": "Both",
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Đối tượng B",
+        "price": 300000,
+        "sample_size": 7,
+        "sample_type": "Extra for Boosters",
+        "target_for_interviewers": 2
+      },
+      {
+        "age_range": [
+          0,
+          0
+        ],
+        "complexity": "Standard",
+        "daily_sup_target": 0,
+        "description": "",
+        "gender": "Both",
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Đối tượng A",
+        "price": 300000,
+        "sample_size": 17,
+        "sample_type": "Pilot",
+        "target_for_interviewers": 2
+      },
+      {
+        "age_range": [
+          0,
+          0
+        ],
+        "complexity": "Standard",
+        "daily_sup_target": 0,
+        "description": "",
+        "gender": "Both",
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Đối tượng B",
+        "price": 300000,
+        "sample_size": 19,
+        "sample_type": "Pilot",
+        "target_for_interviewers": 2
+      }
+    ],
+    "interview_length": 15,
+    "questionnaire_length": 0,
+    "hut_test_products": 0,
+    "hut_usage_duration": 0,
+    "clt_test_products": 0,
+    "clt_respondent_visits": 2,
+    "clt_sample_size_per_day": 70,
+    "clt_desk_interviewers_count": 2,
+    "clt_provincial_desk_interviewers_count": 3,
+    "clt_failure_rate": 10,
+    "clt_device_type": "Tablet >= 9 inch",
+    "clt_sample_recruit_idi": 50,
+    "clt_dan_mau": true,
+    "clt_dan_mau_days": 2,
+    "clt_assistant_setup_days": 2,
+    "bw_page_count": 2,
+    "showphoto_page_count": 4,
+    "showcard_page_count": 6,
+    "dropcard_page_count": 8,
+    "color_page_count": 10,
+    "decal_page_count": 12,
+    "laminated_page_count": 14,
+    "scripting": false,
+    "data_processing": false,
+    "coding": false,
+    "open_ended_main_count": 0,
+    "open_ended_booster_count": 0,
+    "data_processing_method": []
+  },
+  "settings": {
+    "interviewers_per_supervisor": 8,
+    "parking_fee": 5000,
+    "distant_district_fee": 5000,
+    "stationary": {
+      "Hồ Chí Minh": {
+        "bw_photo_fee": 350,
+        "showphoto_fee": 2500,
+        "showcard_fee": 4000,
+        "decal_fee": 3500,
+        "color_photo_fee": 2500,
+        "lamination_fee": 6000,
+        "dropcard_fee": 9000
+      },
+      "Hà Nội": {
+        "bw_photo_fee": 400,
+        "showphoto_fee": 3000,
+        "showcard_fee": 6000,
+        "decal_fee": 2500,
+        "color_photo_fee": 3000,
+        "lamination_fee": 5000,
+        "dropcard_fee": 9000
+      },
+      "Đà Nẵng": {
+        "bw_photo_fee": 450,
+        "showphoto_fee": 2500,
+        "showcard_fee": 4000,
+        "decal_fee": 3500,
+        "color_photo_fee": 3500,
+        "lamination_fee": 7000,
+        "dropcard_fee": 9000
+      },
+      "Cần Thơ": {
+        "bw_photo_fee": 400,
+        "showphoto_fee": 2500,
+        "showcard_fee": 3500,
+        "decal_fee": 3500,
+        "color_photo_fee": 2500,
+        "lamination_fee": 6000,
+        "dropcard_fee": 9000
+      },
+      "Others": {
+        "bw_photo_fee": 350,
+        "showphoto_fee": 2500,
+        "showcard_fee": 4000,
+        "decal_fee": 3500,
+        "color_photo_fee": 2500,
+        "lamination_fee": 6000,
+        "dropcard_fee": 9000
+      }
+    },
+    "transportation": {
+      "Others": {
+        "flight": 1000000,
+        "train": 400000
+      }
+    },
+    "travel_junior_hotel": 500000,
+    "travel_junior_food": 500000,
+    "travel_senior_hotel": 1000000,
+    "travel_senior_food": 800000,
+    "travel_manager_hotel": 2000000,
+    "travel_manager_food": 1000000,
+    "travel_director_hotel": 3000000,
+    "travel_director_food": 1200000
+  },
+  "samples": {
+    "An Giang": {
+      "Main - Đối tượng A": {
+        "age_range": [
+          0,
+          0
+        ],
+        "complexity": "Standard",
+        "daily_sup_target": 1.25,
+        "description": "",
+        "gender": "Both",
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Đối tượng A",
+        "price": 300000,
+        "sample_size": 20,
+        "sample_type": "Main",
+        "target_for_interviewers": 2,
+        "price_growth": 100.0,
+        "comment": {}
+      },
+      "Main - Đối tượng B": {
+        "age_range": [
+          0,
+          0
+        ],
+        "complexity": "Standard",
+        "daily_sup_target": 1.56,
+        "description": "",
+        "gender": "Both",
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Đối tượng B",
+        "price": 300000,
+        "sample_size": 25,
+        "sample_type": "Main",
+        "target_for_interviewers": 2,
+        "price_growth": 100.0,
+        "comment": {}
+      },
+      "Boosters - Đối tượng A": {
+        "age_range": [
+          0,
+          0
+        ],
+        "complexity": "Standard",
+        "daily_sup_target": 0.62,
+        "description": "",
+        "gender": "Both",
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Đối tượng A",
+        "price": 300000,
+        "sample_size": 10,
+        "sample_type": "Boosters",
+        "target_for_interviewers": 2,
+        "price_growth": 100.0,
+        "comment": {}
+      },
+      "Boosters - Đối tượng B": {
+        "age_range": [
+          0,
+          0
+        ],
+        "complexity": "Standard",
+        "daily_sup_target": 0.94,
+        "description": "",
+        "gender": "Both",
+        "incident_rate": 80,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Đối tượng B",
+        "price": 300000,
+        "sample_size": 15,
+        "sample_type": "Boosters",
+        "target_for_interviewers": 2,
+        "price_growth": 100.0,
+        "comment": {}
+      },
+      "Extra for Main - Đối tượng A": {
+        "age_range": [
+          0,
+          0
+        ],
+        "complexity": "Standard",
+        "daily_sup_target": 0.31,
+        "description": "",
+        "gender": "Both",
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Đối tượng A",
+        "price": 300000,
+        "sample_size": 5,
+        "sample_type": "Extra for Main",
+        "target_for_interviewers": 2,
+        "price_growth": 100.0,
+        "comment": {}
+      },
+      "Extra for Boosters - Đối tượng A": {
+        "age_range": [
+          0,
+          0
+        ],
+        "complexity": "Standard",
+        "daily_sup_target": 0.5,
+        "description": "",
+        "gender": "Both",
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Đối tượng A",
+        "price": 300000,
+        "sample_size": 8,
+        "sample_type": "Extra for Boosters",
+        "target_for_interviewers": 2,
+        "price_growth": 100.0,
+        "comment": {}
+      },
+      "Extra for Main - Đối tượng B": {
+        "age_range": [
+          0,
+          0
+        ],
+        "complexity": "Standard",
+        "daily_sup_target": 0.25,
+        "description": "",
+        "gender": "Both",
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Đối tượng B",
+        "price": 300000,
+        "sample_size": 4,
+        "sample_type": "Extra for Main",
+        "target_for_interviewers": 2,
+        "price_growth": 100.0,
+        "comment": {}
+      },
+      "Extra for Boosters - Đối tượng B": {
+        "age_range": [
+          0,
+          0
+        ],
+        "complexity": "Standard",
+        "daily_sup_target": 0.44,
+        "description": "",
+        "gender": "Both",
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Đối tượng B",
+        "price": 300000,
+        "sample_size": 7,
+        "sample_type": "Extra for Boosters",
+        "target_for_interviewers": 2,
+        "price_growth": 100.0,
+        "comment": {}
+      },
+      "Pilot - Đối tượng A": {
+        "age_range": [
+          0,
+          0
+        ],
+        "complexity": "Standard",
+        "daily_sup_target": 1.06,
+        "description": "",
+        "gender": "Both",
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Đối tượng A",
+        "price": 300000,
+        "sample_size": 17,
+        "sample_type": "Pilot",
+        "target_for_interviewers": 2,
+        "price_growth": 100.0,
+        "comment": {}
+      },
+      "Pilot - Đối tượng B": {
+        "age_range": [
+          0,
+          0
+        ],
+        "complexity": "Standard",
+        "daily_sup_target": 1.19,
+        "description": "",
+        "gender": "Both",
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Đối tượng B",
+        "price": 300000,
+        "sample_size": 19,
+        "sample_type": "Pilot",
+        "target_for_interviewers": 2,
+        "price_growth": 100.0,
+        "comment": {}
+      }
+    },
+    "Bà Rịa - Vũng Tàu": {
+      "Main - Đối tượng A": {
+        "age_range": [
+          0,
+          0
+        ],
+        "complexity": "Standard",
+        "daily_sup_target": 1.25,
+        "description": "",
+        "gender": "Both",
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Đối tượng A",
+        "price": 300000,
+        "sample_size": 20,
+        "sample_type": "Main",
+        "target_for_interviewers": 2,
+        "price_growth": 100.0,
+        "comment": {}
+      },
+      "Main - Đối tượng B": {
+        "age_range": [
+          0,
+          0
+        ],
+        "complexity": "Standard",
+        "daily_sup_target": 1.56,
+        "description": "",
+        "gender": "Both",
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Đối tượng B",
+        "price": 300000,
+        "sample_size": 25,
+        "sample_type": "Main",
+        "target_for_interviewers": 2,
+        "price_growth": 100.0,
+        "comment": {}
+      },
+      "Boosters - Đối tượng A": {
+        "age_range": [
+          0,
+          0
+        ],
+        "complexity": "Standard",
+        "daily_sup_target": 0.62,
+        "description": "",
+        "gender": "Both",
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Đối tượng A",
+        "price": 300000,
+        "sample_size": 10,
+        "sample_type": "Boosters",
+        "target_for_interviewers": 2,
+        "price_growth": 100.0,
+        "comment": {}
+      },
+      "Boosters - Đối tượng B": {
+        "age_range": [
+          0,
+          0
+        ],
+        "complexity": "Standard",
+        "daily_sup_target": 0.94,
+        "description": "",
+        "gender": "Both",
+        "incident_rate": 80,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Đối tượng B",
+        "price": 300000,
+        "sample_size": 15,
+        "sample_type": "Boosters",
+        "target_for_interviewers": 2,
+        "price_growth": 100.0,
+        "comment": {}
+      },
+      "Extra for Main - Đối tượng A": {
+        "age_range": [
+          0,
+          0
+        ],
+        "complexity": "Standard",
+        "daily_sup_target": 0.31,
+        "description": "",
+        "gender": "Both",
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Đối tượng A",
+        "price": 300000,
+        "sample_size": 5,
+        "sample_type": "Extra for Main",
+        "target_for_interviewers": 2,
+        "price_growth": 100.0,
+        "comment": {}
+      },
+      "Extra for Boosters - Đối tượng A": {
+        "age_range": [
+          0,
+          0
+        ],
+        "complexity": "Standard",
+        "daily_sup_target": 0.5,
+        "description": "",
+        "gender": "Both",
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Đối tượng A",
+        "price": 300000,
+        "sample_size": 8,
+        "sample_type": "Extra for Boosters",
+        "target_for_interviewers": 2,
+        "price_growth": 100.0,
+        "comment": {}
+      },
+      "Extra for Main - Đối tượng B": {
+        "age_range": [
+          0,
+          0
+        ],
+        "complexity": "Standard",
+        "daily_sup_target": 0.25,
+        "description": "",
+        "gender": "Both",
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Đối tượng B",
+        "price": 300000,
+        "sample_size": 4,
+        "sample_type": "Extra for Main",
+        "target_for_interviewers": 2,
+        "price_growth": 100.0,
+        "comment": {}
+      },
+      "Extra for Boosters - Đối tượng B": {
+        "age_range": [
+          0,
+          0
+        ],
+        "complexity": "Standard",
+        "daily_sup_target": 0.44,
+        "description": "",
+        "gender": "Both",
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Đối tượng B",
+        "price": 300000,
+        "sample_size": 7,
+        "sample_type": "Extra for Boosters",
+        "target_for_interviewers": 2,
+        "price_growth": 100.0,
+        "comment": {}
+      },
+      "Pilot - Đối tượng A": {
+        "age_range": [
+          0,
+          0
+        ],
+        "complexity": "Standard",
+        "daily_sup_target": 1.06,
+        "description": "",
+        "gender": "Both",
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Đối tượng A",
+        "price": 300000,
+        "sample_size": 17,
+        "sample_type": "Pilot",
+        "target_for_interviewers": 2,
+        "price_growth": 100.0,
+        "comment": {}
+      },
+      "Pilot - Đối tượng B": {
+        "age_range": [
+          0,
+          0
+        ],
+        "complexity": "Standard",
+        "daily_sup_target": 1.19,
+        "description": "",
+        "gender": "Both",
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Đối tượng B",
+        "price": 300000,
+        "sample_size": 19,
+        "sample_type": "Pilot",
+        "target_for_interviewers": 2,
+        "price_growth": 100.0,
+        "comment": {}
+      }
+    }
+  },
+  "qc_methods": [],
+  "conditions": {
+    "age_ranges": [],
+    "sex": "male/female",
+    "income_ranges": []
+  },
+  "travel": {
+    "An Giang": {
+      "fulltime": {
+        "travel_days": 3,
+        "travel_nights": 2,
+        "assigned_people": [
+          "junior@gmail.com",
+          "senior@gmail.com"
+        ],
+        "transportation_type": "máy bay"
+      },
+      "parttime": {
+        "supervisor": {
+          "distant": 0,
+          "nearby": 0,
+          "recruit_distant": 1,
+          "recruit_nearby": 2,
+          "ngoi_ban_distant": 3,
+          "ngoi_ban_nearby": 4
+        },
+        "interviewer": {
+          "distant": 0,
+          "nearby": 0,
+          "recruit_distant": 5,
+          "recruit_nearby": 6,
+          "ngoi_ban_distant": 7,
+          "ngoi_ban_nearby": 8
+        },
+        "qc": {
+          "distant": 9,
+          "nearby": 10
+        }
+      }
+    },
+    "Bà Rịa - Vũng Tàu": {
+      "fulltime": {
+        "travel_days": 0,
+        "travel_nights": 0,
+        "assigned_people": []
+      },
+      "parttime": {
+        "supervisor": {
+          "distant": 0,
+          "nearby": 0,
+          "recruit_distant": 0,
+          "recruit_nearby": 0,
+          "ngoi_ban_distant": 0,
+          "ngoi_ban_nearby": 0
+        },
+        "interviewer": {
+          "distant": 0,
+          "nearby": 0,
+          "recruit_distant": 0,
+          "recruit_nearby": 0,
+          "ngoi_ban_distant": 0,
+          "ngoi_ban_nearby": 0
+        },
+        "qc": {
+          "distant": 0,
+          "nearby": 0
+        }
+      }
+    }
+  },
+  "assignments": [
+    {
+      "level": "Junior",
+      "email": "junior@gmail.com"
+    },
+    {
+      "level": "Senior",
+      "email": "senior@gmail.com"
+    },
+    {
+      "level": "Manager",
+      "email": "manager@gmail.com"
+    },
+    {
+      "level": "Director",
+      "email": "director@gmail.com"
+    }
+  ],
+  "additional_costs": [
+    {
+      "category": "INTERVIEWER",
+      "name": "chi phí khác 1",
+      "unit_price": 1111.0,
+      "quantity": 20.0,
+      "description": "",
+      "is_dp_coding": false
+    },
+    {
+      "category": "DP",
+      "name": "chi phí coding",
+      "unit_price": 1111.0,
+      "quantity": 20.0,
+      "description": "",
+      "is_dp_coding": true
+    }
+  ]
+}

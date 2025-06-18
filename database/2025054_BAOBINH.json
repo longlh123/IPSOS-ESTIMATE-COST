@@ -1,0 +1,391 @@
+{
+  "general": {
+    "internal_job": "2025-054",
+    "symphony": "999999",
+    "project_name": "BAOBINH",
+    "project_type": "F2F/D2D",
+    "clients": [
+      "TÂN HIỆP PHÁT"
+    ],
+    "project_objectives": "- Người có dùng các sản phẩm chăm sóc sức khỏe, bao gồm: bao cao su, băng keo cá nhân, miếng dán giảm đau (Salonpas, Tiger balm, Fujisip), khẩu trang y tế các loại, vitamin các loại, thực phẩm chức năng,…..\n- Tâm lý người tiêu dùng/ Psychographics:\nNgười tiêu dùng chú trọng đến sức khỏe, nhạy cảm với giá cả và mong đợi sản phẩm có chất lượng cao cấp\nChấp nhận giải pháp sức khỏe hiện đại và thảo dược truyền thống\nƯa thích thiết kế mang nhiều thông tin và hấp dẫn, có xu hướng mua sản phẩm được gợi ý bởi dược sĩ, KOLs, bạn bè và gia đình\n\n- Các ngành hàng:\n\n1. MULTI-VITAMINS: Vitamin tổng hợp dành cho người lớn\n2. KIDS (+2 yrs): Thực phẩm chức năng cho trẻ em trên 2 tuổi\n3. LUNGS : Thực phẩm chức năng cho phổi \n4. BONE & JOINT: Sản phẩm bổ sung canxi \n5. CIRCULATION: Sản phẩm dưỡng não/hệ tuần hoàn máu não (vd. Hoạt huyết dưỡng não)\n6. DIGESTION: Thực phẩm chức năng cho tiêu hóa (vd. Men vi sinh)\n7. LIVER: Thực phẩm chức năng dành cho gan\n8. BEAUTY ( SKIN + HAIR): Thực phẩm chức năng cho da & tóc\n9. BRAIN: Thực phẩm chức năng dành cho não\n",
+    "platform": "iField",
+    "interview_methods": [
+      "CAPI"
+    ],
+    "sampling_method": "Random sampling",
+    "recruit_method": [
+      "Client List"
+    ],
+    "type_of_quota_control": "Parallel Fixed Quota",
+    "quota_description": [],
+    "service_line": "HEC",
+    "provinces": [
+      "Cần Thơ",
+      "Đà Nẵng",
+      "Hà Nội",
+      "Hồ Chí Minh City"
+    ],
+    "sample_types": [
+      "Main",
+      "Boosters"
+    ],
+    "industries": [
+      "Thuốc"
+    ],
+    "target_audiences": [
+      {
+        "age_range": [
+          0,
+          0
+        ],
+        "complexity": "Standard",
+        "daily_sup_target": 0,
+        "description": "",
+        "gender": "Both",
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Thuốc (nói chung)",
+        "price": 350000,
+        "sample_size": 12,
+        "sample_type": "Main",
+        "target_for_interviewers": 2
+      },
+      {
+        "age_range": [
+          0,
+          0
+        ],
+        "complexity": "Standard",
+        "daily_sup_target": 0,
+        "description": "",
+        "gender": "Both",
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Thuốc điều trị viêm mũi dị ứng",
+        "price": 142500,
+        "sample_size": 21,
+        "sample_type": "Main",
+        "target_for_interviewers": 2
+      }
+    ],
+    "interview_length": 0,
+    "questionnaire_length": 0,
+    "hut_test_products": 0,
+    "hut_usage_duration": 0,
+    "clt_test_products": 0,
+    "clt_respondent_visits": 0,
+    "clt_sample_size_per_day": 0,
+    "showcard_page_count": 0,
+    "dropcard_page_count": 0,
+    "color_page_count": 0,
+    "laminated_page_count": 0,
+    "scripting": false,
+    "data_processing": false,
+    "coding": true,
+    "open_ended_main_count": 5,
+    "open_ended_booster_count": 0,
+    "data_processing_method": []
+  },
+  "settings": {
+    "interviewers_per_supervisor": 8,
+    "bw_photo_fee": 250,
+    "color_photo_fee": 5000,
+    "lamination_fee": 4000,
+    "dropcard_fee": 1000,
+    "parking_fee": 5000,
+    "distant_district_fee": 5000,
+    "travel_junior_hotel": 500000,
+    "travel_junior_food": 500000,
+    "travel_senior_hotel": 1000000,
+    "travel_senior_food": 800000,
+    "travel_manager_hotel": 2000000,
+    "travel_manager_food": 1000000,
+    "travel_director_hotel": 3000000,
+    "travel_director_food": 1200000
+  },
+  "samples": {
+    "Cần Thơ": {
+      "Main - Thuốc (nói chung)": {
+        "name": "Thuốc (nói chung)",
+        "sample_type": "Main",
+        "sample_size": 12,
+        "price": 350000,
+        "price_growth": 110.0,
+        "target_for_interviewers": 2,
+        "daily_sup_target": 0.75,
+        "gender": "Both",
+        "age_range": [
+          0,
+          0
+        ],
+        "income_range": [
+          0,
+          0
+        ],
+        "incident_rate": 100,
+        "complexity": "Standard",
+        "description": "",
+        "comment": {
+          "price_growth": "fadf asdfa dsf"
+        }
+      },
+      "Main - Thuốc điều trị viêm mũi dị ứng": {
+        "age_range": [
+          0,
+          0
+        ],
+        "complexity": "Standard",
+        "daily_sup_target": 1.31,
+        "description": "",
+        "gender": "Both",
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Thuốc điều trị viêm mũi dị ứng",
+        "price": 142500,
+        "sample_size": 21,
+        "sample_type": "Main",
+        "target_for_interviewers": 2,
+        "price_growth": 100.0,
+        "comment": {}
+      }
+    },
+    "Đà Nẵng": {
+      "Main - Thuốc (nói chung)": {
+        "name": "Thuốc (nói chung)",
+        "sample_type": "Main",
+        "sample_size": 12,
+        "price": 350000,
+        "price_growth": 100.0,
+        "target_for_interviewers": 2,
+        "daily_sup_target": 0.75,
+        "gender": "Both",
+        "age_range": [
+          0,
+          0
+        ],
+        "income_range": [
+          0,
+          0
+        ],
+        "incident_rate": 100,
+        "complexity": "Standard",
+        "description": "",
+        "comment": {
+          "interviewer_target": "zxcsdvag fd"
+        }
+      },
+      "Main - Thuốc điều trị viêm mũi dị ứng": {
+        "age_range": [
+          0,
+          0
+        ],
+        "complexity": "Standard",
+        "daily_sup_target": 1.31,
+        "description": "",
+        "gender": "Both",
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Thuốc điều trị viêm mũi dị ứng",
+        "price": 142500,
+        "sample_size": 21,
+        "sample_type": "Main",
+        "target_for_interviewers": 2,
+        "price_growth": 100.0,
+        "comment": {}
+      }
+    },
+    "Hà Nội": {
+      "Main - Thuốc (nói chung)": {
+        "age_range": [
+          0,
+          0
+        ],
+        "complexity": "Standard",
+        "daily_sup_target": 0.75,
+        "description": "",
+        "gender": "Both",
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Thuốc (nói chung)",
+        "price": 350000,
+        "sample_size": 12,
+        "sample_type": "Main",
+        "target_for_interviewers": 2,
+        "price_growth": 100.0,
+        "comment": {}
+      },
+      "Main - Thuốc điều trị viêm mũi dị ứng": {
+        "age_range": [
+          0,
+          0
+        ],
+        "complexity": "Standard",
+        "daily_sup_target": 1.31,
+        "description": "",
+        "gender": "Both",
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Thuốc điều trị viêm mũi dị ứng",
+        "price": 142500,
+        "sample_size": 21,
+        "sample_type": "Main",
+        "target_for_interviewers": 2,
+        "price_growth": 100.0,
+        "comment": {}
+      }
+    },
+    "Hồ Chí Minh City": {
+      "Main - Thuốc (nói chung)": {
+        "age_range": [
+          0,
+          0
+        ],
+        "complexity": "Standard",
+        "daily_sup_target": 0.75,
+        "description": "",
+        "gender": "Both",
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Thuốc (nói chung)",
+        "price": 350000,
+        "sample_size": 12,
+        "sample_type": "Main",
+        "target_for_interviewers": 2,
+        "price_growth": 100.0,
+        "comment": {}
+      },
+      "Main - Thuốc điều trị viêm mũi dị ứng": {
+        "age_range": [
+          0,
+          0
+        ],
+        "complexity": "Standard",
+        "daily_sup_target": 1.31,
+        "description": "",
+        "gender": "Both",
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Thuốc điều trị viêm mũi dị ứng",
+        "price": 142500,
+        "sample_size": 21,
+        "sample_type": "Main",
+        "target_for_interviewers": 2,
+        "price_growth": 100.0,
+        "comment": {}
+      }
+    }
+  },
+  "qc_methods": [],
+  "conditions": {
+    "age_ranges": [],
+    "sex": "male/female",
+    "income_ranges": []
+  },
+  "travel": {
+    "Cần Thơ": {
+      "fulltime": {
+        "travel_days": 0,
+        "assigned_people": []
+      },
+      "parttime": {
+        "supervisor": {
+          "distant": 0,
+          "nearby": 0
+        },
+        "interviewer": {
+          "distant": 0,
+          "nearby": 0
+        },
+        "qc": {
+          "distant": 0,
+          "nearby": 0
+        }
+      }
+    },
+    "Đà Nẵng": {
+      "fulltime": {
+        "travel_days": 0,
+        "assigned_people": []
+      },
+      "parttime": {
+        "supervisor": {
+          "distant": 0,
+          "nearby": 0
+        },
+        "interviewer": {
+          "distant": 0,
+          "nearby": 0
+        },
+        "qc": {
+          "distant": 0,
+          "nearby": 0
+        }
+      }
+    },
+    "Hà Nội": {
+      "fulltime": {
+        "travel_days": 0,
+        "assigned_people": []
+      },
+      "parttime": {
+        "supervisor": {
+          "distant": 0,
+          "nearby": 0
+        },
+        "interviewer": {
+          "distant": 0,
+          "nearby": 0
+        },
+        "qc": {
+          "distant": 0,
+          "nearby": 0
+        }
+      }
+    },
+    "Hồ Chí Minh City": {
+      "fulltime": {
+        "travel_days": 0,
+        "assigned_people": []
+      },
+      "parttime": {
+        "supervisor": {
+          "distant": 0,
+          "nearby": 0
+        },
+        "interviewer": {
+          "distant": 0,
+          "nearby": 0
+        },
+        "qc": {
+          "distant": 0,
+          "nearby": 0
+        }
+      }
+    }
+  },
+  "assignments": []
+}

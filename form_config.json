@@ -1,0 +1,305 @@
+{
+  "Details": {
+    "fields": {
+      "InternalJob": {
+        "type": "string",
+        "value": "",
+        "mapping": "D",
+        "placeholder": "Internal Job",
+        "required": true,
+        "disabled": false,
+        "min": 0,
+        "max": 5000
+      },
+      "Symphony": {
+        "type": "string",
+        "value": "",
+        "mapping": "E",
+        "placeholder": "Symphony",
+        "required": true,
+        "disabled": false,
+        "min": 0,
+        "max": 5000
+      },
+      "ProjectName": {
+        "type": "string",
+        "value": "",
+        "mapping": "F",
+        "placeholder": "Project Name",
+        "required": true,
+        "disabled": false,
+        "min": 0,
+        "max": 5000
+      },
+      "Team": {
+        "type": "combobox",
+        "value": "",
+        "mapping": "B",
+        "placeholder": "Select team",
+        "required": true,
+        "disabled": false,
+        "min": 0,
+        "max": 5000,
+        "excelSheet": "Team",
+        "displayColumn": "A",
+        "valueColumn": "B"
+      },
+      "NganhHang": {
+        "type": "combobox",
+        "value": "",
+        "mapping": "C",
+        "placeholder": "Select Ngành Hàng",
+        "required": true,
+        "disabled": false,
+        "min": 0,
+        "max": 5000,
+        "excelSheet": "NganhHang",
+        "displayColumn": "A",
+        "valueColumn": "B"
+      },
+      "ProjectType": {
+        "type": "combobox",
+        "value": "",
+        "mapping": "D",
+        "placeholder": "Select project type",
+        "required": true,
+        "disabled": false,
+        "min": 0,
+        "max": 5000,
+        "excelSheet": "ProjectType",
+        "displayColumn": "A",
+        "valueColumn": "B"
+      },
+      "LOI": {
+        "type": "combobox",
+        "value": "",
+        "mapping": "E",
+        "placeholder": "Length of Interview",
+        "required": true,
+        "disabled": false,
+        "min": 0,
+        "max": 5000,
+        "excelSheet": "LengthOfInterview",
+        "displayColumn": "A",
+        "valueColumn": "B"
+      },
+      "DoTuoi": {
+        "type": "combobox",
+        "value": "",
+        "mapping": "F",
+        "placeholder": "Select Độ Tuổi",
+        "required": true,
+        "disabled": false,
+        "min": 0,
+        "max": 5000,
+        "excelSheet": "DoTuoi",
+        "displayColumn": "A",
+        "valueColumn": "B"
+      },
+      "GioiTinh": {
+        "type": "combobox",
+        "value": "",
+        "mapping": "H",
+        "placeholder": "Select Giới Tính",
+        "required": true,
+        "disabled": false,
+        "min": 0,
+        "max": 5000,
+        "excelSheet": "GioiTinh",
+        "displayColumn": "A",
+        "valueColumn": "B"
+      },
+      "ThuNhap": {
+        "type": "combobox",
+        "value": "",
+        "mapping": "K",
+        "placeholder": "Select Thu Nhập",
+        "required": true,
+        "disabled": false,
+        "min": 0,
+        "max": 5000,
+        "excelSheet": "ThuNhap",
+        "displayColumn": "A",
+        "valueColumn": "B"
+      },
+      "SamplingMethod": {
+        "type": "combobox",
+        "value": "",
+        "mapping": "I",
+        "placeholder": "Select sampling method",
+        "required": true,
+        "disabled": false,
+        "min": 0,
+        "max": 5000,
+        "excelSheet": "SamplingMethod",
+        "displayColumn": "A",
+        "valueColumn": "B"
+      }
+    },
+    "customFields": {}
+  },
+  "InterviewMethod": {
+    "fields": {
+      "Methods": {
+        "type": "checkboxgroup",
+        "value": [],
+        "mapping": "J",
+        "placeholder": "Select methods",
+        "required": true,
+        "disabled": false,
+        "min": 0,
+        "max": 5000,
+        "excelSheet": "InterviewMethod",
+        "displayColumn": "A",
+        "valueColumn": "B"
+      }
+    },
+    "customFields": {}
+  },
+  "HUT": {
+    "fields": {
+      "Products": {
+        "type": "number",
+        "value": 0,
+        "mapping": "K",
+        "placeholder": "Number of Test Products",
+        "required": true,
+        "disabled": true,
+        "min": 0,
+        "max": 5000
+      },
+      "Duration": {
+        "type": "number",
+        "value": 0,
+        "mapping": "L",
+        "placeholder": "Product Usage Duration (days)",
+        "required": true,
+        "disabled": true,
+        "min": 0,
+        "max": 5000
+      }
+    },
+    "customFields": {}
+  },
+  "CLT": {
+    "fields": {
+      "Products": {
+        "type": "number",
+        "value": 0,
+        "mapping": "M",
+        "placeholder": "Number of Test Products",
+        "required": true,
+        "disabled": true,
+        "min": 0,
+        "max": 5000
+      },
+      "Visits": {
+        "type": "number",
+        "value": 0,
+        "mapping": "N",
+        "placeholder": "Number of Respondent Visits to CLT Location",
+        "required": true,
+        "disabled": true,
+        "min": 0,
+        "max": 5000
+      },
+      "SampleSize": {
+        "type": "number",
+        "value": 0,
+        "mapping": "O",
+        "placeholder": "Sample Size Target per Day of CLT",
+        "required": true,
+        "disabled": true,
+        "min": 0,
+        "max": 5000
+      }
+    },
+    "customFields": {}
+  },
+  "Printer": {
+    "fields": {
+      "ShowcardCount": {
+        "type": "number",
+        "value": 0,
+        "mapping": "P",
+        "placeholder": "SHOWCARD page count",
+        "required": true,
+        "disabled": false,
+        "min": 0,
+        "max": 5000
+      },
+      "DropcardCount": {
+        "type": "number",
+        "value": 0,
+        "mapping": "Q",
+        "placeholder": "DROPCARD page count",
+        "required": true,
+        "disabled": false,
+        "min": 0,
+        "max": 5000
+      },
+      "ColorCount": {
+        "type": "number",
+        "value": 0,
+        "mapping": "R",
+        "placeholder": "COLOR page count",
+        "required": true,
+        "disabled": false,
+        "min": 0,
+        "max": 5000
+      },
+      "LaminatedCount": {
+        "type": "number",
+        "value": 0,
+        "mapping": "S",
+        "placeholder": "Laminated page count",
+        "required": true,
+        "disabled": false,
+        "min": 0,
+        "max": 5000
+      }
+    },
+    "customFields": {}
+  },
+  "Province": {
+    "fields": {
+      "ProvinceSelect": {
+        "type": "combobox",
+        "value": "",
+        "mapping": "T",
+        "placeholder": "Select province",
+        "required": true,
+        "disabled": false,
+        "min": 0,
+        "max": 5000,
+        "excelSheet": "City",
+        "displayColumn": "A",
+        "valueColumn": "B"
+      },
+      "SampleType": {
+        "type": "combobox",
+        "value": "",
+        "mapping": "U",
+        "placeholder": "Select sample type",
+        "required": true,
+        "disabled": false,
+        "min": 0,
+        "max": 5000,
+        "excelSheet": "SampleType",
+        "displayColumn": "A",
+        "valueColumn": "B"
+      },
+      "SampleSize": {
+        "type": "number",
+        "value": 0,
+        "mapping": "V",
+        "placeholder": "Enter value",
+        "required": true,
+        "disabled": false,
+        "min": 0,
+        "max": 5000
+      }
+    },
+    "customFields": {}
+  }
+}
