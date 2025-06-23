@@ -31,9 +31,7 @@ SAMPLE_TYPES = [
     "Pilot",
     "Main",
     "Boosters",
-    "Non",
-    "Extra (Main)",
-    "Extra (Booster)"
+    "Non"
 ]
 
 # Sampling methods

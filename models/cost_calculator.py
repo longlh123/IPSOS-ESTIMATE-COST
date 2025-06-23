@@ -8,9 +8,6 @@ class CostCalculator:
         self.hierarchy_data = {}
 
         self.load_cost_hierarchy()
-
-        
-
     
     def load_cost_hierarchy(self):
         config_path = ""

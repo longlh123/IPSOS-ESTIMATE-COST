@@ -16,8 +16,6 @@ from formulars.pricing_formulas import (
     has_custom_daily_sup_target
 )
 
-
-
 class SampleEditDialog(QDialog):
 
     """
