@@ -15,7 +15,10 @@ from config.predefined_values import *
 from config.settings import COST_CONSTANTS
 from config.predefined_values import ASSIGNED_PEOPLE_LEVELS, DEFAULT_TRAVEL_COSTS
 from models.element_costs_model import ElementCostsModel
-from formulars.pricing_formulas import calculate_daily_sup_target
+from formulars.pricing_formulas import (
+    calculate_daily_sup_target,
+    calculate_sample_size
+)
 
 class ProjectModel(QObject):
     """
@@ -29,7 +32,7 @@ class ProjectModel(QObject):
         
         # Initialize element costs model
         self.element_costs = ElementCostsModel()
-        
+    
     def reset(self):
         """Reset the model to its initial state."""
         # Tab 1: General data
@@ -54,6 +57,9 @@ class ProjectModel(QObject):
             "target_audiences": [],
             "interview_length": 0,
             "questionnaire_length": 0,
+            "device_type": "",
+            "tablet_usage_duration": "",
+
 
             # Region 2 - HUT
             "hut_test_products": 0,
@@ -62,16 +68,14 @@ class ProjectModel(QObject):
             # Region 3 - CLT
             "clt_test_products": 0,
             "clt_respondent_visits": 0,
+            "clt_failure_rate": 0,
             "clt_sample_size_per_day": 0,
             "clt_desk_interviewers_count": 0,
             "clt_provincial_desk_interviewers_count": 0,
-            "clt_failure_rate": 0,
-            "clt_device_type": "Tablet >= 9 inch",
-            "clt_sample_recruit_idi": 0,
+            "clt_sample_recruit_idi" : 0,
             "clt_dan_mau": False,
             "clt_dan_mau_days": 0,
             "clt_assistant_setup_days": 1,
-            "clt_tablet_usage_duration": "<= 15 phút",
 
             # Region 4 - Printer
             "bw_page_count": 0,
@@ -89,6 +93,23 @@ class ProjectModel(QObject):
             "open_ended_main_count": 0,
             "open_ended_booster_count": 0,
             "data_processing_method": []
+        }
+
+        self.cost_toggles = {
+            "device_rental_costs" : {
+                "Chi phí thuê tablet < 9 inch" : False,
+                "Chi phí thuê tablet >= 9 inch" : False,
+                "Chi phí thuê laptop" : False
+            },
+            "idi_costs" : {
+                "Chi phí Tuyển đáp viên IDI" : False,
+                "Chi phí Quản lý IDI" : False,
+                "Chi phí QC - IDI" : False,
+                "Quà Phiếu PV - IDI" : False
+            },
+            "failure_rate_costs" : {
+                "Chi phí Phiếu PV - Bài rớt giữa chừng" : False
+            }
         }
 
         # Application settings
@@ -196,6 +217,25 @@ class ProjectModel(QObject):
 
         self.dataChanged.emit()
 
+    def set_selected_device_cost(self, selected_name: str):
+        for name in self.cost_toggles.get('device_rental_costs', {}).keys():
+            self.cost_toggles['device_rental_costs'][name] = selected_name.lower() in name.lower()
+
+    def set_selected_idi_costs(self, selected):
+        for name in self.cost_toggles.get('idi_costs', {}).keys():
+            self.cost_toggles['idi_costs'][name] = selected
+    
+    def set_selected_failure_rate_costs(self, selected):
+        for name in self.cost_toggles.get('failure_rate_costs', {}).keys():
+            self.cost_toggles['failure_rate_costs'][name] = selected
+
+    def is_enabled(self, cost_name: str):
+        for group, costs in self.cost_toggles.items():
+            for name, enabled in costs.items():
+                if name.lower() == cost_name.lower():
+                    return enabled
+        return True
+
     def update_settings(self, field, value):
         """
         Update a field in the settings.
@@ -237,10 +277,8 @@ class ProjectModel(QObject):
         """
         self.general[field] = value
         
-        # Handle dependencies
-        # if field == "service_line":
-        #     # Reset industries when service line changes
-        #     self.general["industries"] = []
+        if field == "device_type":
+            self.set_selected_device_cost(value)
 
         if field == "type_of_quota_control":
             if self.general[field] != "Interlocked Quota":
@@ -350,6 +388,105 @@ class ProjectModel(QObject):
 
         # Emit signal to notify change
         self.dataChanged.emit()
+
+    def flatten_cost_hierarchy(self, hierarchy):
+        flat_rows = []
+
+        def is_device_rental(description: str):
+            return any(keyword in description.lower() for keyword in [
+                "tablet < 9 inch", "tablet >= 9 inch", "laptop"
+            ])
+
+        def get_device_rental_cost(element_name: str, base_cost: float = 0.0):
+            device_type = self.general.get("device_type", "").lower()
+            tablet_duration = self.general.get("tablet_usage_duration", "<= 15 phút")
+
+            if "tablet < 9 inch" in element_name.lower() and "tablet < 9 inch" in device_type:
+                return 5000 if tablet_duration == "<= 15 phút" else 8000
+            elif "tablet >= 9 inch" in element_name.lower() and "tablet >= 9 inch" in device_type:
+                return base_cost
+            elif "laptop" in element_name.lower() and "laptop" in device_type:
+                return base_cost
+            return 0
+        
+        def create_element(current_title, elements):
+            for province in self.samples.keys():
+                for element in elements:
+                    cost_description = element.get("description", "")
+
+                    if self.is_enabled(cost_description):
+                        default_cost = element.get('costs', {}).get('L1', {}).get('< 30 phút', 0)
+                        
+                        if is_device_rental(cost_description):
+                            cost = get_device_rental_cost(cost_description, base_cost=default_cost)
+                        else:
+                            cost = default_cost
+
+                        row = [
+                            element.get("name", current_title),
+                            province,
+                            cost_description,
+                            element.get("target_audience", ""),
+                            element.get("code", ""),
+                            element.get("unit", ""),
+                            0 if not cost and cost != 0 else cost,
+                            element.get("quanty", 0),
+                            element.get("total_cost", 0)
+                        ]
+
+                        flat_rows.append(row)
+
+
+        def traverse(subtree, parent_title=""):
+            for title, node in subtree.items():
+                current_title = f"{parent_title} / {title}" if parent_title else title
+
+                if len(node['children']) == 0 and len(node['elements']):
+                    create_element(current_title, node['elements'])
+                else:
+                    traverse(node.get("children", {}), current_title)
+        
+        def get_title(type):
+            if type == 'pilot':
+                return "Chi phí Phiếu PV - Pilot"
+            elif type == 'main':
+                return "Chi phí Phiếu PV - Main"
+            elif type == 'booster':
+                return "Chi phí Phiếu PV - Booster"
+            elif type == 'recruit':
+                return "Chi phí Phiếu PV - Recruit"
+            elif type == 'location':
+                return "Chi phí Phiếu PV - Tại Location"
+            else:
+                return None
+
+        def create_element_from_pricing(current_title, province, target_audience):
+            
+            for price in target_audience.get('pricing', {}):
+                row = [
+                    current_title,
+                    province,
+                    get_title(price.get('type', '')),
+                    target_audience.get('name', ''),
+                    0,
+                    "Phiếu",
+                    price.get('price', 0),
+                    calculate_sample_size(target_audience.get('sample_size', 0), target_audience.get('extra_rate', 0)),
+                    0
+                ]
+
+                flat_rows.append(row)
+
+        def traverse_pricing(samples):
+            for province, target_audiences in samples.items():
+                for ta_key, target_audience in target_audiences.items():
+                    create_element_from_pricing("INTERVIEWER", province, target_audience)
+
+        traverse_pricing(self.samples)
+
+        traverse(hierarchy[self.general.get('project_type', "")].get("children", {}))
+
+        return flat_rows
 
     def _update_all_audience_price_growth(self, audience, sample_type, value, comment=None):
         """
@@ -469,6 +606,7 @@ class ProjectModel(QObject):
         """Convert model to dictionary for saving."""
         data = {
             "general": self.general,
+            "cost_toggles" : self.cost_toggles,
             "settings": self.settings,
             "samples": self.samples,
             "qc_methods": self.qc_methods,
@@ -486,6 +624,7 @@ class ProjectModel(QObject):
         
         # Load basic data
         self.general.update(data.get("general", {}))
+        self.cost_toggles.update(data.get("cost_toggles", {}))
         self.settings.update(data.get("settings", {}))
         self.samples = data.get("samples", {})
         self.qc_methods = data.get("qc_methods", [])
@@ -886,7 +1025,7 @@ class ProjectModel(QObject):
             hierarchy[category]["elements"].append(element)
             hierarchy[category]["cost"] += total_cost
 
-    def calculate_hierarchical_project_cost(self):
+    def calculate_hierarchical_project_cost(self, hierarchy_data):
         """
         Calculate detailed project costs organized hierarchically by subtitle levels
         and separated by province.
@@ -905,7 +1044,6 @@ class ProjectModel(QObject):
                 self.general.get("target_audiences", [])
             ]
         )
-         
         
         if not project_type or not provinces:
             return {"error": "Missing required parameters for cost calculation"}
@@ -920,74 +1058,74 @@ class ProjectModel(QObject):
         if project_type not in self.element_costs.costs:
             return results
         
-        # Get element costs DataFrame and metadata
-        project_costs = self.element_costs.costs[project_type]
+        # # Get element costs DataFrame and metadata
+        # project_costs = self.element_costs.costs[project_type]
         
-        # Handle both new format (dict with "data" key) and old format (directly DataFrame)
-        if isinstance(project_costs, dict) and "data" in project_costs:
-            df = project_costs["data"]
-            metadata = project_costs.get("metadata", {})
-        else:
-            # Fallback for backward compatibility
-            df = project_costs
-            metadata = {}
+        # # Handle both new format (dict with "data" key) and old format (directly DataFrame)
+        # if isinstance(project_costs, dict) and "data" in project_costs:
+        #     df = project_costs["data"]
+        #     metadata = project_costs.get("metadata", {})
+        # else:
+        #     # Fallback for backward compatibility
+        #     df = project_costs
+        #     metadata = {}
         
-        # Determine column based on classification and interview length
-        # Try to use metadata if available
-        if metadata and "levels" in metadata and "lengths" in metadata and "length_ranges" in metadata:
-            # Find the appropriate length range in metadata
-            available_lengths = metadata.get("lengths", [])
-            length_ranges = metadata.get("length_ranges", {})
+        # # Determine column based on classification and interview length
+        # # Try to use metadata if available
+        # if metadata and "levels" in metadata and "lengths" in metadata and "length_ranges" in metadata:
+        #     # Find the appropriate length range in metadata
+        #     available_lengths = metadata.get("lengths", [])
+        #     length_ranges = metadata.get("length_ranges", {})
             
-            matching_length = None
-            for length in available_lengths:
-                min_length, max_length = length_ranges.get(length, (0, 60))
-                if min_length <= interview_length <= max_length:
-                    matching_length = length
-                    break
+        #     matching_length = None
+        #     for length in available_lengths:
+        #         min_length, max_length = length_ranges.get(length, (0, 60))
+        #         if min_length <= interview_length <= max_length:
+        #             matching_length = length
+        #             break
                     
-            if matching_length and classification in metadata.get("levels", []):
-                cost_column = f"{classification} ({matching_length})"
-            else:
-                # Fall back to the old method if no match in metadata
-                cost_column = self._get_column_name(classification, interview_length)
-        else:
-            # Use the old method if no metadata
-            if interview_length < 15:
-                col_suffix = "(<15 min)"
-            elif interview_length < 30:
-                col_suffix = "(15-30 min)"
-            elif interview_length < 45:
-                col_suffix = "(30-45 min)"
-            else:
-                col_suffix = "(45-60 min)"
+        #     if matching_length and classification in metadata.get("levels", []):
+        #         cost_column = f"{classification} ({matching_length})"
+        #     else:
+        #         # Fall back to the old method if no match in metadata
+        #         cost_column = self._get_column_name(classification, interview_length)
+        # else:
+        #     # Use the old method if no metadata
+        #     if interview_length < 15:
+        #         col_suffix = "(<15 min)"
+        #     elif interview_length < 30:
+        #         col_suffix = "(15-30 min)"
+        #     elif interview_length < 45:
+        #         col_suffix = "(30-45 min)"
+        #     else:
+        #         col_suffix = "(45-60 min)"
                 
-            cost_column = f"{classification} {col_suffix}"
+        #     cost_column = f"{classification} {col_suffix}"
         
-        # Skip if cost column doesn't exist
-        if cost_column not in df.columns:
-            return results
+        # # Skip if cost column doesn't exist
+        # if cost_column not in df.columns:
+        #     return results
         
-        # Process each province
-        for province in provinces:
-            # Build the hierarchical cost structure for this province
-            province_hierarchy = self._build_province_cost_hierarchy(
-                df, cost_column, target_audiences, province
-            )
+        # # Process each province
+        # for province in provinces:
+        #     # Build the hierarchical cost structure for this province
+        #     province_hierarchy = self._build_province_cost_hierarchy(
+        #         df, cost_column, target_audiences, province
+        #     )
             
-            # Calculate total cost for this province
-            province_total = self._calculate_hierarchy_total(province_hierarchy)
+        #     # Calculate total cost for this province
+        #     province_total = self._calculate_hierarchy_total(province_hierarchy)
             
-            # Add to results
-            results["provinces"][province] = {
-                "hierarchy": province_hierarchy,
-                "total_cost": province_total
-            }
+        #     # Add to results
+        #     results["provinces"][province] = {
+        #         "hierarchy": province_hierarchy,
+        #         "total_cost": province_total
+        #     }
             
-            # Add to total project cost
-            results["total_cost"] += province_total
+        #     # Add to total project cost
+        #     results["total_cost"] += province_total
         
-        return results
+        # return results
 
     def _build_province_cost_hierarchy(self, df, cost_column, target_audiences, province):
         """

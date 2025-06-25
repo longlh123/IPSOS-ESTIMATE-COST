@@ -590,7 +590,7 @@ class GeneralTab(QWidget):
             self.project_model.update_general("data_processing_method", [])
 
     def handle_coding_checkbox(self, is_check: bool):
-        self.project_model.update_general("coding", is_check),
+        self.project_model.update_general("coding", is_check)
 
         self.open_ended_main_count.setEnabled(bool("Main" in self.project_model.general["sample_types"]))
         self.open_ended_booster_count.setEnabled(bool("Boosters" in self.project_model.general["sample_types"]))
@@ -598,6 +598,23 @@ class GeneralTab(QWidget):
         if not is_check:
             self.project_model.update_general("open_ended_main_count", 0)
             self.project_model.update_general("open_ended_booster_count", 0)
+    
+    def handle_device_type_changed(self, text: str):
+        self.project_model.update_general("device_type", text)
+
+        is_enabled = text == "Tablet < 9 inch"
+        self.tablet_usage_duration.setEnabled(is_enabled)
+
+        if not is_enabled:
+            self.project_model.update_general("tablet_usage_duration", "")
+
+    def handle_clt_respondent_visits_changed(self, value):
+        self.project_model.update_general("clt_respondent_visits", value)
+
+        is_enabled = value == 0
+
+        if not is_enabled:
+            self.project_model.update_general("clt_failure_rate", 0)
 
     def create_region_dp(self):
         group_box = QGroupBox("Scripting - Data Processing")
@@ -735,10 +752,12 @@ class GeneralTab(QWidget):
         # Number of test products
         self.clt_test_products = QSpinBox()
         self.clt_test_products.setRange(0, 999)
-        layout.addRow("Number of Test Products:", self.clt_test_products)
+        
         self.clt_test_products.valueChanged.connect(
             lambda value: self.project_model.update_general("clt_test_products", value)
         )
+
+        layout.addRow("Number of Test Products:", self.clt_test_products)
         
         # Create a horizontal layout for respondent visits and failure rate
         visits_layout = QHBoxLayout()
@@ -746,8 +765,13 @@ class GeneralTab(QWidget):
         # Number of respondent visits
         self.clt_respondent_visits = QSpinBox()
         self.clt_respondent_visits.setRange(1, 3)
+
+        self.clt_respondent_visits.valueChanged.connect(
+            lambda value: self.handle_clt_respondent_visits_changed(value)
+        )
+
         visits_layout.addWidget(self.clt_respondent_visits)
-        
+
         # Add spacing
         visits_layout.addSpacing(20)
         
@@ -757,31 +781,58 @@ class GeneralTab(QWidget):
         self.clt_failure_rate.setRange(0, 100)
         self.clt_failure_rate.setSuffix("%")
         self.clt_failure_rate.setEnabled(False)  # Initially disabled
+
         visits_layout.addWidget(self.clt_failure_rate)
         
         visits_layout.addStretch()
+
         layout.addRow("Number of Respondent Visits:", visits_layout)
         
         # Connect signals for respondent visits and failure rate
         self.clt_respondent_visits.valueChanged.connect(self.update_respondent_visits)
+
         self.clt_failure_rate.valueChanged.connect(
             lambda value: self.project_model.update_general("clt_failure_rate", value)
         )
         
         # Tablet/Laptop selection
-        self.clt_device_type = QComboBox()
-        self.clt_device_type.addItems(["Tablet >= 9 inch", "Tablet < 9 inch", "Laptop"])
-        layout.addRow("Thuê tablet / laptop:", self.clt_device_type)
-        self.clt_device_type.currentTextChanged.connect(self.update_device_type)
+        self.device_type = QComboBox()
+        self.device_type.addItem("-- Select --")
+        self.device_type.addItems(DEVIVE_TYPES)
+
+        # Set item đầu tiên là mặc định
+        self.device_type.setCurrentIndex(0)
+
+        # Set item đầu tiên là không thể chọn
+        self.device_type.model().item(0).setEnabled(False)
+
+        self.device_type.currentTextChanged.connect(
+            lambda text: (
+                self.handle_device_type_changed(text)
+            )
+        )
+        
+        layout.addRow("Thuê tablet / laptop:", self.device_type)
+        # self.clt_device_type.currentTextChanged.connect(self.update_device_type)
 
         # Tablet usage duration - only shown when "Tablet < 9 inch" is selected
-        self.clt_tablet_usage_duration = QComboBox()
-        self.clt_tablet_usage_duration.addItems(["<= 15 phút", "> 15 phút"])
-        self.clt_tablet_usage_duration.setVisible(False)  # Initially hidden
-        layout.addRow("Thời gian sử dụng tablet:", self.clt_tablet_usage_duration)
-        self.clt_tablet_usage_duration.currentTextChanged.connect(
-            lambda text: self.project_model.update_general("clt_tablet_usage_duration", text)
+        self.tablet_usage_duration = QComboBox()
+        self.tablet_usage_duration.addItem("-- Select --")
+        self.tablet_usage_duration.addItems(TABLET_USAGE_DURATIONS)
+
+        # Set item đầu tiên là mặc định
+        self.tablet_usage_duration.setCurrentIndex(0)
+
+        # Set item đầu tiên là không thể chọn
+        self.tablet_usage_duration.model().item(0).setEnabled(False)
+
+        self.tablet_usage_duration.currentTextChanged.connect(
+            lambda text: (
+                self.handle_combobox_changed("tablet_usage_duration", text)
+            )
         )
+
+        layout.addRow("Thời gian sử dụng tablet:", self.tablet_usage_duration)
         
         # Sample Recruit IDI
         self.clt_sample_recruit_idi = QSpinBox()
@@ -910,19 +961,6 @@ class GeneralTab(QWidget):
         )
         
         return group_box
-
-    def update_device_type(self, device_type):
-        """Update device type and show/hide tablet usage duration field."""
-        self.project_model.update_general("clt_device_type", device_type)
-        
-        # Show tablet usage duration only for "Tablet < 9 inch"
-        is_small_tablet = device_type == "Tablet < 9 inch"
-        self.clt_tablet_usage_duration.setVisible(is_small_tablet)
-        
-        # Set default value when showing the field
-        if is_small_tablet and not self.project_model.general.get("clt_tablet_usage_duration"):
-            self.clt_tablet_usage_duration.setCurrentText("<= 15 phút")
-            self.project_model.update_general("clt_tablet_usage_duration", "<= 15 phút")
 
     def update_respondent_visits(self, value):
         """Update failure rate field based on respondent visits value."""
@@ -1107,16 +1145,39 @@ class GeneralTab(QWidget):
         # Update CLT
         self.clt_test_products.setValue(self.project_model.general["clt_test_products"])
         self.clt_respondent_visits.setValue(self.project_model.general["clt_respondent_visits"])
+        self.clt_failure_rate.setValue(self.project_model.general.get("clt_failure_rate", 0))
+
+        self.project_model.set_selected_failure_rate_costs(self.project_model.general.get("clt_failure_rate", 0) != 0)
+
         self.clt_sample_size_per_day.setValue(self.project_model.general["clt_sample_size_per_day"])
         self.clt_desk_interviewers_count.setValue(self.project_model.general["clt_desk_interviewers_count"])
         self.clt_provincial_desk_interviewers_count.setValue(self.project_model.general["clt_provincial_desk_interviewers_count"])
         self.clt_assistant_setup_days.setValue(self.project_model.general.get("clt_assistant_setup_days", 1))
-        self.clt_failure_rate.setValue(self.project_model.general.get("clt_failure_rate", 0))
+        
 
-        device_type = self.project_model.general.get("clt_device_type", "Tablet >= 9 inch")
-        index = self.clt_device_type.findText(device_type)
-        if index >= 0:
-            self.clt_device_type.setCurrentIndex(index)
+        value = self.project_model.general["device_type"]
+        
+        self.device_type.blockSignals(True)
+
+        if value and value in DEVIVE_TYPES:
+            self.device_type.setCurrentText(value)
+        else:
+            self.device_type.setCurrentIndex(0)
+
+        self.project_model.set_selected_device_cost(value)
+
+        self.device_type.blockSignals(False)
+        
+        value = self.project_model.general["tablet_usage_duration"]
+
+        self.tablet_usage_duration.blockSignals(True)
+
+        if value and value in TABLET_USAGE_DURATIONS:
+            self.tablet_usage_duration.setCurrentText(value)
+        else:
+            self.tablet_usage_duration.setCurrentIndex(0)
+
+        self.tablet_usage_duration.blockSignals(False)
 
         self.clt_sample_recruit_idi.setValue(self.project_model.general.get("clt_sample_recruit_idi", 0))
         self.clt_dan_mau.setChecked(self.project_model.general.get("clt_dan_mau", False))
@@ -1124,17 +1185,6 @@ class GeneralTab(QWidget):
         self.clt_dan_mau_days.setEnabled(self.project_model.general.get("clt_dan_mau", False))
 
         self.clt_sample_size_per_day.setValue(self.project_model.general["clt_sample_size_per_day"])
-
-        # Update tablet usage duration
-        device_type = self.project_model.general.get("clt_device_type", "Tablet >= 9 inch")
-        is_small_tablet = device_type == "Tablet < 9 inch"
-        self.clt_tablet_usage_duration.setVisible(is_small_tablet)
-
-        if is_small_tablet:
-            tablet_duration = self.project_model.general.get("clt_tablet_usage_duration", "<= 15 phút")
-            index = self.clt_tablet_usage_duration.findText(tablet_duration)
-            if index >= 0:
-                self.clt_tablet_usage_duration.setCurrentIndex(index)
 
         # Update Printer
         self.bw_page_count.setValue(self.project_model.general["bw_page_count"])
@@ -1146,3 +1196,5 @@ class GeneralTab(QWidget):
         self.laminated_page_count.setValue(self.project_model.general["laminated_page_count"])
 
         self.update_region_visibility()
+
+        

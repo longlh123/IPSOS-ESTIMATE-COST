@@ -70,6 +70,8 @@
     ],
     "interview_length": 60,
     "questionnaire_length": 4,
+    "device_type": "Tablet >= 9 inch",
+    "tablet_usage_duration": "<= 15 phút",
     "hut_test_products": 0,
     "hut_usage_duration": 0,
     "clt_test_products": 0,
@@ -78,12 +80,9 @@
     "clt_desk_interviewers_count": 0,
     "clt_provincial_desk_interviewers_count": 0,
     "clt_failure_rate": 0,
-    "clt_device_type": "Tablet >= 9 inch",
-    "clt_sample_recruit_idi": 0,
     "clt_dan_mau": false,
     "clt_dan_mau_days": 0,
     "clt_assistant_setup_days": 1,
-    "clt_tablet_usage_duration": "<= 15 phút",
     "bw_page_count": 0,
     "showphoto_page_count": 0,
     "showcard_page_count": 0,
@@ -99,7 +98,21 @@
     "data_processing_method": [
       "TOPLINE",
       "SPSS"
-    ]
+    ],
+    "clt_sample_recruit_idi": 0
+  },
+  "cost_toggles": {
+    "device_rental_costs": {
+      "Chi phí thuê tablet < 9 inch": false,
+      "Chi phí thuê tablet >= 9 inch": true,
+      "Chi phí thuê laptop": false
+    },
+    "idi_costs": {
+      "Chi phí Tuyển đáp viên IDI": false,
+      "Chi phí Quản lý IDI": false,
+      "Chi phí QC - IDI": false,
+      "Quà Phiếu PV - IDI": false
+    }
   },
   "settings": {
     "interviewers_per_supervisor": 8,

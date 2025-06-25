@@ -39,32 +39,38 @@ class HierarchicalCostResultsDialog(QDialog):
         header_label.setAlignment(Qt.AlignCenter)
         main_layout.addWidget(header_label)
         
-        # Total cost display
-        total_cost = self.cost_data.get("total_cost", 0)
-        total_cost_label = QLabel(f"Total Project Cost: {total_cost:,.0f} VND")
-        total_cost_font = QFont()
-        total_cost_font.setPointSize(14)
-        total_cost_font.setBold(True)
-        total_cost_label.setFont(total_cost_font)
-        total_cost_label.setAlignment(Qt.AlignCenter)
-        total_cost_label.setStyleSheet("color: #2C3E50; background-color: #ECF0F1; padding: 10px; border-radius: 5px;")
-        main_layout.addWidget(total_cost_label)
+        # # Total cost display
+        # total_cost = self.cost_data.get("total_cost", 0)
+        # total_cost_label = QLabel(f"Total Project Cost: {total_cost:,.0f} VND")
+        # total_cost_font = QFont()
+        # total_cost_font.setPointSize(14)
+        # total_cost_font.setBold(True)
+        # total_cost_label.setFont(total_cost_font)
+        # total_cost_label.setAlignment(Qt.AlignCenter)
+        # total_cost_label.setStyleSheet("color: #2C3E50; background-color: #ECF0F1; padding: 10px; border-radius: 5px;")
+        # main_layout.addWidget(total_cost_label)
         
         # Create tabs for provinces
         self.tabs = QTabWidget()
         
         # Add summary tab
-        summary_tab = self.create_summary_tab()
-        self.tabs.addTab(summary_tab, "Summary")
+        # summary_tab = self.create_summary_tab()
+        # self.tabs.addTab(summary_tab, "Summary")
         
         # Add a tab for each province
-        provinces = self.cost_data.get("provinces", {})
-        for province, province_data in provinces.items():
-            province_tab = self.create_province_tab(province, province_data)
-            self.tabs.addTab(province_tab, province)
+        # provinces = self.cost_data.get("provinces", {})
+
+        # for province, province_data in provinces.items():
+        #     province_tab = self.create_province_tab(province, province_data)
+        #     self.tabs.addTab(province_tab, province)
         
+        # main_layout.addWidget(self.tabs)
+        
+        estimate_cost_tab = self.create_estimate_cost_tab()
+        self.tabs.addTab(estimate_cost_tab, "Estimate Cost")
+
         main_layout.addWidget(self.tabs)
-        
+
         # Buttons layout
         buttons_layout = QHBoxLayout()
         
@@ -123,10 +129,10 @@ class HierarchicalCostResultsDialog(QDialog):
         layout = QVBoxLayout(widget)
         
         # Province total cost
-        total_cost = province_data.get("total_cost", 0)
-        total_label = QLabel(f"Total Cost for {province}: {total_cost:,.0f} VND")
-        total_label.setStyleSheet("font-weight: bold; font-size: 14px; margin-bottom: 10px;")
-        layout.addWidget(total_label)
+        # total_cost = province_data.get("total_cost", 0)
+        # total_label = QLabel(f"Total Cost for {province}: {total_cost:,.0f} VND")
+        # total_label.setStyleSheet("font-weight: bold; font-size: 14px; margin-bottom: 10px;")
+        # layout.addWidget(total_label)
         
         # Create tree widget for costs
         tree = QTreeWidget()
@@ -171,92 +177,222 @@ class HierarchicalCostResultsDialog(QDialog):
         tree.setMouseTracking(True)
         
         return widget
+    
+    def create_estimate_cost_tab(self):
+        """Create a tab for a specific province."""
+        widget = QWidget()
+        layout = QVBoxLayout(widget)
         
-    def add_cost_hierarchy(self, tree, hierarchy):
-        """Add improved cost hierarchy to tree widget."""
-        for subtitle, data in hierarchy.items():
-            # Create item for this subtitle
-            subtitle_item = QTreeWidgetItem([subtitle])
-            subtitle_item.setTextAlignment(0, Qt.AlignLeft | Qt.AlignVCenter)
+        # Province total cost
+        # total_cost = province_data.get("total_cost", 0)
+        # total_label = QLabel(f"Total Cost for {province}: {total_cost:,.0f} VND")
+        # total_label.setStyleSheet("font-weight: bold; font-size: 14px; margin-bottom: 10px;")
+        # layout.addWidget(total_label)
+        
+        # Create tree widget for costs
+        tree = QTreeWidget()
+        tree.setHeaderLabels([
+            "Subtitle / Component", 
+            "Province", 
+            "Target Audience", 
+            "Unit",
+            "Qty", 
+            "Unit Cost (VND)", 
+            "Total Cost (VND)"
+        ])
+        tree.setAlternatingRowColors(True)
+        
+        # Set column widths
+        tree.header().setSectionResizeMode(0, QHeaderView.ResizeToContents)  # Subtitle / Component
+        tree.header().setSectionResizeMode(1, QHeaderView.ResizeToContents)  # Code
+        tree.header().setSectionResizeMode(2, QHeaderView.ResizeToContents)  # Unit
+        tree.header().setSectionResizeMode(3, QHeaderView.ResizeToContents)  # Target Audience
+        tree.header().setSectionResizeMode(4, QHeaderView.ResizeToContents)  # Unit Cost
+        tree.header().setSectionResizeMode(5, QHeaderView.ResizeToContents)  # Qty
+        tree.header().setSectionResizeMode(6, QHeaderView.ResizeToContents)  # Total Cost
+        
+        # Set minimum column widths
+        tree.setColumnWidth(1, 80)  # Code
+        tree.setColumnWidth(2, 80)  # Unit
+        tree.setColumnWidth(3, 150)  # Target Audience
+        tree.setColumnWidth(4, 120)  # Unit Cost
+        tree.setColumnWidth(5, 100)  # Qty
+        tree.setColumnWidth(6, 120)  # Total Cost
+        
+        # Add cost hierarchy
+        self.add_cost_hierarchy(tree, self.cost_data)
+        
+        layout.addWidget(tree)
+        
+        # Expand top-level items
+        for i in range(tree.topLevelItemCount()):
+            tree.topLevelItem(i).setExpanded(True)
+        
+        # Enable custom tooltip handling
+        tree.setMouseTracking(True)
+        
+        return widget
+    
+    def add_cost_hierarchy(self, tree, hierachy):
+        subtitle = ""
+        
+        for i, row in enumerate(hierachy):
+    
+            if i == 0 or subtitle != row[0]:
+                current_parent = None
+                current_level_items = tree.invisibleRootItem() # Node cha hiện tại
             
-            # Set total cost in the last column
-            subtitle_item.setText(6, f"{data.get('cost', 0):,.0f}")
-            subtitle_item.setTextAlignment(6, Qt.AlignRight | Qt.AlignVCenter)
-            
-            # Set subtitle styling
-            font = subtitle_item.font(0)
-            font.setBold(True)
-            subtitle_item.setFont(0, font)
-            subtitle_item.setFont(6, font)
-            subtitle_item.setBackground(0, QColor("#F2F2F2"))
-            subtitle_item.setBackground(6, QColor("#F2F2F2"))
-            
-            tree.addTopLevelItem(subtitle_item)
-            
-            # Add elements
-            for element in data.get("elements", []):
-                code = element.get("code", "")
-                unit = element.get("unit", "")
-                target_audience = element.get("target_audience", "")
-                base_cost = element.get("base_cost", 0)
-                element_cost = element.get("element_cost", 0)
-                element_cost_formula = element.get("element_cost_formula", "")
-                coefficient = element.get("coefficient", 1.0)
-                coefficient_formula = element.get("coefficient_formula", "")
-                total_cost = element.get("total_cost", 0)
-                level = element.get("level", "")  # Get level if it exists
-                element_name = element.get("name", "")  # Get element name if it exists
-                is_additional_cost = element.get("is_additional_cost", False)  # Check if this is an additional cost
-                
-                # Convert target_audience to string if it's a dictionary
-                target_audience_str = self._get_target_audience_string(target_audience)
-                
-                # Create element item
-                element_item = QTreeWidgetItem()
-                
-                # Set element properties
-                # Add level to element name if it exists
-                if not element_name:
-                    element_name = subtitle
-                if level:
-                    element_name = f"{subtitle} ({level})"
-                elif target_audience_str:
-                    element_name = f"{subtitle} - {target_audience_str}"
+                subtitles = row[0].split(' / ')
 
-                element_item.setText(0, element_name)
-                element_item.setText(1, str(code))
-                element_item.setText(2, unit)
-                element_item.setText(3, target_audience_str)
-                element_item.setText(4, f"{element_cost:,.0f}")
-                element_item.setText(5, f"{coefficient:.1f}")
-                element_item.setText(6, f"{total_cost:,.0f}")
-                
-                # Set text alignment
-                element_item.setTextAlignment(1, Qt.AlignCenter)
-                element_item.setTextAlignment(2, Qt.AlignCenter)
-                element_item.setTextAlignment(3, Qt.AlignCenter)
-                element_item.setTextAlignment(4, Qt.AlignRight | Qt.AlignVCenter)
-                element_item.setTextAlignment(5, Qt.AlignRight | Qt.AlignVCenter)
-                element_item.setTextAlignment(6, Qt.AlignRight | Qt.AlignVCenter)
-                
-                # Apply special formatting for additional costs
-                if is_additional_cost:
-                    # Make additional costs bold and add a light background color
-                    for col in range(7):
-                        font = element_item.font(col)
-                        font.setBold(True)
-                        element_item.setFont(col, font)
-                        # Light blue background to distinguish additional costs
-                        element_item.setBackground(col, QColor("#E3F2FD"))
-                
-                # Set tooltips with formulas
-                element_item.setToolTip(4, element_cost_formula)  # Element cost formula on hover
-                element_item.setToolTip(5, coefficient_formula)   # Qty formula on hover
-                
-                subtitle_item.addChild(element_item)
+                for level, title in enumerate(subtitles):
+                    found = False
+
+                    for i in range(current_level_items.childCount()):
+                        item = current_level_items.child(i)
+
+                        if item.text(0) == title:
+                            current_parent = item
+                            current_level_items = item
+                            found = True
+                            break
+                    
+                    if not found:
+                        node = self.create_node(title, total_cost=0)
+
+                        if current_parent:
+                            current_parent.addChild(node)
+                        else:
+                            tree.addTopLevelItem(node)
+                        
+                        current_parent = node
+                        current_level_items = node
             
-            # Add children subtitles recursively
-            self.add_subtitle_children(subtitle_item, data.get("children", {}))
+            child_node = self.create_child_node(row)
+            current_parent.addChild(child_node)
+
+    def create_node(self, title, total_cost=0):
+            
+        item = QTreeWidgetItem([title])
+        item.setTextAlignment(0, Qt.AlignLeft | Qt.AlignVCenter)
+
+        item.setText(6, f"{total_cost:,.0f}")
+        item.setTextAlignment(6, Qt.AlignRight | Qt.AlignVCenter)
+
+        # Set subtitle styling
+        font = item.font(0)
+        font.setBold(True)
+        item.setFont(0, font)
+        item.setFont(6, font)
+        item.setBackground(0, QColor("#F2F2F2"))
+        item.setBackground(6, QColor("#F2F2F2"))
+
+        return item
+
+    def create_child_node(self, data):
+        item = QTreeWidgetItem()
+
+        item.setText(0, data[2])                #Subtitle / Component
+        item.setText(1, str(data[1]))           #Province
+        item.setText(2, data[3])                #Target Audience
+        item.setText(3, data[5])                #Unit
+        item.setText(4, f"{data[7]:,.0f}")      #Qty
+        item.setText(5, f"{data[6]:.1f}")       #Unit Cost (VND)
+        item.setText(6, f"{data[8]:,.0f}")      #Total Cost (VND)
+
+        item.setTextAlignment(1, Qt.AlignCenter)
+        item.setTextAlignment(2, Qt.AlignCenter)
+        item.setTextAlignment(3, Qt.AlignCenter)
+        item.setTextAlignment(4, Qt.AlignRight | Qt.AlignVCenter)
+        item.setTextAlignment(5, Qt.AlignRight | Qt.AlignVCenter)
+        item.setTextAlignment(6, Qt.AlignRight | Qt.AlignVCenter)
+
+        return item
+
+    # def add_cost_hierarchy(self, tree, hierarchy):
+    #     """Add improved cost hierarchy to tree widget."""
+    #     for subtitle, data in hierarchy.items():
+    #         # Create item for this subtitle
+    #         subtitle_item = QTreeWidgetItem([subtitle])
+    #         subtitle_item.setTextAlignment(0, Qt.AlignLeft | Qt.AlignVCenter)
+            
+    #         # Set total cost in the last column
+    #         subtitle_item.setText(6, f"{data.get('cost', 0):,.0f}")
+    #         subtitle_item.setTextAlignment(6, Qt.AlignRight | Qt.AlignVCenter)
+            
+    #         # Set subtitle styling
+    #         font = subtitle_item.font(0)
+    #         font.setBold(True)
+    #         subtitle_item.setFont(0, font)
+    #         subtitle_item.setFont(6, font)
+    #         subtitle_item.setBackground(0, QColor("#F2F2F2"))
+    #         subtitle_item.setBackground(6, QColor("#F2F2F2"))
+            
+    #         tree.addTopLevelItem(subtitle_item)
+            
+    #         # Add elements
+    #         for element in data.get("elements", []):
+    #             code = element.get("code", "")
+    #             unit = element.get("unit", "")
+    #             target_audience = element.get("target_audience", "")
+    #             base_cost = element.get("base_cost", 0)
+    #             element_cost = element.get("element_cost", 0)
+    #             element_cost_formula = element.get("element_cost_formula", "")
+    #             coefficient = element.get("coefficient", 1.0)
+    #             coefficient_formula = element.get("coefficient_formula", "")
+    #             total_cost = element.get("total_cost", 0)
+    #             level = element.get("level", "")  # Get level if it exists
+    #             element_name = element.get("name", "")  # Get element name if it exists
+    #             is_additional_cost = element.get("is_additional_cost", False)  # Check if this is an additional cost
+                
+    #             # Convert target_audience to string if it's a dictionary
+    #             target_audience_str = self._get_target_audience_string(target_audience)
+                
+    #             # Create element item
+    #             element_item = QTreeWidgetItem()
+                
+    #             # Set element properties
+    #             # Add level to element name if it exists
+    #             if not element_name:
+    #                 element_name = subtitle
+    #             if level:
+    #                 element_name = f"{subtitle} ({level})"
+    #             elif target_audience_str:
+    #                 element_name = f"{subtitle} - {target_audience_str}"
+
+    #             element_item.setText(0, element_name)
+    #             element_item.setText(1, str(code))
+    #             element_item.setText(2, unit)
+    #             element_item.setText(3, target_audience_str)
+    #             element_item.setText(4, f"{element_cost:,.0f}")
+    #             element_item.setText(5, f"{coefficient:.1f}")
+    #             element_item.setText(6, f"{total_cost:,.0f}")
+                
+    #             # Set text alignment
+    #             element_item.setTextAlignment(1, Qt.AlignCenter)
+    #             element_item.setTextAlignment(2, Qt.AlignCenter)
+    #             element_item.setTextAlignment(3, Qt.AlignCenter)
+    #             element_item.setTextAlignment(4, Qt.AlignRight | Qt.AlignVCenter)
+    #             element_item.setTextAlignment(5, Qt.AlignRight | Qt.AlignVCenter)
+    #             element_item.setTextAlignment(6, Qt.AlignRight | Qt.AlignVCenter)
+                
+    #             # Apply special formatting for additional costs
+    #             if is_additional_cost:
+    #                 # Make additional costs bold and add a light background color
+    #                 for col in range(7):
+    #                     font = element_item.font(col)
+    #                     font.setBold(True)
+    #                     element_item.setFont(col, font)
+    #                     # Light blue background to distinguish additional costs
+    #                     element_item.setBackground(col, QColor("#E3F2FD"))
+                
+    #             # Set tooltips with formulas
+    #             element_item.setToolTip(4, element_cost_formula)  # Element cost formula on hover
+    #             element_item.setToolTip(5, coefficient_formula)   # Qty formula on hover
+                
+    #             subtitle_item.addChild(element_item)
+            
+    #         # Add children subtitles recursively
+    #         self.add_subtitle_children(subtitle_item, data.get("children", {}))
 
     def add_subtitle_children(self, parent_item, children):
         """Add improved subtitle children to tree item."""

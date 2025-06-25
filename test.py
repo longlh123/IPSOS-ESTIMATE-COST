@@ -6,7 +6,7 @@ def build_cost_hierarchy_from_csv(csv_path):
     df = pd.read_csv(
         csv_path,
         header=[0, 1],
-        index_col=[0, 1, 2, 3, 4, 5, 6, 7],
+        index_col=[0, 1, 2, 3, 4, 5, 6, 7, 8],
         encoding="utf-8"
     )
     df.fillna("", inplace=True)
@@ -14,10 +14,10 @@ def build_cost_hierarchy_from_csv(csv_path):
     hierarchy = {}
 
     for idx, row in df.iterrows():
-        project_type, s1, s2, s3, s4, s5, code, unit = idx
+        project_type, s1, s2, s3, s4, s5, s6, code, unit = idx
         base_cost = row.get(("Base Cost", ""), 0)
 
-        keys = [project_type, s1, s2, s3, s4]
+        keys = [project_type, s1, s2, s3, s4, s5]
         current_level = hierarchy
         
         for key in keys:
@@ -35,7 +35,7 @@ def build_cost_hierarchy_from_csv(csv_path):
         element = {
             "code": code,
             "unit": "" if pd.isnull(unit) else unit,
-            "description": s5,
+            "description": s6,
             "costs": {}
         }
         
@@ -53,11 +53,11 @@ def build_cost_hierarchy_from_csv(csv_path):
 
 
 if __name__ == "__main__":
-    csv_file = "F2F_D2D.csv"  # Đường dẫn đến file CSV
+    csv_file = "CLT.csv"  # Đường dẫn đến file CSV
     hierarchy = build_cost_hierarchy_from_csv(csv_file)
 
     # Ghi kết quả ra file JSON
-    with open("cost_hierarchy.json", "w", encoding="utf-8") as f:
+    with open("clt_cost_hierarchy.json", "w", encoding="utf-8") as f:
         json.dump(hierarchy, f, ensure_ascii=False, indent=2)
 
-    print("✅ Hierarchy JSON has been saved to 'cost_hierarchy.json'")
+    print("✅ Hierarchy JSON has been saved to 'clt_cost_hierarchy.json'")

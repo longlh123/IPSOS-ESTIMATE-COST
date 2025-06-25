@@ -112,6 +112,17 @@ VIETNAM_PROVINCES = [
     "Vĩnh Phúc", "Yên Bái", "Hồ Chí Minh", "Cần Thơ", "N/A"
 ]
 
+DEVIVE_TYPES = [
+    "Tablet >= 9 inch", 
+    "Tablet < 9 inch", 
+    "Laptop"
+]
+
+TABLET_USAGE_DURATIONS = [
+    "<= 15 phút", 
+    "> 15 phút"
+]
+
 # Common target audiences (examples, can be expanded)
 TARGET_AUDIENCES = [
     "Bác sĩ chuyên khoa",
@@ -146,14 +157,14 @@ QC_TEAMS = [
 # QC Methods
 QC_METHODS = [
     "QC tại nhà",
-"QC qua điện thoại",
-"QC qua điện thoại kiểm tra sự tồn tại",
-"QC qua điện thoại (khoán nguyên dự án)",
-"QC nghe file ghi âm",
-"QC DP",
-"QC phiếu Non",
-"QC tại CLT",
-"QC Coding",
+    "QC qua điện thoại",
+    "QC qua điện thoại kiểm tra sự tồn tại",
+    "QC qua điện thoại (khoán nguyên dự án)",
+    "QC nghe file ghi âm",
+    "QC DP",
+    "QC phiếu Non",
+    "QC tại CLT",
+    "QC Coding",
 ]
 
 # Level definitions for assigned people
