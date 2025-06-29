@@ -57,6 +57,21 @@ class GenericEditorWidget(QWidget):
 
         # Emit the selectionChanged signal
         self.selectionChanged.emit(self.selected_items)
+    
+    def set_selected_items(self, items):
+        self.selected_items = items
+        self.update_display()
+
+    def update_display(self):
+        names = list()
+
+        for item in self.selected_items:
+            if 'qc_method' in item.keys():
+                names.append(item.get('qc_method', ""))
+
+        names = list(set(names))
+        display = ", ".join(names[:4]) + (f" +{len(names)-4} more" if len(names) > 4 else "")
+        self.selected_items_input.setText(display)
 
 class GeneralEditorDialog(QDialog):
 
@@ -98,6 +113,7 @@ class GeneralEditorDialog(QDialog):
             elif field["widget"] == QSpinBox:
                 widget = QSpinBox()
                 widget.setRange(field.get("min", 0), field.get("max", 100))
+                widget.setSuffix(field.get('suffix', ''))
             elif field["widget"] == QComboBox:
                 widget = QComboBox()
                 options = field.get("options", [])
@@ -117,10 +133,12 @@ class GeneralEditorDialog(QDialog):
         layout.addWidget(form_container, stretch=0)
 
         # Right list widget
-        self.table = QTableWidget(0, len(self.field_config), self)
+        self.table = QTableWidget(0, len(self.field_config) + 1, self)
         self.table.setHorizontalHeaderLabels([field["label"] for field in self.field_config])
         self.table.horizontalHeader().setStretchLastSection(True)
         layout.addWidget(self.table, stretch=1)
+
+        self.refresh_table()
     
     def clear_form(self):
         for widget in self.widgets.values():
@@ -146,8 +164,10 @@ class GeneralEditorDialog(QDialog):
             elif isinstance(widget, QComboBox):
                 entry[field["name"]] = widget.currentText()
 
-        if not all(entry.values()):
-            QMessageBox.warning(self, "Input Error", "Please fill in all fields.")
+        result, message = self.validate(entry)
+
+        if not result:
+            QMessageBox.warning(self, "Input Error", message)
             return
 
         # Add the entry to the selected items
@@ -158,20 +178,85 @@ class GeneralEditorDialog(QDialog):
         # Clear the form for the next entry
         self.clear_form()
 
-    def refresh_table(self):
-        self.table.setRowCount(len(self.selected_items))
-
-        for entry in self.selected_items:
-            row_position = self.table.rowCount()
-            self.table.insertRow(row_position)
-            for field_name in entry.keys():
+    def validate(self, new_item):
+        
+        for field in self.field_config:
+            if field.get('required', False):
+                field_name = field.get('name', '')
                 widget = self.widgets[field_name]
 
                 if isinstance(widget, QLineEdit):
-                    item = QTableWidgetItem(widget.text().strip())
+                    if new_item.get(field_name, ''): 
+                        return False, f"{field_name} should not be blank."
+                elif isinstance(widget, QComboBox):
+                    if new_item.get(field_name, '-- Select --') == '-- Select --':
+                        return False, f"{field_name} is required."
                 elif isinstance(widget, QSpinBox):
-                    item = QTableWidgetItem(f'{widget.value():,}')
-                self.table.setItem(row_position, i, item)
+                    if "min_range" in field.keys():
+                        if new_item.get(field_name, 0) < field.get('min_range', 0):
+                            return False, f"{field_name} must be >= {field['min_range']}."
+
+        # 2. Kiểm tra trùng lặp
+        if len(self.selected_items) > 0:
+            duplicated_fields = [f['name'] for f in self.field_config if f.get('duplicated')]
+            
+            for item in self.selected_items:
+                if all(
+                    new_item.get(f_name) == item.get(f_name) for f_name in duplicated_fields
+                ):
+                    return False, "Duplicated item detected."
+        
+        return True, ""
+    
+    def refresh_table(self):
+        self.table.setRowCount(len(self.selected_items))
+
+        for row_index, entry in enumerate(self.selected_items):
+            for col_index, field_name in enumerate([field["name"] for field in self.field_config]):
+                widget = self.widgets[field_name]
+
+                if isinstance(widget, QLineEdit):
+                    item = QTableWidgetItem(entry.get(field_name, "").strip())
+                elif isinstance(widget, QSpinBox):
+                    item = QTableWidgetItem(f'{entry.get(field_name, 0):,}')
+                elif isinstance(widget, QComboBox):
+                    item = QTableWidgetItem(f'{entry.get(field_name, "")}')
+
+                self.table.setItem(row_index, col_index, item)
+
+            btn = QPushButton("Delete")
+            btn.setStyleSheet(""" 
+                QPushButton {
+                    background-color: #3498db;
+                    color: white;
+                    border-radius: 4px;
+                    padding: 4px 8px;
+                    border: none;
+                    font-weight: bold;
+                }
+                QPushButton:hover {
+                    background-color: #2980b9;
+                }
+                QPushButton:pressed {
+                    background-color: #1a5276;
+                }
+            """)
+            btn.clicked.connect(lambda _, row=row_index: self.delete_row(row))
+
+            # Bọc button bằng container với layout
+            container = QWidget()
+            layout = QHBoxLayout(container)
+            layout.setContentsMargins(5, 2, 5, 2)  # left, top, right, bottom (khoảng cách từ button đến mép cell)
+            layout.setAlignment(Qt.AlignCenter)
+            layout.addWidget(btn)
+
+            self.table.setCellWidget(row_index, col_index + 1, container)
             
         self.table.resizeColumnsToContents()
-        
+    
+    def delete_row(self, index):
+        del self.selected_items[index]
+        self.refresh_table()
+    
+    
+    

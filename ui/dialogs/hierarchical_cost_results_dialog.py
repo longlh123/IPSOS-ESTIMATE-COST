@@ -19,13 +19,23 @@ class HierarchicalCostResultsDialog(QDialog):
     def __init__(self, cost_data, parent=None):
         super().__init__(parent)
         self.cost_data = cost_data
+        self.df = pd.DataFrame(cost_data, columns=["Subtitle", 
+                                                    "Province", 
+                                                    "Description", 
+                                                    "Target_Audience",
+                                                    "Code",
+                                                    "Unit", 
+                                                    "Cost",
+                                                    "Unit Cost (VND)", 
+                                                    "Total Cost (VND)",
+                                                    "Comment"])
         self.init_ui()
         
     def init_ui(self):
         """Initialize the UI components."""
         # Set dialog properties
         self.setWindowTitle("Hierarchical Project Cost Results")
-        self.setMinimumSize(1000, 700)
+        self.setMinimumSize(1240, 700)
         
         # Main layout
         main_layout = QVBoxLayout(self)
@@ -89,94 +99,6 @@ class HierarchicalCostResultsDialog(QDialog):
         
         # Add buttons layout to main layout
         main_layout.addLayout(buttons_layout)
-        
-    def create_summary_tab(self):
-        """Create a summary tab showing total costs for all provinces."""
-        widget = QWidget()
-        layout = QVBoxLayout(widget)
-        
-        # Create tree widget for summary
-        tree = QTreeWidget()
-        tree.setHeaderLabels(["Province / Component", "Cost (VND)"])
-        tree.setAlternatingRowColors(True)
-        tree.header().setSectionResizeMode(0, QHeaderView.Stretch)
-        tree.header().setSectionResizeMode(1, QHeaderView.ResizeToContents)
-        
-        # Add provinces
-        provinces = self.cost_data.get("provinces", {})
-        for province, province_data in provinces.items():
-            item = QTreeWidgetItem([province, f"{province_data.get('total_cost', 0):,.0f}"])
-            item.setTextAlignment(1, Qt.AlignRight | Qt.AlignVCenter)
-            tree.addTopLevelItem(item)
-        
-        # Add total
-        total_item = QTreeWidgetItem(["Total Project Cost", f"{self.cost_data.get('total_cost', 0):,.0f}"])
-        total_item.setTextAlignment(1, Qt.AlignRight | Qt.AlignVCenter)
-        total_item.setBackground(0, QColor("#ECF0F1"))
-        total_item.setBackground(1, QColor("#ECF0F1"))
-        font = total_item.font(0)
-        font.setBold(True)
-        total_item.setFont(0, font)
-        total_item.setFont(1, font)
-        tree.addTopLevelItem(total_item)
-        
-        layout.addWidget(tree)
-        return widget
-        
-    def create_province_tab(self, province, province_data):
-        """Create a tab for a specific province."""
-        widget = QWidget()
-        layout = QVBoxLayout(widget)
-        
-        # Province total cost
-        # total_cost = province_data.get("total_cost", 0)
-        # total_label = QLabel(f"Total Cost for {province}: {total_cost:,.0f} VND")
-        # total_label.setStyleSheet("font-weight: bold; font-size: 14px; margin-bottom: 10px;")
-        # layout.addWidget(total_label)
-        
-        # Create tree widget for costs
-        tree = QTreeWidget()
-        tree.setHeaderLabels([
-            "Subtitle / Component", 
-            "Code", 
-            "Unit",
-            "Target Audience", 
-            "Unit Cost (VND)", 
-            "Qty", 
-            "Total Cost (VND)"
-        ])
-        tree.setAlternatingRowColors(True)
-        
-        # Set column widths
-        tree.header().setSectionResizeMode(0, QHeaderView.ResizeToContents)  # Subtitle / Component
-        tree.header().setSectionResizeMode(1, QHeaderView.ResizeToContents)  # Code
-        tree.header().setSectionResizeMode(2, QHeaderView.ResizeToContents)  # Unit
-        tree.header().setSectionResizeMode(3, QHeaderView.ResizeToContents)  # Target Audience
-        tree.header().setSectionResizeMode(4, QHeaderView.ResizeToContents)  # Unit Cost
-        tree.header().setSectionResizeMode(5, QHeaderView.ResizeToContents)  # Qty
-        tree.header().setSectionResizeMode(6, QHeaderView.ResizeToContents)  # Total Cost
-        
-        # Set minimum column widths
-        tree.setColumnWidth(1, 80)  # Code
-        tree.setColumnWidth(2, 80)  # Unit
-        tree.setColumnWidth(3, 150)  # Target Audience
-        tree.setColumnWidth(4, 120)  # Unit Cost
-        tree.setColumnWidth(5, 100)  # Qty
-        tree.setColumnWidth(6, 120)  # Total Cost
-        
-        # Add cost hierarchy
-        self.add_cost_hierarchy(tree, province_data.get("hierarchy", {}))
-        
-        layout.addWidget(tree)
-        
-        # Expand top-level items
-        for i in range(tree.topLevelItemCount()):
-            tree.topLevelItem(i).setExpanded(True)
-        
-        # Enable custom tooltip handling
-        tree.setMouseTracking(True)
-        
-        return widget
     
     def create_estimate_cost_tab(self):
         """Create a tab for a specific province."""
@@ -198,26 +120,29 @@ class HierarchicalCostResultsDialog(QDialog):
             "Unit",
             "Qty", 
             "Unit Cost (VND)", 
-            "Total Cost (VND)"
+            "Total Cost (VND)",
+            "Comment"
         ])
-        tree.setAlternatingRowColors(True)
+        # tree.setAlternatingRowColors(True)
         
         # Set column widths
         tree.header().setSectionResizeMode(0, QHeaderView.ResizeToContents)  # Subtitle / Component
-        tree.header().setSectionResizeMode(1, QHeaderView.ResizeToContents)  # Code
-        tree.header().setSectionResizeMode(2, QHeaderView.ResizeToContents)  # Unit
-        tree.header().setSectionResizeMode(3, QHeaderView.ResizeToContents)  # Target Audience
-        tree.header().setSectionResizeMode(4, QHeaderView.ResizeToContents)  # Unit Cost
-        tree.header().setSectionResizeMode(5, QHeaderView.ResizeToContents)  # Qty
+        tree.header().setSectionResizeMode(1, QHeaderView.ResizeToContents)  # Province
+        tree.header().setSectionResizeMode(2, QHeaderView.ResizeToContents)  # Target Audience
+        tree.header().setSectionResizeMode(3, QHeaderView.ResizeToContents)  # Unit
+        tree.header().setSectionResizeMode(4, QHeaderView.ResizeToContents)  # Qty
+        tree.header().setSectionResizeMode(5, QHeaderView.ResizeToContents)  # Unit Cost
         tree.header().setSectionResizeMode(6, QHeaderView.ResizeToContents)  # Total Cost
+        tree.header().setSectionResizeMode(7, QHeaderView.ResizeToContents)  # Comment
         
         # Set minimum column widths
-        tree.setColumnWidth(1, 80)  # Code
-        tree.setColumnWidth(2, 80)  # Unit
-        tree.setColumnWidth(3, 150)  # Target Audience
-        tree.setColumnWidth(4, 120)  # Unit Cost
-        tree.setColumnWidth(5, 100)  # Qty
-        tree.setColumnWidth(6, 120)  # Total Cost
+        tree.setColumnWidth(1, 80)  
+        tree.setColumnWidth(2, 80)  
+        tree.setColumnWidth(3, 150)  
+        tree.setColumnWidth(4, 100) 
+        tree.setColumnWidth(5, 100)  
+        tree.setColumnWidth(6, 100)  
+        tree.setColumnWidth(7, 200)  
         
         # Add cost hierarchy
         self.add_cost_hierarchy(tree, self.cost_data)
@@ -225,49 +150,87 @@ class HierarchicalCostResultsDialog(QDialog):
         layout.addWidget(tree)
         
         # Expand top-level items
-        for i in range(tree.topLevelItemCount()):
-            tree.topLevelItem(i).setExpanded(True)
+        tree.expandAll()
         
         # Enable custom tooltip handling
         tree.setMouseTracking(True)
         
         return widget
     
+    def calculate_total_cost(self, titles=list(), province=""):
+        if province:
+            df = self.df[self.df["Province"] == province]
+        else:
+            df = self.df
+
+        condition = True
+
+        for i, title in enumerate(titles):
+            condition &= df["Subtitle"].str.split(' / ').str[i].str.contains(title, case=False, na=False)
+
+        df = df[condition]
+        
+        return df["Total Cost (VND)"].sum()
+
     def add_cost_hierarchy(self, tree, hierachy):
         subtitle = ""
-        
+        province_nodes = {}
+
         for i, row in enumerate(hierachy):
-    
-            if i == 0 or subtitle != row[0]:
-                current_parent = None
-                current_level_items = tree.invisibleRootItem() # Node cha hiện tại
+            subtitle = row[0]
+            province_title = row[1]
+
+            if "TRAVEL" in subtitle:
+                a = ""
+
+            subtitles = row[0].split(' / ')
+            title_root = subtitles[0]
+
+            root = tree.invisibleRootItem() # Root gốc
+            current_root = None
+
+            for i in range(root.childCount()):
+                item_node = root.child(i)
+
+                if item_node.text(0) == title_root:
+                    current_root = item_node
+                    break
             
-                subtitles = row[0].split(' / ')
+            if not current_root:
+                total_cost = self.calculate_total_cost(titles=[title_root])
 
-                for level, title in enumerate(subtitles):
-                    found = False
+                node = self.create_node(title_root, total_cost=total_cost)
+                tree.addTopLevelItem(node)
+                current_root = node
 
-                    for i in range(current_level_items.childCount()):
-                        item = current_level_items.child(i)
-
-                        if item.text(0) == title:
-                            current_parent = item
-                            current_level_items = item
-                            found = True
-                            break
-                    
-                    if not found:
-                        node = self.create_node(title, total_cost=0)
-
-                        if current_parent:
-                            current_parent.addChild(node)
-                        else:
-                            tree.addTopLevelItem(node)
-                        
-                        current_parent = node
-                        current_level_items = node
+            province_key = (current_root, province_title)
             
-            child_node = self.create_child_node(row)
+            if province_key not in province_nodes:
+                total_cost = self.calculate_total_cost(titles=[title_root], province=province_title)
+
+                province_node = self.create_node(province_title, total_cost=total_cost)
+                current_root.addChild(province_node)
+                province_nodes[province_key] = province_node
+            else:
+                province_node = province_nodes[province_key]
+
+            current_parent = province_node
+
+            for title in subtitles[1:]:
+                found = False
+                for i in range(current_parent.childCount()):
+                    child = current_parent.child(i)
+                    if child.text(0) == title:
+                        current_parent = child
+                        found = True
+                        break
+
+                if not found:
+                    new_node = self.create_node(title, total_cost=0)
+                    current_parent.addChild(new_node)
+                    current_parent = new_node
+            
+            child_node = self.create_child_node(row, current_parent)
             current_parent.addChild(child_node)
 
     def create_node(self, title, total_cost=0):
@@ -275,29 +238,37 @@ class HierarchicalCostResultsDialog(QDialog):
         item = QTreeWidgetItem([title])
         item.setTextAlignment(0, Qt.AlignLeft | Qt.AlignVCenter)
 
-        item.setText(6, f"{total_cost:,.0f}")
-        item.setTextAlignment(6, Qt.AlignRight | Qt.AlignVCenter)
+        if total_cost > 0:
+            item.setText(6, f"{total_cost:,.0f}")
+            item.setTextAlignment(6, Qt.AlignRight | Qt.AlignVCenter)
 
         # Set subtitle styling
         font = item.font(0)
         font.setBold(True)
         item.setFont(0, font)
         item.setFont(6, font)
-        item.setBackground(0, QColor("#F2F2F2"))
-        item.setBackground(6, QColor("#F2F2F2"))
+
+        for i in range(item.columnCount()):
+            item.setBackground(i, QColor("#F2F2F2"))
 
         return item
 
-    def create_child_node(self, data):
+    def create_child_node(self, data, current_parent):
         item = QTreeWidgetItem()
 
         item.setText(0, data[2])                #Subtitle / Component
         item.setText(1, str(data[1]))           #Province
         item.setText(2, data[3])                #Target Audience
-        item.setText(3, data[5])                #Unit
-        item.setText(4, f"{data[7]:,.0f}")      #Qty
-        item.setText(5, f"{data[6]:.1f}")       #Unit Cost (VND)
+        item.setText(3, data[5] if data[5] != "0" else "-")                #Unit
+        
+        if current_parent.text(0) in ["SUPERVISOR/ ASSISTANT", "QC", "DP"]:
+            item.setText(4, f"{data[7]:,.2f}") #Qty
+        else:               
+            item.setText(4, f"{data[7]:,.0f}") #Qty     
+            
+        item.setText(5, f"{data[6]:,.0f}")       #Unit Cost (VND)
         item.setText(6, f"{data[8]:,.0f}")      #Total Cost (VND)
+        item.setText(7, data[9]) #Comment
 
         item.setTextAlignment(1, Qt.AlignCenter)
         item.setTextAlignment(2, Qt.AlignCenter)
@@ -305,8 +276,246 @@ class HierarchicalCostResultsDialog(QDialog):
         item.setTextAlignment(4, Qt.AlignRight | Qt.AlignVCenter)
         item.setTextAlignment(5, Qt.AlignRight | Qt.AlignVCenter)
         item.setTextAlignment(6, Qt.AlignRight | Qt.AlignVCenter)
+        item.setTextAlignment(7, Qt.AlignLeft)
 
         return item
+    
+    def export_results(self):
+        """Export cost results to an Excel file."""
+        # Open file save dialog
+        file_path, _ = QFileDialog.getSaveFileName(
+            self,
+            "Export Results",
+            "project_costs.xlsx",
+            "Excel Files (*.xlsx);;All Files (*)"
+        )
+        
+        if not file_path:
+            return
+        
+        # Ensure .xlsx extension
+        if not file_path.endswith('.xlsx'):
+            file_path += '.xlsx'
+        
+        # Create a new workbook
+        wb = openpyxl.Workbook()
+        
+        # Try to get project model from parent window
+        project_model = None
+
+        if hasattr(self.parent(), 'project_model'):
+            project_model = self.parent().project_model
+        
+        self.create_estimate_cost_sheet(wb)
+
+        # Create Project Information sheet
+        # self.create_project_info_sheet(wb, project_model)
+        
+        # # Create Summary sheet
+        # self.create_summary_sheet(wb, project_model)
+        
+        # # Create sheets for each province
+        # provinces = self.cost_data.get("provinces", {})
+        # for province, province_data in provinces.items():
+        #     self.create_province_sheet(wb, province, province_data)
+        
+        # Remove default sheet
+        if "Sheet" in wb.sheetnames:
+            wb.remove(wb["Sheet"])
+        
+        # Save the workbook
+        try:
+            wb.save(file_path)
+            QMessageBox.information(
+                self,
+                "Export Successful",
+                f"Results exported to {file_path}"
+            )
+        except Exception as e:
+            QMessageBox.critical(
+                self,
+                "Export Error",
+                f"Failed to save file: {str(e)}"
+            )
+
+    def create_estimate_cost_sheet(self, wb, project_model=None):
+        """Create and populate the Summary sheet with total costs across all provinces."""
+        # Create sheet
+        sheet = wb.create_sheet("Estimate Cost")
+        
+        # Set column widths for initial columns
+        sheet.column_dimensions['A'].width = 40  # Subtitle / Component
+        sheet.column_dimensions['B'].width = 15  # Code
+        sheet.column_dimensions['C'].width = 10  # Unit
+        sheet.column_dimensions['D'].width = 20  # Target Audience
+        sheet.column_dimensions['E'].width = 15  # Qty (moved before Unit Cost)
+        sheet.column_dimensions['F'].width = 20  # Unit Cost
+        sheet.column_dimensions['G'].width = 20  # Total Cost
+        sheet.column_dimensions['H'].width = 50  # Note
+        
+        # Add title
+        sheet['A1'] = "Summary of All Provinces"
+        sheet['A1'].font = Font(bold=True, size=16)
+        sheet.merge_cells('A1:H1')
+        
+        # Add total cost
+        sheet['A2'] = "Total Project Cost:"
+        sheet['A2'].font = Font(bold=True)
+        sheet['B2'] = self.cost_data.get("total_cost", 0)
+        sheet['B2'].number_format = '#,##0 "VND"'
+        sheet.merge_cells('B2:H2')
+        
+        # Get provinces
+        provinces = self.cost_data.get("provinces", {})
+        province_names = list(provinces.keys())
+        
+        # Add province links section
+        row = 4
+        sheet.cell(row=row, column=1).value = "Province Cost Sheets:"
+        sheet.cell(row=row, column=1).font = Font(bold=True)
+        row += 1
+        
+        # Add hyperlinks to each province sheet
+        for province in province_names:
+            cell = sheet.cell(row=row, column=1)
+            cell.value = f"Go to {province}"
+            # Create internal hyperlink to the province sheet
+            cell.hyperlink = f"#{province}!A1"
+            cell.font = Font(color="0000FF", underline="single")
+            
+            # Add province total cost
+            province_cost = provinces[province].get("total_cost", 0)
+            sheet.cell(row=row, column=2).value = province_cost
+            sheet.cell(row=row, column=2).number_format = '#,##0 "VND"'
+            
+            row += 1
+        
+        row += 2  # Add spacing
+        
+        # Add headers for the main data table
+        headers = [
+            "Subtitle / Component", 
+            "Code", 
+            "Unit",
+            "Target Audience",
+            "Qty",  # Moved before Unit Cost
+            "Unit Cost (VND)",
+            "Total Cost (VND)",
+            "Note"
+        ]
+        
+        header_row = row
+        for col, header in enumerate(headers, 1):
+            cell = sheet.cell(row=header_row, column=col)
+            cell.value = header
+            cell.font = Font(bold=True)
+            cell.alignment = Alignment(horizontal='center', vertical='center')
+            cell.border = Border(
+                left=Side(style='thin'),
+                right=Side(style='thin'),
+                top=Side(style='thin'),
+                bottom=Side(style='thin')
+            )
+        
+        row = header_row + 1  # Start of data rows
+        
+        # Get a combined hierarchy of all provinces
+        combined_hierarchy = self.get_combined_hierarchy(provinces)
+        
+        # Add hierarchical data with totals
+        self.add_combined_hierarchy_totals_to_sheet(sheet, combined_hierarchy, row, 0, provinces)
+        
+        return sheet
+
+    # def create_summary_tab(self):
+    #     """Create a summary tab showing total costs for all provinces."""
+    #     widget = QWidget()
+    #     layout = QVBoxLayout(widget)
+        
+    #     # Create tree widget for summary
+    #     tree = QTreeWidget()
+    #     tree.setHeaderLabels(["Province / Component", "Cost (VND)"])
+    #     tree.setAlternatingRowColors(True)
+    #     tree.header().setSectionResizeMode(0, QHeaderView.Stretch)
+    #     tree.header().setSectionResizeMode(1, QHeaderView.ResizeToContents)
+        
+    #     # Add provinces
+    #     provinces = self.cost_data.get("provinces", {})
+    #     for province, province_data in provinces.items():
+    #         item = QTreeWidgetItem([province, f"{province_data.get('total_cost', 0):,.0f}"])
+    #         item.setTextAlignment(1, Qt.AlignRight | Qt.AlignVCenter)
+    #         tree.addTopLevelItem(item)
+        
+    #     # Add total
+    #     total_item = QTreeWidgetItem(["Total Project Cost", f"{self.cost_data.get('total_cost', 0):,.0f}"])
+    #     total_item.setTextAlignment(1, Qt.AlignRight | Qt.AlignVCenter)
+    #     total_item.setBackground(0, QColor("#ECF0F1"))
+    #     total_item.setBackground(1, QColor("#ECF0F1"))
+    #     font = total_item.font(0)
+    #     font.setBold(True)
+    #     total_item.setFont(0, font)
+    #     total_item.setFont(1, font)
+    #     tree.addTopLevelItem(total_item)
+        
+    #     layout.addWidget(tree)
+    #     return widget
+        
+    # def create_province_tab(self, province, province_data):
+    #     """Create a tab for a specific province."""
+    #     widget = QWidget()
+    #     layout = QVBoxLayout(widget)
+        
+    #     # Province total cost
+    #     # total_cost = province_data.get("total_cost", 0)
+    #     # total_label = QLabel(f"Total Cost for {province}: {total_cost:,.0f} VND")
+    #     # total_label.setStyleSheet("font-weight: bold; font-size: 14px; margin-bottom: 10px;")
+    #     # layout.addWidget(total_label)
+        
+    #     # Create tree widget for costs
+    #     tree = QTreeWidget()
+    #     tree.setHeaderLabels([
+    #         "Subtitle / Component", 
+    #         "Code", 
+    #         "Unit",
+    #         "Target Audience", 
+    #         "Unit Cost (VND)", 
+    #         "Qty", 
+    #         "Total Cost (VND)"
+    #     ])
+    #     tree.setAlternatingRowColors(True)
+        
+    #     # Set column widths
+    #     tree.header().setSectionResizeMode(0, QHeaderView.ResizeToContents)  # Subtitle / Component
+    #     tree.header().setSectionResizeMode(1, QHeaderView.ResizeToContents)  # Code
+    #     tree.header().setSectionResizeMode(2, QHeaderView.ResizeToContents)  # Unit
+    #     tree.header().setSectionResizeMode(3, QHeaderView.ResizeToContents)  # Target Audience
+    #     tree.header().setSectionResizeMode(4, QHeaderView.ResizeToContents)  # Unit Cost
+    #     tree.header().setSectionResizeMode(5, QHeaderView.ResizeToContents)  # Qty
+    #     tree.header().setSectionResizeMode(6, QHeaderView.ResizeToContents)  # Total Cost
+        
+    #     # Set minimum column widths
+    #     tree.setColumnWidth(1, 80)  # Code
+    #     tree.setColumnWidth(2, 80)  # Unit
+    #     tree.setColumnWidth(3, 150)  # Target Audience
+    #     tree.setColumnWidth(4, 120)  # Unit Cost
+    #     tree.setColumnWidth(5, 100)  # Qty
+    #     tree.setColumnWidth(6, 120)  # Total Cost
+        
+    #     # Add cost hierarchy
+    #     self.add_cost_hierarchy(tree, province_data.get("hierarchy", {}))
+        
+    #     layout.addWidget(tree)
+        
+    #     # Expand top-level items
+    #     for i in range(tree.topLevelItemCount()):
+    #         tree.topLevelItem(i).setExpanded(True)
+        
+    #     # Enable custom tooltip handling
+    #     tree.setMouseTracking(True)
+        
+    #     return widget
+    
+    
 
     # def add_cost_hierarchy(self, tree, hierarchy):
     #     """Add improved cost hierarchy to tree widget."""
@@ -394,522 +603,468 @@ class HierarchicalCostResultsDialog(QDialog):
     #         # Add children subtitles recursively
     #         self.add_subtitle_children(subtitle_item, data.get("children", {}))
 
-    def add_subtitle_children(self, parent_item, children):
-        """Add improved subtitle children to tree item."""
-        for subtitle, data in children.items():
-            # Create item for this subtitle
-            subtitle_item = QTreeWidgetItem()
-            subtitle_item.setText(0, subtitle)
-            subtitle_item.setText(6, f"{data.get('cost', 0):,.0f}")
+    # def add_subtitle_children(self, parent_item, children):
+    #     """Add improved subtitle children to tree item."""
+    #     for subtitle, data in children.items():
+    #         # Create item for this subtitle
+    #         subtitle_item = QTreeWidgetItem()
+    #         subtitle_item.setText(0, subtitle)
+    #         subtitle_item.setText(6, f"{data.get('cost', 0):,.0f}")
             
-            # Set text alignment
-            subtitle_item.setTextAlignment(0, Qt.AlignLeft | Qt.AlignVCenter)
-            subtitle_item.setTextAlignment(6, Qt.AlignRight | Qt.AlignVCenter)
+    #         # Set text alignment
+    #         subtitle_item.setTextAlignment(0, Qt.AlignLeft | Qt.AlignVCenter)
+    #         subtitle_item.setTextAlignment(6, Qt.AlignRight | Qt.AlignVCenter)
             
-            # Set subtitle styling
-            font = subtitle_item.font(0)
-            font.setBold(True)
-            subtitle_item.setFont(0, font)
-            subtitle_item.setFont(6, font)
+    #         # Set subtitle styling
+    #         font = subtitle_item.font(0)
+    #         font.setBold(True)
+    #         subtitle_item.setFont(0, font)
+    #         subtitle_item.setFont(6, font)
             
-            # Set a lighter background to differentiate child subtitles
-            subtitle_item.setBackground(0, QColor("#F8F8F8"))
-            subtitle_item.setBackground(6, QColor("#F8F8F8"))
+    #         # Set a lighter background to differentiate child subtitles
+    #         subtitle_item.setBackground(0, QColor("#F8F8F8"))
+    #         subtitle_item.setBackground(6, QColor("#F8F8F8"))
             
-            parent_item.addChild(subtitle_item)
+    #         parent_item.addChild(subtitle_item)
             
-            # Add elements
-            for element in data.get("elements", []):
-                code = element.get("code", "")
+    #         # Add elements
+    #         for element in data.get("elements", []):
+    #             code = element.get("code", "")
                 
-                # Fix for nan values in unit
-                unit = element.get("unit", "")
-                if isinstance(unit, float) and (unit != unit or pd.isna(unit)):  # Check for nan
-                    unit = ""
+    #             # Fix for nan values in unit
+    #             unit = element.get("unit", "")
+    #             if isinstance(unit, float) and (unit != unit or pd.isna(unit)):  # Check for nan
+    #                 unit = ""
                     
-                target_audience = element.get("target_audience", "")
-                if isinstance(target_audience, float) and (target_audience != target_audience or pd.isna(target_audience)):
-                    target_audience = ""
+    #             target_audience = element.get("target_audience", "")
+    #             if isinstance(target_audience, float) and (target_audience != target_audience or pd.isna(target_audience)):
+    #                 target_audience = ""
                 
-                # Convert target_audience to string if it's a dictionary
-                target_audience_str = self._get_target_audience_string(target_audience)
+    #             # Convert target_audience to string if it's a dictionary
+    #             target_audience_str = self._get_target_audience_string(target_audience)
                     
-                base_cost = element.get("base_cost", 0)
-                element_cost = element.get("element_cost", 0)
-                element_cost_formula = element.get("element_cost_formula", "")
-                coefficient = element.get("coefficient", 1.0)
-                coefficient_formula = element.get("coefficient_formula", "")
-                total_cost = element.get("total_cost", 0)
-                level = element.get("level", "")  # Get level if it exists
-                element_name = element.get("name", "")  # Get element name if it exists
-                is_additional_cost = element.get("is_additional_cost", False)  # Check if this is an additional cost
+    #             base_cost = element.get("base_cost", 0)
+    #             element_cost = element.get("element_cost", 0)
+    #             element_cost_formula = element.get("element_cost_formula", "")
+    #             coefficient = element.get("coefficient", 1.0)
+    #             coefficient_formula = element.get("coefficient_formula", "")
+    #             total_cost = element.get("total_cost", 0)
+    #             level = element.get("level", "")  # Get level if it exists
+    #             element_name = element.get("name", "")  # Get element name if it exists
+    #             is_additional_cost = element.get("is_additional_cost", False)  # Check if this is an additional cost
 
-                # Create element item
-                element_item = QTreeWidgetItem()
+    #             # Create element item
+    #             element_item = QTreeWidgetItem()
                 
-                # Set element properties
-                # Add level to element name if it exists
-                if not element_name:
-                    element_name = subtitle
-                if level:
-                    element_name = f"{element_name} ({level})"
-                elif target_audience_str:
-                    element_name = f"{element_name} - {target_audience_str}"
+    #             # Set element properties
+    #             # Add level to element name if it exists
+    #             if not element_name:
+    #                 element_name = subtitle
+    #             if level:
+    #                 element_name = f"{element_name} ({level})"
+    #             elif target_audience_str:
+    #                 element_name = f"{element_name} - {target_audience_str}"
 
-                element_item.setText(0, element_name)
-                element_item.setText(1, str(code))
-                element_item.setText(2, str(unit))  # Ensure it's a string
-                element_item.setText(3, str(target_audience_str))  # Ensure it's a string
-                element_item.setText(4, f"{element_cost:,.0f}")
-                element_item.setText(5, f"{coefficient:.1f}")
-                element_item.setText(6, f"{total_cost:,.0f}")
+    #             element_item.setText(0, element_name)
+    #             element_item.setText(1, str(code))
+    #             element_item.setText(2, str(unit))  # Ensure it's a string
+    #             element_item.setText(3, str(target_audience_str))  # Ensure it's a string
+    #             element_item.setText(4, f"{element_cost:,.0f}")
+    #             element_item.setText(5, f"{coefficient:.1f}")
+    #             element_item.setText(6, f"{total_cost:,.0f}")
                 
-                # Set text alignment
-                element_item.setTextAlignment(1, Qt.AlignCenter)
-                element_item.setTextAlignment(2, Qt.AlignCenter)
-                element_item.setTextAlignment(3, Qt.AlignCenter)
-                element_item.setTextAlignment(4, Qt.AlignRight | Qt.AlignVCenter)
-                element_item.setTextAlignment(5, Qt.AlignRight | Qt.AlignVCenter)
-                element_item.setTextAlignment(6, Qt.AlignRight | Qt.AlignVCenter)
+    #             # Set text alignment
+    #             element_item.setTextAlignment(1, Qt.AlignCenter)
+    #             element_item.setTextAlignment(2, Qt.AlignCenter)
+    #             element_item.setTextAlignment(3, Qt.AlignCenter)
+    #             element_item.setTextAlignment(4, Qt.AlignRight | Qt.AlignVCenter)
+    #             element_item.setTextAlignment(5, Qt.AlignRight | Qt.AlignVCenter)
+    #             element_item.setTextAlignment(6, Qt.AlignRight | Qt.AlignVCenter)
                 
-                # Apply special formatting for additional costs
-                if is_additional_cost:
-                    # Make additional costs bold and add a light background color
-                    for col in range(7):
-                        font = element_item.font(col)
-                        font.setBold(True)
-                        element_item.setFont(col, font)
-                        # Light blue background to distinguish additional costs
-                        element_item.setBackground(col, QColor("#E3F2FD"))
+    #             # Apply special formatting for additional costs
+    #             if is_additional_cost:
+    #                 # Make additional costs bold and add a light background color
+    #                 for col in range(7):
+    #                     font = element_item.font(col)
+    #                     font.setBold(True)
+    #                     element_item.setFont(col, font)
+    #                     # Light blue background to distinguish additional costs
+    #                     element_item.setBackground(col, QColor("#E3F2FD"))
                 
-                # Set tooltips with formulas
-                element_item.setToolTip(4, element_cost_formula)  # Element cost formula on hover
-                element_item.setToolTip(5, coefficient_formula)   # Qty formula on hover
+    #             # Set tooltips with formulas
+    #             element_item.setToolTip(4, element_cost_formula)  # Element cost formula on hover
+    #             element_item.setToolTip(5, coefficient_formula)   # Qty formula on hover
                 
-                subtitle_item.addChild(element_item)
+    #             subtitle_item.addChild(element_item)
             
-            # Add children subtitles recursively
-            self.add_subtitle_children(subtitle_item, data.get("children", {}))
+    #         # Add children subtitles recursively
+    #         self.add_subtitle_children(subtitle_item, data.get("children", {}))
     
-    def export_results(self):
-        """Export cost results to an Excel file."""
-        # Open file save dialog
-        file_path, _ = QFileDialog.getSaveFileName(
-            self,
-            "Export Results",
-            "project_costs.xlsx",
-            "Excel Files (*.xlsx);;All Files (*)"
-        )
+    
+    # def create_project_info_sheet(self, wb, project_model=None):
+    #     """Create and populate the Project Information sheet."""
+    #     # Create sheet
+    #     sheet = wb.create_sheet("Project Information")
         
-        if not file_path:
-            return
+    #     # Set column widths
+    #     sheet.column_dimensions['A'].width = 30
+    #     sheet.column_dimensions['B'].width = 50
         
-        # Ensure .xlsx extension
-        if not file_path.endswith('.xlsx'):
-            file_path += '.xlsx'
+    #     # Add title
+    #     sheet['A1'] = "Project Information"
+    #     sheet['A1'].font = Font(bold=True, size=16)
+    #     sheet.merge_cells('A1:B1')
         
-        # Create a new workbook
-        wb = openpyxl.Workbook()
+    #     row = 3
         
-        # Try to get project model from parent window
-        project_model = None
-        if hasattr(self.parent(), 'project_model'):
-            project_model = self.parent().project_model
+    #     # Add project information
+    #     sheet[f'A{row}'] = "Project Information"
+    #     sheet[f'A{row}'].font = Font(bold=True)
+    #     row += 1
         
-        # Create Project Information sheet
-        self.create_project_info_sheet(wb, project_model)
-        
-        # Create Summary sheet
-        self.create_summary_sheet(wb, project_model)
-        
-        # Create sheets for each province
-        provinces = self.cost_data.get("provinces", {})
-        for province, province_data in provinces.items():
-            self.create_province_sheet(wb, province, province_data)
-        
-        # Remove default sheet
-        if "Sheet" in wb.sheetnames:
-            wb.remove(wb["Sheet"])
-        
-        # Save the workbook
-        try:
-            wb.save(file_path)
-            QMessageBox.information(
-                self,
-                "Export Successful",
-                f"Results exported to {file_path}"
-            )
-        except Exception as e:
-            QMessageBox.critical(
-                self,
-                "Export Error",
-                f"Failed to save file: {str(e)}"
-            )
+    #     # If project_model is available, extract information from it
+    #     if project_model:
+    #         # Extract general information
+    #         general = project_model.general
+            
+    #         # Add project details
+    #         fields = [
+    #             ("Project Name", general.get("project_name", "")),
+    #             ("Project Type", general.get("project_type", "")),
+    #             ("Internal Job", general.get("internal_job", "")),
+    #             ("Symphony", general.get("symphony", "")),
+    #             ("Sampling Method", general.get("sampling_method", "")),
+    #             ("Responsibility Classification", general.get("resp_classification", "")),
+    #             ("Interview Length", f"{general.get('interview_length', 0)} minutes"),
+    #             ("Questionnaire Length", general.get("questionnaire_length", 0)),
+    #             ("Open-ended Questions", general.get("open_ended_count", 0)),
+    #             ("Interview Methods", ", ".join(general.get("interview_methods", []))),
+    #             ("Service Line", general.get("service_line", "")),
+    #             ("Industries", ", ".join(general.get("industries", []))),
+    #             ("Provinces", ", ".join(general.get("provinces", []))),
+    #             ("Sample Types", ", ".join(general.get("sample_types", [])))
+    #         ]
+            
+    #         for field, value in fields:
+    #             sheet[f'A{row}'] = field + ":"
+    #             sheet[f'B{row}'] = value
+    #             row += 1
+            
+    #         # Update Target Audiences section
+    #         if project_model.general.get("target_audiences"):
+    #             row += 2
+    #             sheet[f'A{row}'] = "Target Audiences"
+    #             sheet[f'A{row}'].font = Font(bold=True)
+    #             row += 1
+                
+    #             # Add header for target audiences table
+    #             sheet[f'A{row}'] = "Target Audience"
+    #             sheet[f'B{row}'] = "Representative Price Growth Rate (%)"
+                
+    #             # Style headers
+    #             for col in ['A', 'B']:
+    #                 cell = sheet[f'{col}{row}']
+    #                 cell.font = Font(bold=True)
+    #                 cell.alignment = Alignment(horizontal='center')
+    #                 cell.border = Border(
+    #                     left=Side(style='thin'), right=Side(style='thin'),
+    #                     top=Side(style='thin'), bottom=Side(style='thin')
+    #                 )
+                
+    #             row += 1
+                
+    #             # Check if there are any "All Audiences" elements
+    #             has_aggregated_elements = False
+    #             for province_name, province_data in self.cost_data.get("provinces", {}).items():
+    #                 hierarchy = province_data.get("hierarchy", {})
+    #                 if self._check_for_aggregated_elements(hierarchy):
+    #                     has_aggregated_elements = True
+    #                     break
 
-    def create_project_info_sheet(self, wb, project_model=None):
-        """Create and populate the Project Information sheet."""
-        # Create sheet
-        sheet = wb.create_sheet("Project Information")
-        
-        # Set column widths
-        sheet.column_dimensions['A'].width = 30
-        sheet.column_dimensions['B'].width = 50
-        
-        # Add title
-        sheet['A1'] = "Project Information"
-        sheet['A1'].font = Font(bold=True, size=16)
-        sheet.merge_cells('A1:B1')
-        
-        row = 3
-        
-        # Add project information
-        sheet[f'A{row}'] = "Project Information"
-        sheet[f'A{row}'].font = Font(bold=True)
-        row += 1
-        
-        # If project_model is available, extract information from it
-        if project_model:
-            # Extract general information
-            general = project_model.general
+    #             # Process target audiences (now list of dictionaries)
+    #             provinces = project_model.general.get("provinces", [])
+    #             target_audiences = project_model.general.get("target_audiences", [])
+    #             sample_types = project_model.general.get("sample_types", [])
+                
+    #             # Create list of audiences to show
+    #             audiences_to_show = []
+                
+    #             # Add each target audience dictionary (only if unique combination)
+    #             added_combinations = set()
+    #             for audience_dict in target_audiences:
+    #                 # Create a unique key based on the audience attributes
+    #                 unique_key = (
+    #                     audience_dict.get('name', ''),
+    #                     tuple(audience_dict.get('age_range', [])),
+    #                     tuple(audience_dict.get('income_range', [])),
+    #                     audience_dict.get('incident_rate', 0),
+    #                     audience_dict.get('complexity', '')
+    #                 )
+                    
+    #                 # Only add if this combination hasn't been seen before
+    #                 if unique_key not in added_combinations:
+    #                     added_combinations.add(unique_key)
+    #                     audiences_to_show.append(audience_dict)
+                
+    #             for audience in audiences_to_show:
+    #                 # Handle audience dictionary case
+    #                 audience_display_name = self._get_audience_display_name(audience)
+    #                 representative_growth_rate = self._find_representative_price_growth(
+    #                     audience, provinces, project_model.samples
+    #                 )
+                    
+    #                 # Add target audience row
+    #                 sheet[f'A{row}'] = audience_display_name
+    #                 sheet[f'B{row}'] = representative_growth_rate
+                    
+    #                 # Style cells
+    #                 for col in ['A', 'B']:
+    #                     cell = sheet[f'{col}{row}']
+    #                     cell.border = Border(
+    #                         left=Side(style='thin'), right=Side(style='thin'),
+    #                         top=Side(style='thin'), bottom=Side(style='thin')
+    #                     )
+                    
+    #                 sheet[f'B{row}'].number_format = '0.0'
+    #                 sheet[f'B{row}'].alignment = Alignment(horizontal='right')
+                    
+    #                 row += 1
+                
+    #             # Add HUT information if applicable
+    #             if general.get("hut_test_products", 0) > 0:
+    #                 row += 1
+    #                 sheet[f'A{row}'] = "HUT (Home Use Test)"
+    #                 sheet[f'A{row}'].font = Font(bold=True)
+    #                 row += 1
+                    
+    #                 sheet[f'A{row}'] = "Test Products:"
+    #                 sheet[f'B{row}'] = general.get("hut_test_products", 0)
+    #                 row += 1
+                    
+    #                 sheet[f'A{row}'] = "Usage Duration (days):"
+    #                 sheet[f'B{row}'] = general.get("hut_usage_duration", 0)
+    #                 row += 1
+                
+    #             # Add CLT information if applicable
+    #             if general.get("clt_test_products", 0) > 0:
+    #                 row += 1
+    #                 sheet[f'A{row}'] = "CLT (Central Location Test)"
+    #                 sheet[f'A{row}'].font = Font(bold=True)
+    #                 row += 1
+                    
+    #                 sheet[f'A{row}'] = "Test Products:"
+    #                 sheet[f'B{row}'] = general.get("clt_test_products", 0)
+    #                 row += 1
+                    
+    #                 sheet[f'A{row}'] = "Respondent Visits:"
+    #                 sheet[f'B{row}'] = general.get("clt_respondent_visits", 0)
+    #                 row += 1
+                    
+    #                 sheet[f'A{row}'] = "Sample Size Target per Day:"
+    #                 sheet[f'B{row}'] = general.get("clt_sample_size_per_day", 0)
+    #                 row += 1
+                
+    #             # Add Printer information if applicable
+    #             if any(general.get(field, 0) > 0 for field in ["showcard_page_count", "dropcard_page_count", "color_page_count", "laminated_page_count"]):
+    #                 row += 1
+    #                 sheet[f'A{row}'] = "Printer"
+    #                 sheet[f'A{row}'].font = Font(bold=True)
+    #                 row += 1
+                    
+    #                 sheet[f'A{row}'] = "SHOWCARD Page Count:"
+    #                 sheet[f'B{row}'] = general.get("showcard_page_count", 0)
+    #                 row += 1
+                    
+    #                 sheet[f'A{row}'] = "DROPCARD Page Count:"
+    #                 sheet[f'B{row}'] = general.get("dropcard_page_count", 0)
+    #                 row += 1
+                    
+    #                 sheet[f'A{row}'] = "COLOR Page Count:"
+    #                 sheet[f'B{row}'] = general.get("color_page_count", 0)
+    #                 row += 1
+                    
+    #                 sheet[f'A{row}'] = "Laminated Page Count:"
+    #                 sheet[f'B{row}'] = general.get("laminated_page_count", 0)
+    #                 row += 1
+    #     else:
+    #         # If project_model is not available, add a placeholder
+    #         sheet[f'A{row}'] = "Project model not available"
+    #         row += 1
             
-            # Add project details
-            fields = [
-                ("Project Name", general.get("project_name", "")),
-                ("Project Type", general.get("project_type", "")),
-                ("Internal Job", general.get("internal_job", "")),
-                ("Symphony", general.get("symphony", "")),
-                ("Sampling Method", general.get("sampling_method", "")),
-                ("Responsibility Classification", general.get("resp_classification", "")),
-                ("Interview Length", f"{general.get('interview_length', 0)} minutes"),
-                ("Questionnaire Length", general.get("questionnaire_length", 0)),
-                ("Open-ended Questions", general.get("open_ended_count", 0)),
-                ("Interview Methods", ", ".join(general.get("interview_methods", []))),
-                ("Service Line", general.get("service_line", "")),
-                ("Industries", ", ".join(general.get("industries", []))),
-                ("Provinces", ", ".join(general.get("provinces", []))),
-                ("Sample Types", ", ".join(general.get("sample_types", [])))
-            ]
+    #     # Add section header for Samples information
+    #     if hasattr(project_model, 'samples') and project_model.samples:
+    #         row += 2
+    #         sheet[f'A{row}'] = "Samples Information"
+    #         sheet[f'A{row}'].font = Font(bold=True)
+    #         row += 1
             
-            for field, value in fields:
-                sheet[f'A{row}'] = field + ":"
-                sheet[f'B{row}'] = value
-                row += 1
+    #         # Add header for the sample summary table
+    #         headers = ["Province", "Total Sample Size", "Comments"]
             
-            # Update Target Audiences section
-            if project_model.general.get("target_audiences"):
-                row += 2
-                sheet[f'A{row}'] = "Target Audiences"
-                sheet[f'A{row}'].font = Font(bold=True)
-                row += 1
+    #         for col_idx, header in enumerate(headers):
+    #             col_letter = chr(65 + col_idx)  # A, B, C
+    #             cell = sheet[f'{col_letter}{row}']
+    #             cell.value = header
+    #             cell.font = Font(bold=True)
+    #             cell.alignment = Alignment(horizontal='center')
+    #             cell.border = Border(
+    #                 left=Side(style='thin'), right=Side(style='thin'),
+    #                 top=Side(style='thin'), bottom=Side(style='thin')
+    #             )
                 
-                # Add header for target audiences table
-                sheet[f'A{row}'] = "Target Audience"
-                sheet[f'B{row}'] = "Representative Price Growth Rate (%)"
-                
-                # Style headers
-                for col in ['A', 'B']:
-                    cell = sheet[f'{col}{row}']
-                    cell.font = Font(bold=True)
-                    cell.alignment = Alignment(horizontal='center')
-                    cell.border = Border(
-                        left=Side(style='thin'), right=Side(style='thin'),
-                        top=Side(style='thin'), bottom=Side(style='thin')
-                    )
-                
-                row += 1
-                
-                # Check if there are any "All Audiences" elements
-                has_aggregated_elements = False
-                for province_name, province_data in self.cost_data.get("provinces", {}).items():
-                    hierarchy = province_data.get("hierarchy", {})
-                    if self._check_for_aggregated_elements(hierarchy):
-                        has_aggregated_elements = True
-                        break
-
-                # Process target audiences (now list of dictionaries)
-                provinces = project_model.general.get("provinces", [])
-                target_audiences = project_model.general.get("target_audiences", [])
-                sample_types = project_model.general.get("sample_types", [])
-                
-                # Create list of audiences to show
-                audiences_to_show = []
-                
-                # Add each target audience dictionary (only if unique combination)
-                added_combinations = set()
-                for audience_dict in target_audiences:
-                    # Create a unique key based on the audience attributes
-                    unique_key = (
-                        audience_dict.get('name', ''),
-                        tuple(audience_dict.get('age_range', [])),
-                        tuple(audience_dict.get('income_range', [])),
-                        audience_dict.get('incident_rate', 0),
-                        audience_dict.get('complexity', '')
-                    )
-                    
-                    # Only add if this combination hasn't been seen before
-                    if unique_key not in added_combinations:
-                        added_combinations.add(unique_key)
-                        audiences_to_show.append(audience_dict)
-                
-                for audience in audiences_to_show:
-                    # Handle audience dictionary case
-                    audience_display_name = self._get_audience_display_name(audience)
-                    representative_growth_rate = self._find_representative_price_growth(
-                        audience, provinces, project_model.samples
-                    )
-                    
-                    # Add target audience row
-                    sheet[f'A{row}'] = audience_display_name
-                    sheet[f'B{row}'] = representative_growth_rate
-                    
-                    # Style cells
-                    for col in ['A', 'B']:
-                        cell = sheet[f'{col}{row}']
-                        cell.border = Border(
-                            left=Side(style='thin'), right=Side(style='thin'),
-                            top=Side(style='thin'), bottom=Side(style='thin')
-                        )
-                    
-                    sheet[f'B{row}'].number_format = '0.0'
-                    sheet[f'B{row}'].alignment = Alignment(horizontal='right')
-                    
-                    row += 1
-                
-                # Add HUT information if applicable
-                if general.get("hut_test_products", 0) > 0:
-                    row += 1
-                    sheet[f'A{row}'] = "HUT (Home Use Test)"
-                    sheet[f'A{row}'].font = Font(bold=True)
-                    row += 1
-                    
-                    sheet[f'A{row}'] = "Test Products:"
-                    sheet[f'B{row}'] = general.get("hut_test_products", 0)
-                    row += 1
-                    
-                    sheet[f'A{row}'] = "Usage Duration (days):"
-                    sheet[f'B{row}'] = general.get("hut_usage_duration", 0)
-                    row += 1
-                
-                # Add CLT information if applicable
-                if general.get("clt_test_products", 0) > 0:
-                    row += 1
-                    sheet[f'A{row}'] = "CLT (Central Location Test)"
-                    sheet[f'A{row}'].font = Font(bold=True)
-                    row += 1
-                    
-                    sheet[f'A{row}'] = "Test Products:"
-                    sheet[f'B{row}'] = general.get("clt_test_products", 0)
-                    row += 1
-                    
-                    sheet[f'A{row}'] = "Respondent Visits:"
-                    sheet[f'B{row}'] = general.get("clt_respondent_visits", 0)
-                    row += 1
-                    
-                    sheet[f'A{row}'] = "Sample Size Target per Day:"
-                    sheet[f'B{row}'] = general.get("clt_sample_size_per_day", 0)
-                    row += 1
-                
-                # Add Printer information if applicable
-                if any(general.get(field, 0) > 0 for field in ["showcard_page_count", "dropcard_page_count", "color_page_count", "laminated_page_count"]):
-                    row += 1
-                    sheet[f'A{row}'] = "Printer"
-                    sheet[f'A{row}'].font = Font(bold=True)
-                    row += 1
-                    
-                    sheet[f'A{row}'] = "SHOWCARD Page Count:"
-                    sheet[f'B{row}'] = general.get("showcard_page_count", 0)
-                    row += 1
-                    
-                    sheet[f'A{row}'] = "DROPCARD Page Count:"
-                    sheet[f'B{row}'] = general.get("dropcard_page_count", 0)
-                    row += 1
-                    
-                    sheet[f'A{row}'] = "COLOR Page Count:"
-                    sheet[f'B{row}'] = general.get("color_page_count", 0)
-                    row += 1
-                    
-                    sheet[f'A{row}'] = "Laminated Page Count:"
-                    sheet[f'B{row}'] = general.get("laminated_page_count", 0)
-                    row += 1
-        else:
-            # If project_model is not available, add a placeholder
-            sheet[f'A{row}'] = "Project model not available"
-            row += 1
+    #             # Set column widths
+    #             if col_idx == 0:  # Province
+    #                 sheet.column_dimensions[col_letter].width = 20
+    #             elif col_idx == 1:  # Total Sample Size
+    #                 sheet.column_dimensions[col_letter].width = 15
+    #             else:  # Comments
+    #                 sheet.column_dimensions[col_letter].width = 50
             
-        # Add section header for Samples information
-        if hasattr(project_model, 'samples') and project_model.samples:
-            row += 2
-            sheet[f'A{row}'] = "Samples Information"
-            sheet[f'A{row}'].font = Font(bold=True)
-            row += 1
+    #         row += 1
             
-            # Add header for the sample summary table
-            headers = ["Province", "Total Sample Size", "Comments"]
+    #         # Process samples with new structure (list of sample entries per province)
+    #         provinces = project_model.general.get("provinces", [])
+    #         target_audiences = project_model.general.get("target_audiences", [])
             
-            for col_idx, header in enumerate(headers):
-                col_letter = chr(65 + col_idx)  # A, B, C
-                cell = sheet[f'{col_letter}{row}']
-                cell.value = header
-                cell.font = Font(bold=True)
-                cell.alignment = Alignment(horizontal='center')
-                cell.border = Border(
-                    left=Side(style='thin'), right=Side(style='thin'),
-                    top=Side(style='thin'), bottom=Side(style='thin')
-                )
+    #         for province in provinces:
+    #             total_sample_size = 0
+    #             comments = []
                 
-                # Set column widths
-                if col_idx == 0:  # Province
-                    sheet.column_dimensions[col_letter].width = 20
-                elif col_idx == 1:  # Total Sample Size
-                    sheet.column_dimensions[col_letter].width = 15
-                else:  # Comments
-                    sheet.column_dimensions[col_letter].width = 50
-            
-            row += 1
-            
-            # Process samples with new structure (list of sample entries per province)
-            provinces = project_model.general.get("provinces", [])
-            target_audiences = project_model.general.get("target_audiences", [])
-            
-            for province in provinces:
-                total_sample_size = 0
-                comments = []
-                
-                # Calculate total sample size and collect comments from list structure
-                if province in project_model.samples:
-                    for sample_entry_key, sample_entry_value in project_model.samples[province].items():
-                        sample_size = sample_entry_value.get("sample_size", 0)
-                        total_sample_size += sample_size
+    #             # Calculate total sample size and collect comments from list structure
+    #             if province in project_model.samples:
+    #                 for sample_entry_key, sample_entry_value in project_model.samples[province].items():
+    #                     sample_size = sample_entry_value.get("sample_size", 0)
+    #                     total_sample_size += sample_size
                         
-                        # Collect comments related to sample size and price growth
-                        if "comment" in sample_entry_value:
-                            comment_dict = sample_entry_value["comment"]
-                            audience_name = sample_entry_value.get("name", "")
-                            sample_type = sample_entry_value.get("sample_type", "")
+    #                     # Collect comments related to sample size and price growth
+    #                     if "comment" in sample_entry_value:
+    #                         comment_dict = sample_entry_value["comment"]
+    #                         audience_name = sample_entry_value.get("name", "")
+    #                         sample_type = sample_entry_value.get("sample_type", "")
                             
-                            if "sample_size" in comment_dict:
-                                comments.append(f"{audience_name} - {sample_type} - Sample Size: {comment_dict['sample_size']}")
-                            if "price_growth" in comment_dict:
-                                comments.append(f"{audience_name} - {sample_type} - Price Growth: {comment_dict['price_growth']}")
+    #                         if "sample_size" in comment_dict:
+    #                             comments.append(f"{audience_name} - {sample_type} - Sample Size: {comment_dict['sample_size']}")
+    #                         if "price_growth" in comment_dict:
+    #                             comments.append(f"{audience_name} - {sample_type} - Price Growth: {comment_dict['price_growth']}")
                 
-                # Add province row
-                sheet[f'A{row}'] = province
-                sheet[f'B{row}'] = total_sample_size
-                sheet[f'C{row}'] = "\n".join(comments)
+    #             # Add province row
+    #             sheet[f'A{row}'] = province
+    #             sheet[f'B{row}'] = total_sample_size
+    #             sheet[f'C{row}'] = "\n".join(comments)
                 
-                # Style cells
-                for col in ['A', 'B', 'C']:
-                    cell = sheet[f'{col}{row}']
-                    cell.border = Border(
-                        left=Side(style='thin'), right=Side(style='thin'),
-                        top=Side(style='thin'), bottom=Side(style='thin')
-                    )
+    #             # Style cells
+    #             for col in ['A', 'B', 'C']:
+    #                 cell = sheet[f'{col}{row}']
+    #                 cell.border = Border(
+    #                     left=Side(style='thin'), right=Side(style='thin'),
+    #                     top=Side(style='thin'), bottom=Side(style='thin')
+    #                 )
                 
-                sheet[f'B{row}'].alignment = Alignment(horizontal='right')
-                sheet[f'C{row}'].alignment = Alignment(wrap_text=True)
+    #             sheet[f'B{row}'].alignment = Alignment(horizontal='right')
+    #             sheet[f'C{row}'].alignment = Alignment(wrap_text=True)
                 
-                row += 1
+    #             row += 1
         
-        # Add QC Method information
-        if project_model and hasattr(project_model, 'qc_methods') and project_model.qc_methods:
-            row += 2
-            sheet[f'A{row}'] = "QC Methods"
-            sheet[f'A{row}'].font = Font(bold=True)
-            row += 1
+    #     # Add QC Method information
+    #     if project_model and hasattr(project_model, 'qc_methods') and project_model.qc_methods:
+    #         row += 2
+    #         sheet[f'A{row}'] = "QC Methods"
+    #         sheet[f'A{row}'].font = Font(bold=True)
+    #         row += 1
             
-            # Add header for QC methods table
-            sheet[f'A{row}'] = "Team"
-            sheet[f'B{row}'] = "Method"
-            sheet[f'C{row}'] = "Rate (%)"
+    #         # Add header for QC methods table
+    #         sheet[f'A{row}'] = "Team"
+    #         sheet[f'B{row}'] = "Method"
+    #         sheet[f'C{row}'] = "Rate (%)"
             
-            # Style headers
-            for col in ['A', 'B', 'C']:
-                cell = sheet[f'{col}{row}']
-                cell.font = Font(bold=True)
-                cell.alignment = Alignment(horizontal='center')
-                cell.border = Border(
-                    left=Side(style='thin'), right=Side(style='thin'),
-                    top=Side(style='thin'), bottom=Side(style='thin')
-                )
+    #         # Style headers
+    #         for col in ['A', 'B', 'C']:
+    #             cell = sheet[f'{col}{row}']
+    #             cell.font = Font(bold=True)
+    #             cell.alignment = Alignment(horizontal='center')
+    #             cell.border = Border(
+    #                 left=Side(style='thin'), right=Side(style='thin'),
+    #                 top=Side(style='thin'), bottom=Side(style='thin')
+    #             )
             
-            row += 1
+    #         row += 1
             
-            # Add QC methods
-            for qc_method in project_model.qc_methods:
-                sheet[f'A{row}'] = qc_method.get("team", "")
-                sheet[f'B{row}'] = qc_method.get("method", "")
-                sheet[f'C{row}'] = qc_method.get("rate", 0)
+    #         # Add QC methods
+    #         for qc_method in project_model.qc_methods:
+    #             sheet[f'A{row}'] = qc_method.get("team", "")
+    #             sheet[f'B{row}'] = qc_method.get("method", "")
+    #             sheet[f'C{row}'] = qc_method.get("rate", 0)
                 
-                # Style cells
-                for col in ['A', 'B', 'C']:
-                    cell = sheet[f'{col}{row}']
-                    cell.border = Border(
-                        left=Side(style='thin'), right=Side(style='thin'),
-                        top=Side(style='thin'), bottom=Side(style='thin')
-                    )
+    #             # Style cells
+    #             for col in ['A', 'B', 'C']:
+    #                 cell = sheet[f'{col}{row}']
+    #                 cell.border = Border(
+    #                     left=Side(style='thin'), right=Side(style='thin'),
+    #                     top=Side(style='thin'), bottom=Side(style='thin')
+    #                 )
                 
-                sheet[f'C{row}'].alignment = Alignment(horizontal='right')
+    #             sheet[f'C{row}'].alignment = Alignment(horizontal='right')
                 
-                row += 1
+    #             row += 1
         
-        # Add section header for cost summary
-        row += 2
-        sheet[f'A{row}'] = "Cost Summary"
-        sheet[f'A{row}'].font = Font(bold=True)
-        row += 1
+    #     # Add section header for cost summary
+    #     row += 2
+    #     sheet[f'A{row}'] = "Cost Summary"
+    #     sheet[f'A{row}'].font = Font(bold=True)
+    #     row += 1
         
-        # Add total project cost
-        sheet[f'A{row}'] = "Total Project Cost:"
-        sheet[f'B{row}'] = self.cost_data.get("total_cost", 0)
-        sheet[f'B{row}'].number_format = '#,##0 "VND"'
-        row += 1
+    #     # Add total project cost
+    #     sheet[f'A{row}'] = "Total Project Cost:"
+    #     sheet[f'B{row}'] = self.cost_data.get("total_cost", 0)
+    #     sheet[f'B{row}'].number_format = '#,##0 "VND"'
+    #     row += 1
         
-        # Add costs by province
-        provinces = self.cost_data.get("provinces", {})
-        for province, province_data in provinces.items():
-            sheet[f'A{row}'] = f"{province} Cost:"
-            sheet[f'B{row}'] = province_data.get("total_cost", 0)
-            sheet[f'B{row}'].number_format = '#,##0 "VND"'
-            row += 1
+    #     # Add costs by province
+    #     provinces = self.cost_data.get("provinces", {})
+    #     for province, province_data in provinces.items():
+    #         sheet[f'A{row}'] = f"{province} Cost:"
+    #         sheet[f'B{row}'] = province_data.get("total_cost", 0)
+    #         sheet[f'B{row}'].number_format = '#,##0 "VND"'
+    #         row += 1
 
-    def _get_audience_display_name(self, audience_dict):
-        """Get display name for an audience dictionary."""
-        if isinstance(audience_dict, str):
-            return audience_dict
+    # def _get_audience_display_name(self, audience_dict):
+    #     """Get display name for an audience dictionary."""
+    #     if isinstance(audience_dict, str):
+    #         return audience_dict
         
-        name = audience_dict.get('name', '')
-        age_range = audience_dict.get('age_range', [])
-        income_range = audience_dict.get('income_range', [])
-        incident_rate = audience_dict.get('incident_rate', 0)
-        complexity = audience_dict.get('complexity', '')
+    #     name = audience_dict.get('name', '')
+    #     age_range = audience_dict.get('age_range', [])
+    #     income_range = audience_dict.get('income_range', [])
+    #     incident_rate = audience_dict.get('incident_rate', 0)
+    #     complexity = audience_dict.get('complexity', '')
         
-        return f"{name} - Age {age_range} - Income {income_range} - IR {incident_rate} - Complexity: {complexity}"
+    #     return f"{name} - Age {age_range} - Income {income_range} - IR {incident_rate} - Complexity: {complexity}"
 
-    def _find_representative_price_growth(self, audience_dict, provinces, samples):
-        """Find representative price growth rate for an audience dictionary."""
-        representative_growth_rate = 0.0
+    # def _find_representative_price_growth(self, audience_dict, provinces, samples):
+    #     """Find representative price growth rate for an audience dictionary."""
+    #     representative_growth_rate = 0.0
         
-        # Search through the new list-based samples structure
-        for province in provinces:
-            if province in samples:
-                for sample_entry_key, sample_entry_value in samples[province].items():
-                    # Check if this sample entry matches the audience criteria
-                    if self._audience_matches(audience_dict, sample_entry_value):
-                        representative_growth_rate = sample_entry_value.get("price_growth", 0.0)
-                        if representative_growth_rate > 0:
-                            return representative_growth_rate
+    #     # Search through the new list-based samples structure
+    #     for province in provinces:
+    #         if province in samples:
+    #             for sample_entry_key, sample_entry_value in samples[province].items():
+    #                 # Check if this sample entry matches the audience criteria
+    #                 if self._audience_matches(audience_dict, sample_entry_value):
+    #                     representative_growth_rate = sample_entry_value.get("price_growth", 0.0)
+    #                     if representative_growth_rate > 0:
+    #                         return representative_growth_rate
         
-        return representative_growth_rate
+    #     return representative_growth_rate
 
-    def _audience_matches(self, audience_dict, sample_entry):
-        """Check if a sample entry matches the audience criteria."""
-        return (
-            sample_entry.get('name') == audience_dict.get('name') and
-            sample_entry.get('age_range') == audience_dict.get('age_range') and
-            sample_entry.get('income_range') == audience_dict.get('income_range') and
-            sample_entry.get('incident_rate') == audience_dict.get('incident_rate') and
-            sample_entry.get('complexity') == audience_dict.get('complexity')
-        )
+    # def _audience_matches(self, audience_dict, sample_entry):
+    #     """Check if a sample entry matches the audience criteria."""
+    #     return (
+    #         sample_entry.get('name') == audience_dict.get('name') and
+    #         sample_entry.get('age_range') == audience_dict.get('age_range') and
+    #         sample_entry.get('income_range') == audience_dict.get('income_range') and
+    #         sample_entry.get('incident_rate') == audience_dict.get('incident_rate') and
+    #         sample_entry.get('complexity') == audience_dict.get('complexity')
+    #     )
     
     def create_summary_sheet(self, wb, project_model=None):
         """Create and populate the Summary sheet with total costs across all provinces."""

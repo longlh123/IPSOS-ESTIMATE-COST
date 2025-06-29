@@ -1,36 +1,36 @@
 {
   "general": {
-    "internal_job": "2025-054",
-    "symphony": "999999",
-    "project_name": "BAOBINH",
-    "project_type": "F2F/D2D",
+    "internal_job": "2025-029",
+    "symphony": "99999999",
+    "project_name": "CHIZU",
+    "project_type": "CLT",
     "clients": [
       "TÂN HIỆP PHÁT"
     ],
-    "project_objectives": "- Người có dùng các sản phẩm chăm sóc sức khỏe, bao gồm: bao cao su, băng keo cá nhân, miếng dán giảm đau (Salonpas, Tiger balm, Fujisip), khẩu trang y tế các loại, vitamin các loại, thực phẩm chức năng,…..\n- Tâm lý người tiêu dùng/ Psychographics:\nNgười tiêu dùng chú trọng đến sức khỏe, nhạy cảm với giá cả và mong đợi sản phẩm có chất lượng cao cấp\nChấp nhận giải pháp sức khỏe hiện đại và thảo dược truyền thống\nƯa thích thiết kế mang nhiều thông tin và hấp dẫn, có xu hướng mua sản phẩm được gợi ý bởi dược sĩ, KOLs, bạn bè và gia đình\n\n- Các ngành hàng:\n\n1. MULTI-VITAMINS: Vitamin tổng hợp dành cho người lớn\n2. KIDS (+2 yrs): Thực phẩm chức năng cho trẻ em trên 2 tuổi\n3. LUNGS : Thực phẩm chức năng cho phổi \n4. BONE & JOINT: Sản phẩm bổ sung canxi \n5. CIRCULATION: Sản phẩm dưỡng não/hệ tuần hoàn máu não (vd. Hoạt huyết dưỡng não)\n6. DIGESTION: Thực phẩm chức năng cho tiêu hóa (vd. Men vi sinh)\n7. LIVER: Thực phẩm chức năng dành cho gan\n8. BEAUTY ( SKIN + HAIR): Thực phẩm chức năng cho da & tóc\n9. BRAIN: Thực phẩm chức năng dành cho não\n",
+    "project_objectives": "Mục tiêu: Đánh giá sản phẩm bánh snack.\nĐối tượng:\nGiới tính: nam (50%), nữ (50%)\nTuổi: 18-25 (50%), 26-34 (50%)\nClass: AB (tỉ lệ theo population)\nBUMO:\n50% người dùng nhãn hiệu Slide với tần suất ít nhất 1 lần/ 2 tuần\n50% người dùng nhãn hiệu snack khoai tây vị phô mai khác (Pringles/Jacker hoặc Mr Potato) với tần suất ít nhất 1 lần/ 2 tuần \nLà người có nhận biết snack nhãn hiệu Lays và không từ chối mua nhãn hiệu này.\nLà người không từ chối sử dụng snack khoai tây vị phô mai.\n",
     "platform": "iField",
     "interview_methods": [
       "CAPI"
     ],
     "sampling_method": "Random sampling",
     "recruit_method": [
-      "Client List"
+      "FW free find/ FW connection"
     ],
-    "type_of_quota_control": "Parallel Fixed Quota",
+    "type_of_quota_control": "No Quota",
     "quota_description": [],
-    "service_line": "HEC",
+    "service_line": "INNO",
     "provinces": [
-      "Cần Thơ",
-      "Đà Nẵng",
       "Hà Nội",
-      "Hồ Chí Minh City"
+      "Hồ Chí Minh"
     ],
     "sample_types": [
+      "Pilot",
       "Main",
-      "Boosters"
+      "Booster",
+      "Non"
     ],
     "industries": [
-      "Thuốc"
+      "Thực phẩm - Đồ ăn nhẹ"
     ],
     "target_audiences": [
       {
@@ -38,68 +38,269 @@
           0,
           0
         ],
+        "comment": {},
         "complexity": "Standard",
         "daily_sup_target": 0,
         "description": "",
+        "extra_rate": 5,
         "gender": "Both",
+        "id": null,
         "incident_rate": 100,
         "income_range": [
           0,
           0
         ],
-        "name": "Thuốc (nói chung)",
-        "price": 350000,
-        "sample_size": 12,
+        "name": "Người dùng Sản phẩm về bánh kẹo nói chung",
+        "pricing": [
+          {
+            "comment": {},
+            "price": 84000,
+            "price_growth": 0,
+            "type": "recruit"
+          },
+          {
+            "comment": {},
+            "price": 25000,
+            "price_growth": 0,
+            "type": "location"
+          }
+        ],
+        "sample_size": 100,
         "sample_type": "Main",
-        "target_for_interviewers": 2
+        "target_for_interviewer": 2
       },
       {
         "age_range": [
           0,
           0
         ],
+        "comment": {},
         "complexity": "Standard",
         "daily_sup_target": 0,
         "description": "",
+        "extra_rate": 0,
         "gender": "Both",
+        "id": null,
         "incident_rate": 100,
         "income_range": [
           0,
           0
         ],
-        "name": "Thuốc điều trị viêm mũi dị ứng",
-        "price": 142500,
-        "sample_size": 21,
-        "sample_type": "Main",
-        "target_for_interviewers": 2
+        "name": "Người dùng Sản phẩm về bánh kẹo nói chung",
+        "pricing": [
+          {
+            "comment": {},
+            "price": 0,
+            "price_growth": 0,
+            "type": "pilot"
+          }
+        ],
+        "sample_size": 2,
+        "sample_type": "Pilot",
+        "target_for_interviewer": 2
+      },
+      {
+        "age_range": [
+          0,
+          0
+        ],
+        "comment": {},
+        "complexity": "Standard",
+        "daily_sup_target": 0,
+        "description": "",
+        "extra_rate": 0,
+        "gender": "Both",
+        "id": null,
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Người dùng Sản phẩm về bánh kẹo nói chung",
+        "pricing": [
+          {
+            "comment": {},
+            "price": 15000,
+            "price_growth": 0,
+            "type": "non"
+          }
+        ],
+        "sample_size": 100,
+        "sample_type": "Non",
+        "target_for_interviewer": 2
+      },
+      {
+        "age_range": [
+          0,
+          0
+        ],
+        "comment": {},
+        "complexity": "Standard",
+        "daily_sup_target": 0,
+        "description": "",
+        "extra_rate": 10,
+        "gender": "Both",
+        "id": null,
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Người dùng Sản phẩm bánh Snack",
+        "pricing": [
+          {
+            "comment": {},
+            "price": 115000,
+            "price_growth": 0,
+            "type": "recruit"
+          },
+          {
+            "comment": {},
+            "price": 41000,
+            "price_growth": 0,
+            "type": "location"
+          }
+        ],
+        "sample_size": 100,
+        "sample_type": "Booster",
+        "target_for_interviewer": 2
       }
     ],
-    "interview_length": 0,
-    "questionnaire_length": 0,
-    "hut_test_products": 0,
-    "hut_usage_duration": 0,
-    "clt_test_products": 0,
-    "clt_respondent_visits": 0,
-    "clt_sample_size_per_day": 0,
+    "interview_length": 60,
+    "questionnaire_length": 4,
+    "device_type": "Tablet < 9 inch",
+    "tablet_usage_duration": "<= 15 phút",
+    "bw_page_count": 10,
+    "showphoto_page_count": 0,
     "showcard_page_count": 0,
     "dropcard_page_count": 0,
     "color_page_count": 0,
+    "decal_page_count": 0,
     "laminated_page_count": 0,
-    "scripting": false,
-    "data_processing": false,
+    "interview_form_package_count": 0,
+    "stimulus_material_production_count": 0,
+    "scripting": true,
+    "data_processing": true,
     "coding": true,
-    "open_ended_main_count": 5,
+    "open_ended_main_count": 0,
     "open_ended_booster_count": 0,
-    "data_processing_method": []
+    "data_processing_method": [
+      "TOPLINE",
+      "SPSS"
+    ]
+  },
+  "clt_settings": {
+    "clt_test_products": 2,
+    "clt_respondent_visits": 0,
+    "clt_failure_rate": 10,
+    "clt_sample_recruit_idi": 1,
+    "clt_assistant_setup_days": 1,
+    "clt_dan_mau_days": 2,
+    "clt_sample_size_per_day": 45,
+    "clt_desk_interviewers_count": 2,
+    "clt_provincial_desk_interviewers_count": 0
+  },
+  "hut_settings": {
+    "hut_test_products": 0,
+    "hut_usage_duration": 0
+  },
+  "cost_toggles": {
+    "device_rental_costs": {
+      "Chi phí thuê tablet < 9 inch": true,
+      "Chi phí thuê tablet >= 9 inch": false,
+      "Chi phí thuê laptop": false
+    },
+    "idi_costs": {
+      "Chi phí Tuyển đáp viên IDI": false,
+      "Chi phí Quản lý IDI": false,
+      "Chi phí QC - IDI": false,
+      "Quà Phiếu PV - IDI": false
+    },
+    "failure_rate_costs": {
+      "Chi phí Phiếu PV - Bài rớt giữa chừng": true
+    },
+    "qc_method_costs": {
+      "Chi phí QC - In home": true,
+      "Chi phí QC - In Location": true,
+      "Chi phí QC - DP": false,
+      "Chi phí thuê laptop": true,
+      "Chi phí Quản lý - On-field": true
+    },
+    "incentive_costs": {
+      "Quà Phiếu PV - Pilot": true,
+      "Quà Phiếu PV - Main": true,
+      "Quà Phiếu PV - Booster": true,
+      "Quà Phiếu PV - Non": true
+    },
+    "stationary_costs": {
+      "Photo trắng đen": true,
+      "Showphoto": false,
+      "Showcard": false,
+      "Dropcard": false,
+      "In màu \\ In concept": false,
+      "Decal": false,
+      "Ép Plastic": false,
+      "Hồ sơ biểu mẫu": false,
+      "Chi phí đóng cuốn": false
+    }
   },
   "settings": {
     "interviewers_per_supervisor": 8,
-    "bw_photo_fee": 250,
-    "color_photo_fee": 5000,
-    "lamination_fee": 4000,
-    "dropcard_fee": 1000,
     "parking_fee": 5000,
     "distant_district_fee": 5000,
+    "stationary": {
+      "Hồ Chí Minh": {
+        "bw_photo_fee": 350,
+        "showphoto_fee": 2500,
+        "showcard_fee": 4000,
+        "decal_fee": 3500,
+        "color_photo_fee": 2500,
+        "lamination_fee": 6000,
+        "dropcard_fee": 9000
+      },
+      "Hà Nội": {
+        "bw_photo_fee": 400,
+        "showphoto_fee": 3000,
+        "showcard_fee": 6000,
+        "decal_fee": 2500,
+        "color_photo_fee": 3000,
+        "lamination_fee": 5000,
+        "dropcard_fee": 9000
+      },
+      "Đà Nẵng": {
+        "bw_photo_fee": 450,
+        "showphoto_fee": 2500,
+        "showcard_fee": 4000,
+        "decal_fee": 3500,
+        "color_photo_fee": 3500,
+        "lamination_fee": 7000,
+        "dropcard_fee": 9000
+      },
+      "Cần Thơ": {
+        "bw_photo_fee": 400,
+        "showphoto_fee": 2500,
+        "showcard_fee": 3500,
+        "decal_fee": 3500,
+        "color_photo_fee": 2500,
+        "lamination_fee": 6000,
+        "dropcard_fee": 9000
+      },
+      "Others": {
+        "bw_photo_fee": 350,
+        "showphoto_fee": 2500,
+        "showcard_fee": 4000,
+        "decal_fee": 3500,
+        "color_photo_fee": 2500,
+        "lamination_fee": 6000,
+        "dropcard_fee": 9000
+      }
+    },
+    "transportation": {
+      "Others": {
+        "flight": 1000000,
+        "train": 400000
+      }
+    },
     "travel_junior_hotel": 500000,
     "travel_junior_food": 500000,
     "travel_senior_hotel": 1000000,
@@ -110,255 +311,313 @@
     "travel_director_food": 1200000
   },
   "samples": {
-    "Cần Thơ": {
-      "Main - Thuốc (nói chung)": {
-        "name": "Thuốc (nói chung)",
-        "sample_type": "Main",
-        "sample_size": 12,
-        "price": 350000,
-        "price_growth": 110.0,
-        "target_for_interviewers": 2,
-        "daily_sup_target": 0.75,
-        "gender": "Both",
-        "age_range": [
-          0,
-          0
-        ],
-        "income_range": [
-          0,
-          0
-        ],
-        "incident_rate": 100,
-        "complexity": "Standard",
-        "description": "",
-        "comment": {
-          "price_growth": "fadf asdfa dsf"
-        }
-      },
-      "Main - Thuốc điều trị viêm mũi dị ứng": {
-        "age_range": [
-          0,
-          0
-        ],
-        "complexity": "Standard",
-        "daily_sup_target": 1.31,
-        "description": "",
-        "gender": "Both",
-        "incident_rate": 100,
-        "income_range": [
-          0,
-          0
-        ],
-        "name": "Thuốc điều trị viêm mũi dị ứng",
-        "price": 142500,
-        "sample_size": 21,
-        "sample_type": "Main",
-        "target_for_interviewers": 2,
-        "price_growth": 100.0,
-        "comment": {}
-      }
-    },
-    "Đà Nẵng": {
-      "Main - Thuốc (nói chung)": {
-        "name": "Thuốc (nói chung)",
-        "sample_type": "Main",
-        "sample_size": 12,
-        "price": 350000,
-        "price_growth": 100.0,
-        "target_for_interviewers": 2,
-        "daily_sup_target": 0.75,
-        "gender": "Both",
-        "age_range": [
-          0,
-          0
-        ],
-        "income_range": [
-          0,
-          0
-        ],
-        "incident_rate": 100,
-        "complexity": "Standard",
-        "description": "",
-        "comment": {
-          "interviewer_target": "zxcsdvag fd"
-        }
-      },
-      "Main - Thuốc điều trị viêm mũi dị ứng": {
-        "age_range": [
-          0,
-          0
-        ],
-        "complexity": "Standard",
-        "daily_sup_target": 1.31,
-        "description": "",
-        "gender": "Both",
-        "incident_rate": 100,
-        "income_range": [
-          0,
-          0
-        ],
-        "name": "Thuốc điều trị viêm mũi dị ứng",
-        "price": 142500,
-        "sample_size": 21,
-        "sample_type": "Main",
-        "target_for_interviewers": 2,
-        "price_growth": 100.0,
-        "comment": {}
-      }
-    },
     "Hà Nội": {
-      "Main - Thuốc (nói chung)": {
+      "Main - Người dùng Sản phẩm về bánh kẹo nói chung": {
         "age_range": [
           0,
           0
         ],
+        "comment": {
+          "target_for_interviewer": "fdas afds fasd",
+          "daily_sup_target": "fads fadsf adsf asd"
+        },
         "complexity": "Standard",
-        "daily_sup_target": 0.75,
+        "daily_sup_target": 6.25,
         "description": "",
+        "extra_rate": 5,
         "gender": "Both",
+        "id": null,
         "incident_rate": 100,
         "income_range": [
           0,
           0
         ],
-        "name": "Thuốc (nói chung)",
-        "price": 350000,
-        "sample_size": 12,
+        "name": "Người dùng Sản phẩm về bánh kẹo nói chung",
+        "pricing": [
+          {
+            "comment": {},
+            "price": 84000,
+            "price_growth": 0,
+            "type": "recruit"
+          },
+          {
+            "comment": {},
+            "price": 25000,
+            "price_growth": 0,
+            "type": "location"
+          }
+        ],
+        "sample_size": 100,
         "sample_type": "Main",
-        "target_for_interviewers": 2,
-        "price_growth": 100.0,
-        "comment": {}
+        "target_for_interviewer": 2
       },
-      "Main - Thuốc điều trị viêm mũi dị ứng": {
+      "Pilot - Người dùng Sản phẩm về bánh kẹo nói chung": {
         "age_range": [
           0,
           0
         ],
+        "comment": {},
         "complexity": "Standard",
-        "daily_sup_target": 1.31,
+        "daily_sup_target": 0.12,
         "description": "",
+        "extra_rate": 0,
         "gender": "Both",
+        "id": null,
         "incident_rate": 100,
         "income_range": [
           0,
           0
         ],
-        "name": "Thuốc điều trị viêm mũi dị ứng",
-        "price": 142500,
-        "sample_size": 21,
-        "sample_type": "Main",
-        "target_for_interviewers": 2,
-        "price_growth": 100.0,
-        "comment": {}
+        "name": "Người dùng Sản phẩm về bánh kẹo nói chung",
+        "pricing": [
+          {
+            "comment": {},
+            "price": 0,
+            "price_growth": 0,
+            "type": "pilot"
+          }
+        ],
+        "sample_size": 2,
+        "sample_type": "Pilot",
+        "target_for_interviewer": 2
+      },
+      "Non - Người dùng Sản phẩm về bánh kẹo nói chung": {
+        "age_range": [
+          0,
+          0
+        ],
+        "comment": {},
+        "complexity": "Standard",
+        "daily_sup_target": 6.25,
+        "description": "",
+        "extra_rate": 0,
+        "gender": "Both",
+        "id": null,
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Người dùng Sản phẩm về bánh kẹo nói chung",
+        "pricing": [
+          {
+            "comment": {},
+            "price": 15000,
+            "price_growth": 0,
+            "type": "non"
+          }
+        ],
+        "sample_size": 100,
+        "sample_type": "Non",
+        "target_for_interviewer": 2
+      },
+      "Booster - Người dùng Sản phẩm bánh Snack": {
+        "age_range": [
+          0,
+          0
+        ],
+        "comment": {},
+        "complexity": "Standard",
+        "daily_sup_target": 6.25,
+        "description": "",
+        "extra_rate": 10,
+        "gender": "Both",
+        "id": null,
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Người dùng Sản phẩm bánh Snack",
+        "pricing": [
+          {
+            "comment": {},
+            "price": 115000,
+            "price_growth": 0,
+            "type": "recruit"
+          },
+          {
+            "comment": {},
+            "price": 41000,
+            "price_growth": 0,
+            "type": "location"
+          }
+        ],
+        "sample_size": 100,
+        "sample_type": "Booster",
+        "target_for_interviewer": 2
       }
     },
-    "Hồ Chí Minh City": {
-      "Main - Thuốc (nói chung)": {
+    "Hồ Chí Minh": {
+      "Main - Người dùng Sản phẩm về bánh kẹo nói chung": {
         "age_range": [
           0,
           0
         ],
+        "comment": {},
         "complexity": "Standard",
-        "daily_sup_target": 0.75,
+        "daily_sup_target": 6.25,
         "description": "",
+        "extra_rate": 5,
         "gender": "Both",
+        "id": null,
         "incident_rate": 100,
         "income_range": [
           0,
           0
         ],
-        "name": "Thuốc (nói chung)",
-        "price": 350000,
-        "sample_size": 12,
+        "name": "Người dùng Sản phẩm về bánh kẹo nói chung",
+        "pricing": [
+          {
+            "comment": {},
+            "price": 84000,
+            "price_growth": 0,
+            "type": "recruit"
+          },
+          {
+            "comment": {},
+            "price": 25000,
+            "price_growth": 0,
+            "type": "location"
+          }
+        ],
+        "sample_size": 100,
         "sample_type": "Main",
-        "target_for_interviewers": 2,
-        "price_growth": 100.0,
-        "comment": {}
+        "target_for_interviewer": 2
       },
-      "Main - Thuốc điều trị viêm mũi dị ứng": {
+      "Pilot - Người dùng Sản phẩm về bánh kẹo nói chung": {
         "age_range": [
           0,
           0
         ],
+        "comment": {},
         "complexity": "Standard",
-        "daily_sup_target": 1.31,
+        "daily_sup_target": 0.12,
         "description": "",
+        "extra_rate": 0,
         "gender": "Both",
+        "id": null,
         "incident_rate": 100,
         "income_range": [
           0,
           0
         ],
-        "name": "Thuốc điều trị viêm mũi dị ứng",
-        "price": 142500,
-        "sample_size": 21,
-        "sample_type": "Main",
-        "target_for_interviewers": 2,
-        "price_growth": 100.0,
-        "comment": {}
+        "name": "Người dùng Sản phẩm về bánh kẹo nói chung",
+        "pricing": [
+          {
+            "comment": {},
+            "price": 0,
+            "price_growth": 0,
+            "type": "pilot"
+          }
+        ],
+        "sample_size": 2,
+        "sample_type": "Pilot",
+        "target_for_interviewer": 2
+      },
+      "Non - Người dùng Sản phẩm về bánh kẹo nói chung": {
+        "age_range": [
+          0,
+          0
+        ],
+        "comment": {},
+        "complexity": "Standard",
+        "daily_sup_target": 6.25,
+        "description": "",
+        "extra_rate": 0,
+        "gender": "Both",
+        "id": null,
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Người dùng Sản phẩm về bánh kẹo nói chung",
+        "pricing": [
+          {
+            "comment": {},
+            "price": 15000,
+            "price_growth": 0,
+            "type": "non"
+          }
+        ],
+        "sample_size": 100,
+        "sample_type": "Non",
+        "target_for_interviewer": 2
+      },
+      "Booster - Người dùng Sản phẩm bánh Snack": {
+        "age_range": [
+          0,
+          0
+        ],
+        "comment": {},
+        "complexity": "Standard",
+        "daily_sup_target": 6.25,
+        "description": "",
+        "extra_rate": 10,
+        "gender": "Both",
+        "id": null,
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Người dùng Sản phẩm bánh Snack",
+        "pricing": [
+          {
+            "comment": {},
+            "price": 115000,
+            "price_growth": 0,
+            "type": "recruit"
+          },
+          {
+            "comment": {},
+            "price": 41000,
+            "price_growth": 0,
+            "type": "location"
+          }
+        ],
+        "sample_size": 100,
+        "sample_type": "Booster",
+        "target_for_interviewer": 2
       }
     }
   },
-  "qc_methods": [],
-  "conditions": {
-    "age_ranges": [],
-    "sex": "male/female",
-    "income_ranges": []
-  },
+  "qc_methods": [
+    {
+      "qc_method": "QC - In home",
+      "qc_rate": 10,
+      "team": "QC"
+    },
+    {
+      "qc_method": "QC - In Location",
+      "qc_rate": 10,
+      "team": "QC"
+    }
+  ],
   "travel": {
-    "Cần Thơ": {
-      "fulltime": {
-        "travel_days": 0,
-        "assigned_people": []
-      },
-      "parttime": {
-        "supervisor": {
-          "distant": 0,
-          "nearby": 0
-        },
-        "interviewer": {
-          "distant": 0,
-          "nearby": 0
-        },
-        "qc": {
-          "distant": 0,
-          "nearby": 0
-        }
-      }
-    },
-    "Đà Nẵng": {
-      "fulltime": {
-        "travel_days": 0,
-        "assigned_people": []
-      },
-      "parttime": {
-        "supervisor": {
-          "distant": 0,
-          "nearby": 0
-        },
-        "interviewer": {
-          "distant": 0,
-          "nearby": 0
-        },
-        "qc": {
-          "distant": 0,
-          "nearby": 0
-        }
-      }
-    },
     "Hà Nội": {
       "fulltime": {
         "travel_days": 0,
+        "travel_nights": 0,
         "assigned_people": []
       },
       "parttime": {
         "supervisor": {
           "distant": 0,
-          "nearby": 0
+          "nearby": 0,
+          "recruit_distant": 0,
+          "recruit_nearby": 0,
+          "ngoi_ban_distant": 0,
+          "ngoi_ban_nearby": 0
         },
         "interviewer": {
           "distant": 0,
-          "nearby": 0
+          "nearby": 0,
+          "recruit_distant": 0,
+          "recruit_nearby": 0,
+          "ngoi_ban_distant": 0,
+          "ngoi_ban_nearby": 0
         },
         "qc": {
           "distant": 0,
@@ -366,19 +625,28 @@
         }
       }
     },
-    "Hồ Chí Minh City": {
+    "Hồ Chí Minh": {
       "fulltime": {
         "travel_days": 0,
+        "travel_nights": 0,
         "assigned_people": []
       },
       "parttime": {
         "supervisor": {
           "distant": 0,
-          "nearby": 0
+          "nearby": 0,
+          "recruit_distant": 0,
+          "recruit_nearby": 0,
+          "ngoi_ban_distant": 0,
+          "ngoi_ban_nearby": 0
         },
         "interviewer": {
           "distant": 0,
-          "nearby": 0
+          "nearby": 0,
+          "recruit_distant": 0,
+          "recruit_nearby": 0,
+          "ngoi_ban_distant": 0,
+          "ngoi_ban_nearby": 0
         },
         "qc": {
           "distant": 0,
@@ -387,5 +655,6 @@
       }
     }
   },
-  "assignments": []
+  "assignments": [],
+  "additional_costs": []
 }

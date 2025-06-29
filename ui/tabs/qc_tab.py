@@ -13,7 +13,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, Signal, Slot
 
 from models.project_model import ProjectModel
-from config.predefined_values import QC_TEAMS, QC_METHODS
+from config.predefined_values import TEAMS, QC_METHODS
 
 
 class QCMethodTab(QWidget):
@@ -38,7 +38,7 @@ class QCMethodTab(QWidget):
         add_layout = QHBoxLayout()
         
         self.team_combo = QComboBox()
-        self.team_combo.addItems(QC_TEAMS)
+        self.team_combo.addItems(TEAMS)
         add_layout.addWidget(QLabel("Team:"))
         add_layout.addWidget(self.team_combo)
         

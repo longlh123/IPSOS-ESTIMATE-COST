@@ -123,8 +123,12 @@ class TargetAudienceDialog(QDialog):
         form_layout.addWidget(QLabel("Sample Type:"), 0, 0)
 
         self.sample_type = QComboBox()
+        self.sample_type.addItem("-- Select --")
         self.sample_type.addItems(self.selected_sample_types)
         self.sample_type.setCurrentIndex(0)
+
+        # Set item đầu tiên là không thể chọn
+        self.sample_type.model().item(0).setEnabled(False)
 
         form_layout.addWidget(self.sample_type, 0, 1)
 
@@ -285,9 +289,9 @@ class TargetAudienceDialog(QDialog):
         price_info = []
         
         if sample_type == "Pilot":
-            price_info = self.make_price_entry(pricing.get("pilot", 0), 0, target_for_interviewers, "pilot")
+            price_info = [self.make_price_entry(pricing.get("pilot", 0), 0, "pilot")]
         elif sample_type == "Non":
-            price_info = self.make_price_entry(pricing.get("non", 0), 0, target_for_interviewers, "non")
+            price_info = [self.make_price_entry(pricing.get("non", 0), 0, "non")]
         elif sample_type == "Main":
             price_info = [
                 self.make_price_entry(pricing.get("main", {}).get("recruit", 0), 0, "recruit"),
@@ -339,7 +343,12 @@ class TargetAudienceDialog(QDialog):
         return audience
     
     def add_target_audience(self):
+        
         sample_type = self.sample_type.currentText()
+        if sample_type == "-- Select -- ":
+            QMessageBox.warning(self, "Missing Sample Type", "Please choose a sample type.")
+            return
+
         name = self.name_input.text().strip()
         if not name:
             QMessageBox.warning(self, "Missing Name", "Please enter a target audience name.")

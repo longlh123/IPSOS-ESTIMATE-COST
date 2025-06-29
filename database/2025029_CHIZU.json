@@ -24,8 +24,10 @@
       "Hồ Chí Minh"
     ],
     "sample_types": [
+      "Pilot",
       "Main",
-      "Pilot"
+      "Booster",
+      "Non"
     ],
     "industries": [
       "Thực phẩm - Đồ ăn nhẹ"
@@ -66,52 +68,189 @@
         "sample_size": 100,
         "sample_type": "Main",
         "target_for_interviewer": 2
+      },
+      {
+        "age_range": [
+          0,
+          0
+        ],
+        "comment": {},
+        "complexity": "Standard",
+        "daily_sup_target": 0,
+        "description": "",
+        "extra_rate": 0,
+        "gender": "Both",
+        "id": null,
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Người dùng Sản phẩm về bánh kẹo nói chung",
+        "pricing": [
+          {
+            "comment": {},
+            "price": 0,
+            "price_growth": 0,
+            "type": "pilot"
+          }
+        ],
+        "sample_size": 2,
+        "sample_type": "Pilot",
+        "target_for_interviewer": 2
+      },
+      {
+        "age_range": [
+          0,
+          0
+        ],
+        "comment": {},
+        "complexity": "Standard",
+        "daily_sup_target": 0,
+        "description": "",
+        "extra_rate": 0,
+        "gender": "Both",
+        "id": null,
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Người dùng Sản phẩm về bánh kẹo nói chung",
+        "pricing": [
+          {
+            "comment": {},
+            "price": 15000,
+            "price_growth": 0,
+            "type": "non"
+          }
+        ],
+        "sample_size": 100,
+        "sample_type": "Non",
+        "target_for_interviewer": 2
+      },
+      {
+        "age_range": [
+          0,
+          0
+        ],
+        "comment": {},
+        "complexity": "Standard",
+        "daily_sup_target": 0,
+        "description": "",
+        "extra_rate": 10,
+        "gender": "Both",
+        "id": null,
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Người dùng Sản phẩm bánh Snack",
+        "pricing": [
+          {
+            "comment": {},
+            "price": 115000,
+            "price_growth": 0,
+            "type": "recruit"
+          },
+          {
+            "comment": {},
+            "price": 41000,
+            "price_growth": 0,
+            "type": "location"
+          }
+        ],
+        "sample_size": 100,
+        "sample_type": "Booster",
+        "target_for_interviewer": 2
       }
     ],
     "interview_length": 60,
     "questionnaire_length": 4,
-    "device_type": "Tablet >= 9 inch",
+    "device_type": "Tablet < 9 inch",
     "tablet_usage_duration": "<= 15 phút",
-    "hut_test_products": 0,
-    "hut_usage_duration": 0,
-    "clt_test_products": 0,
-    "clt_respondent_visits": 0,
-    "clt_sample_size_per_day": 0,
-    "clt_desk_interviewers_count": 0,
-    "clt_provincial_desk_interviewers_count": 0,
-    "clt_failure_rate": 0,
-    "clt_dan_mau": false,
-    "clt_dan_mau_days": 0,
-    "clt_assistant_setup_days": 1,
-    "bw_page_count": 0,
+    "bw_page_count": 10,
     "showphoto_page_count": 0,
     "showcard_page_count": 0,
     "dropcard_page_count": 0,
     "color_page_count": 0,
     "decal_page_count": 0,
     "laminated_page_count": 0,
+    "interview_form_package_count": 0,
+    "stimulus_material_production_count": 0,
     "scripting": true,
     "data_processing": true,
     "coding": true,
-    "open_ended_main_count": 8,
-    "open_ended_booster_count": 0,
+    "data_entry": false,
+    "open_ended_main_count": 5,
+    "open_ended_booster_count": 1,
     "data_processing_method": [
       "TOPLINE",
       "SPSS"
-    ],
-    "clt_sample_recruit_idi": 0
+    ]
+  },
+  "clt_settings": {
+    "clt_test_products": 2,
+    "clt_respondent_visits": 0,
+    "clt_failure_rate": 10,
+    "clt_sample_recruit_idi": 2,
+    "clt_assistant_setup_days": 1,
+    "clt_dan_mau_days": 0,
+    "clt_sample_size_per_day": 45,
+    "clt_desk_interviewers_count": 2,
+    "clt_provincial_desk_interviewers_count": 0
+  },
+  "hut_settings": {
+    "hut_test_products": 0,
+    "hut_usage_duration": 0
   },
   "cost_toggles": {
     "device_rental_costs": {
-      "Chi phí thuê tablet < 9 inch": false,
-      "Chi phí thuê tablet >= 9 inch": true,
+      "Chi phí thuê tablet < 9 inch": true,
+      "Chi phí thuê tablet >= 9 inch": false,
       "Chi phí thuê laptop": false
     },
     "idi_costs": {
-      "Chi phí Tuyển đáp viên IDI": false,
-      "Chi phí Quản lý IDI": false,
-      "Chi phí QC - IDI": false,
-      "Quà Phiếu PV - IDI": false
+      "Chi phí Tuyển đáp viên IDI": true,
+      "Chi phí Quản lý IDI": true,
+      "Chi phí QC - IDI": true,
+      "Quà Phiếu PV - IDI": true
+    },
+    "failure_rate_costs": {
+      "Chi phí Phiếu PV - Bài rớt giữa chừng": true
+    },
+    "qc_method_costs": {
+      "Chi phí QC - In home": true,
+      "Chi phí QC - In Location": true,
+      "Chi phí QC - DP": false,
+      "Chi phí thuê laptop": true,
+      "Chi phí Quản lý - On-field": true
+    },
+    "qc_communication_cost": {
+      "Chi phí Card điện thoại": true
+    },
+    "dp_costs": {
+      "Chi phí Coding": true,
+      "Chi phí Input": false,
+      "Chi phí Quản lý - On-field": true
+    },
+    "incentive_costs": {
+      "Quà Phiếu PV - Pilot": true,
+      "Quà Phiếu PV - Main": true,
+      "Quà Phiếu PV - Booster": true,
+      "Quà Phiếu PV - Non": true
+    },
+    "stationary_costs": {
+      "Photo trắng đen": true,
+      "Showphoto": false,
+      "Showcard": false,
+      "Dropcard": false,
+      "In màu \\ In concept": false,
+      "Decal": false,
+      "Ép Plastic": false,
+      "Hồ sơ biểu mẫu": false,
+      "Chi phí đóng cuốn": false
     }
   },
   "settings": {
@@ -183,16 +322,31 @@
   "samples": {
     "Hà Nội": {
       "Main - Người dùng Sản phẩm về bánh kẹo nói chung": {
+        "age_range": [
+          0,
+          0
+        ],
+        "comment": {
+          "target_for_interviewer": "fdas afds fasd",
+          "daily_sup_target": "fads fadsf adsf asd"
+        },
+        "complexity": "Standard",
+        "daily_sup_target": 6.25,
+        "description": "",
+        "extra_rate": 5,
+        "gender": "Both",
+        "id": null,
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
         "name": "Người dùng Sản phẩm về bánh kẹo nói chung",
-        "sample_type": "Main",
-        "sample_size": 100,
         "pricing": [
           {
-            "comment": {
-              "price_growth": "fdasf asdf asfa"
-            },
+            "comment": {},
             "price": 84000,
-            "price_growth": 5.0,
+            "price_growth": 0,
             "type": "recruit"
           },
           {
@@ -202,24 +356,105 @@
             "type": "location"
           }
         ],
-        "target_for_interviewer": 2,
-        "daily_sup_target": 4.25,
-        "gender": "Both",
+        "sample_size": 100,
+        "sample_type": "Main",
+        "target_for_interviewer": 2
+      },
+      "Pilot - Người dùng Sản phẩm về bánh kẹo nói chung": {
         "age_range": [
           0,
           0
         ],
+        "comment": {},
+        "complexity": "Standard",
+        "daily_sup_target": 0.12,
+        "description": "",
+        "extra_rate": 0,
+        "gender": "Both",
+        "id": null,
+        "incident_rate": 100,
         "income_range": [
           0,
           0
         ],
-        "incident_rate": 100,
+        "name": "Người dùng Sản phẩm về bánh kẹo nói chung",
+        "pricing": [
+          {
+            "comment": {},
+            "price": 120000,
+            "price_growth": 0,
+            "type": "pilot"
+          }
+        ],
+        "sample_size": 2,
+        "sample_type": "Pilot",
+        "target_for_interviewer": 2
+      },
+      "Non - Người dùng Sản phẩm về bánh kẹo nói chung": {
+        "age_range": [
+          0,
+          0
+        ],
+        "comment": {},
         "complexity": "Standard",
+        "daily_sup_target": 6.25,
         "description": "",
-        "comment": {
-          "target_for_interviewer": "fdas afds fasd",
-          "daily_sup_target": "fads fadsf adsf asd"
-        }
+        "extra_rate": 0,
+        "gender": "Both",
+        "id": null,
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Người dùng Sản phẩm về bánh kẹo nói chung",
+        "pricing": [
+          {
+            "comment": {},
+            "price": 15000,
+            "price_growth": 0,
+            "type": "non"
+          }
+        ],
+        "sample_size": 100,
+        "sample_type": "Non",
+        "target_for_interviewer": 2
+      },
+      "Booster - Người dùng Sản phẩm bánh Snack": {
+        "age_range": [
+          0,
+          0
+        ],
+        "comment": {},
+        "complexity": "Standard",
+        "daily_sup_target": 6.25,
+        "description": "",
+        "extra_rate": 10,
+        "gender": "Both",
+        "id": null,
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Người dùng Sản phẩm bánh Snack",
+        "pricing": [
+          {
+            "comment": {},
+            "price": 115000,
+            "price_growth": 0,
+            "type": "recruit"
+          },
+          {
+            "comment": {},
+            "price": 41000,
+            "price_growth": 0,
+            "type": "location"
+          }
+        ],
+        "sample_size": 100,
+        "sample_type": "Booster",
+        "target_for_interviewer": 2
       }
     },
     "Hồ Chí Minh": {
@@ -258,70 +493,118 @@
         "sample_size": 100,
         "sample_type": "Main",
         "target_for_interviewer": 2
+      },
+      "Pilot - Người dùng Sản phẩm về bánh kẹo nói chung": {
+        "age_range": [
+          0,
+          0
+        ],
+        "comment": {},
+        "complexity": "Standard",
+        "daily_sup_target": 0.12,
+        "description": "",
+        "extra_rate": 0,
+        "gender": "Both",
+        "id": null,
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Người dùng Sản phẩm về bánh kẹo nói chung",
+        "pricing": [
+          {
+            "comment": {},
+            "price": 120000,
+            "price_growth": 0,
+            "type": "pilot"
+          }
+        ],
+        "sample_size": 2,
+        "sample_type": "Pilot",
+        "target_for_interviewer": 2
+      },
+      "Non - Người dùng Sản phẩm về bánh kẹo nói chung": {
+        "age_range": [
+          0,
+          0
+        ],
+        "comment": {},
+        "complexity": "Standard",
+        "daily_sup_target": 6.25,
+        "description": "",
+        "extra_rate": 0,
+        "gender": "Both",
+        "id": null,
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Người dùng Sản phẩm về bánh kẹo nói chung",
+        "pricing": [
+          {
+            "comment": {},
+            "price": 15000,
+            "price_growth": 0,
+            "type": "non"
+          }
+        ],
+        "sample_size": 100,
+        "sample_type": "Non",
+        "target_for_interviewer": 2
+      },
+      "Booster - Người dùng Sản phẩm bánh Snack": {
+        "age_range": [
+          0,
+          0
+        ],
+        "comment": {},
+        "complexity": "Standard",
+        "daily_sup_target": 6.25,
+        "description": "",
+        "extra_rate": 10,
+        "gender": "Both",
+        "id": null,
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Người dùng Sản phẩm bánh Snack",
+        "pricing": [
+          {
+            "comment": {},
+            "price": 115000,
+            "price_growth": 0,
+            "type": "recruit"
+          },
+          {
+            "comment": {},
+            "price": 41000,
+            "price_growth": 0,
+            "type": "location"
+          }
+        ],
+        "sample_size": 100,
+        "sample_type": "Booster",
+        "target_for_interviewer": 2
       }
     }
   },
-  "qc_methods": [],
-  "travel": {
-    "Hà Nội": {
-      "fulltime": {
-        "travel_days": 0,
-        "travel_nights": 0,
-        "assigned_people": []
-      },
-      "parttime": {
-        "supervisor": {
-          "distant": 0,
-          "nearby": 0,
-          "recruit_distant": 0,
-          "recruit_nearby": 0,
-          "ngoi_ban_distant": 0,
-          "ngoi_ban_nearby": 0
-        },
-        "interviewer": {
-          "distant": 0,
-          "nearby": 0,
-          "recruit_distant": 0,
-          "recruit_nearby": 0,
-          "ngoi_ban_distant": 0,
-          "ngoi_ban_nearby": 0
-        },
-        "qc": {
-          "distant": 0,
-          "nearby": 0
-        }
-      }
+  "qc_methods": [
+    {
+      "qc_method": "QC - In home",
+      "qc_rate": 10,
+      "team": "QC"
     },
-    "Hồ Chí Minh": {
-      "fulltime": {
-        "travel_days": 0,
-        "travel_nights": 0,
-        "assigned_people": []
-      },
-      "parttime": {
-        "supervisor": {
-          "distant": 0,
-          "nearby": 0,
-          "recruit_distant": 0,
-          "recruit_nearby": 0,
-          "ngoi_ban_distant": 0,
-          "ngoi_ban_nearby": 0
-        },
-        "interviewer": {
-          "distant": 0,
-          "nearby": 0,
-          "recruit_distant": 0,
-          "recruit_nearby": 0,
-          "ngoi_ban_distant": 0,
-          "ngoi_ban_nearby": 0
-        },
-        "qc": {
-          "distant": 0,
-          "nearby": 0
-        }
-      }
+    {
+      "qc_method": "QC - In Location",
+      "qc_rate": 10,
+      "team": "QC"
     }
-  },
+  ],
+  "travel": {},
   "assignments": [],
   "additional_costs": []
 }

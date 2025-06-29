@@ -442,7 +442,7 @@ class SamplesTable(QTableWidget):
         """Format comment dictionary into a tooltip string."""
         titles = {
             "price_growth": "Price Growth",
-            "interviewer_target": "Target for Interviewer",
+            "target_for_interviewer": "Target for Interviewer",
             "daily_sup_target": "Daily SUP Target" 
         }
 

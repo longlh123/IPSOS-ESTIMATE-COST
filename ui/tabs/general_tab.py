@@ -48,37 +48,59 @@ class GeneralTab(QWidget):
         # Create the four regions
         self.wheel_blocker = WheelBlocker()
 
-        region_general_information = self.create_region_general_information()
+        self.region_general_information = self.create_region_general_information()
 
         # Apply filter cho tất cả các QComboBox và QSpinBox trong form
-        for widget in region_general_information.findChildren(QSpinBox) + region_general_information.findChildren(QComboBox):
+        for widget in self.region_general_information.findChildren(QSpinBox) + self.region_general_information.findChildren(QComboBox):
             widget.installEventFilter(self.wheel_blocker)
 
-        region_dp = self.create_region_dp()
+        self.region_qc_methods = self.create_region_qc_method()
 
         # Apply filter cho tất cả các QComboBox và QSpinBox trong form
-        for widget in region_dp.findChildren(QSpinBox) + region_dp.findChildren(QComboBox):
-            widget.installEventFilter(self.wheel_blocker)
-    
-        region_subcontract = self.create_region_subcontract()
-
-        region_printer = self.create_region_printer()
-
-        # Apply filter cho tất cả các QComboBox và QSpinBox trong form
-        for widget in region_printer.findChildren(QSpinBox) + region_printer.findChildren(QComboBox):
+        for widget in self.region_qc_methods.findChildren(QSpinBox) + self.region_qc_methods.findChildren(QComboBox):
             widget.installEventFilter(self.wheel_blocker)
         
-        region_clt = self.create_region_clt()
-        region_hut = self.create_region_hut()
+        self.region_dp = self.create_region_dp()
+
+        # Apply filter cho tất cả các QComboBox và QSpinBox trong form
+        for widget in self.region_dp.findChildren(QSpinBox) + self.region_dp.findChildren(QComboBox):
+            widget.installEventFilter(self.wheel_blocker)
+
+        self.region_device = self.create_region_device()
+
+        # Apply filter cho tất cả các QComboBox và QSpinBox trong form
+        for widget in self.region_device.findChildren(QSpinBox) + self.region_device.findChildren(QComboBox):
+            widget.installEventFilter(self.wheel_blocker)
+
+        self.region_subcontract = self.create_region_subcontract()
+
+        self.region_printer = self.create_region_printer()
+
+        # Apply filter cho tất cả các QComboBox và QSpinBox trong form
+        for widget in self.region_printer.findChildren(QSpinBox) + self.region_printer.findChildren(QComboBox):
+            widget.installEventFilter(self.wheel_blocker)
         
+        self.region_clt = self.create_region_clt()
+
+        # Apply filter cho tất cả các QComboBox và QSpinBox trong form
+        for widget in self.region_clt.findChildren(QSpinBox) + self.region_clt.findChildren(QComboBox):
+            widget.installEventFilter(self.wheel_blocker)
+
+        self.region_hut = self.create_region_hut()
+        
+        # Apply filter cho tất cả các QComboBox và QSpinBox trong form
+        for widget in self.region_hut.findChildren(QSpinBox) + self.region_hut.findChildren(QComboBox):
+            widget.installEventFilter(self.wheel_blocker)
+
         # Add regions to layout
-        scroll_layout.addWidget(region_general_information)
-        scroll_layout.addWidget(region_dp)
-        scroll_layout.addWidget(region_subcontract)
-        scroll_layout.addWidget(region_printer)
-        scroll_layout.addWidget(region_clt)
-        scroll_layout.addWidget(region_hut)
-
+        scroll_layout.addWidget(self.region_general_information)
+        scroll_layout.addWidget(self.region_clt)
+        scroll_layout.addWidget(self.region_hut)
+        scroll_layout.addWidget(self.region_qc_methods)
+        scroll_layout.addWidget(self.region_dp)
+        scroll_layout.addWidget(self.region_device)
+        scroll_layout.addWidget(self.region_printer)
+        
         scroll_layout.addStretch()
         
         # Set the scroll area widget
@@ -114,6 +136,14 @@ class GeneralTab(QWidget):
         # Show/hide CLT region  
         if hasattr(self, 'region_clt'):
             self.region_clt.setVisible("CLT" in project_type)
+    
+    def show_warning_message(self, field_name:str, message: str):
+        label_name = f"{field_name}_warning"
+        label = getattr(self, label_name, None)
+        
+        if label:
+            label.setText(message)
+            label.setVisible(bool(message))
 
     def handle_text_changed(self, field_name:str, value: str):
         is_valid, error = self.validator.validate(field_name, value)
@@ -137,15 +167,30 @@ class GeneralTab(QWidget):
             # Add this line to handle region visibility when project type changes
             if field_name == "project_type":
                 self.update_region_visibility()
+    
+    def handle_spinbox_changed(self, field_name:str, value):
+        if field_name == "open_ended_main_count":
+            is_valid, error = self.validator.validate(field_name, value, condition="Main" in self.project_model.general["sample_types"])
+        elif field_name == "open_ended_booster_count":
+            is_valid, error = self.validator.validate(field_name, value, condition="Booster" in self.project_model.general["sample_types"])
+        else:
+            is_valid, error = self.validator.validate(field_name, value)
 
-    def show_warning_message(self, field_name:str, message: str):
-        label_name = f"{field_name}_warning"
-        label = getattr(self, label_name, None)
-        
-        if label:
-            label.setText(message)
-            label.setVisible(bool(message))
-            
+        self.show_warning_message(field_name, error)
+
+        if is_valid:
+            if field_name in self.project_model.clt_settings.keys():
+                self.project_model.update_clt_settings(field_name, value)
+            elif field_name in self.project_model.hut_settings.keys():
+                self.project_model.update_hut_settings(field_name, value)
+            else:
+                self.project_model.update_general(field_name, value)
+        else:
+            field = getattr(self, field_name, None)
+
+            if field:
+                field.setFocus()
+
     def create_input_field(self, layout, field_name, label, widget, row= 0, col= 0, rowspan= 0, colspan= 0, margins = None):
         if margins is None:
             margins = { "left": 0, "top": 0, "right": 0, "bottom": 0}
@@ -208,6 +253,13 @@ class GeneralTab(QWidget):
             margins["left"], margins["top"], margins["right"], margins["bottom"]
         )
         container_layout.addWidget(widget)
+
+        warning_label = QLabel("")
+        warning_label.setStyleSheet("color: red; font-size: 12px")
+        warning_label.setVisible(False)
+        container_layout.addWidget(warning_label)
+
+        setattr(self, f"{field_name}_warning", warning_label)
 
         layout.addWidget(container, row, col + 1)
 
@@ -525,7 +577,7 @@ class GeneralTab(QWidget):
         row += 1
 
         ### Target Audience
-        target_audience_label = QLabel("Target Audience:")
+        target_audience_label = QLabel("Target Audiences:")
         target_audience_label.setStyleSheet("margin-left: 10px;")
 
         layout.addWidget(target_audience_label, row, 0)
@@ -593,7 +645,7 @@ class GeneralTab(QWidget):
         self.project_model.update_general("coding", is_check)
 
         self.open_ended_main_count.setEnabled(bool("Main" in self.project_model.general["sample_types"]))
-        self.open_ended_booster_count.setEnabled(bool("Boosters" in self.project_model.general["sample_types"]))
+        self.open_ended_booster_count.setEnabled(bool("Booster" in self.project_model.general["sample_types"]))
 
         if not is_check:
             self.project_model.update_general("open_ended_main_count", 0)
@@ -607,14 +659,6 @@ class GeneralTab(QWidget):
 
         if not is_enabled:
             self.project_model.update_general("tablet_usage_duration", "")
-
-    def handle_clt_respondent_visits_changed(self, value):
-        self.project_model.update_general("clt_respondent_visits", value)
-
-        is_enabled = value == 0
-
-        if not is_enabled:
-            self.project_model.update_general("clt_failure_rate", 0)
 
     def create_region_dp(self):
         group_box = QGroupBox("Scripting - Data Processing")
@@ -661,7 +705,7 @@ class GeneralTab(QWidget):
         self.open_ended_main_count.setRange(0, 999)
         
         self.open_ended_main_count.valueChanged.connect(
-            lambda value: self.project_model.update_general("open_ended_main_count", value)
+            lambda value: self.handle_spinbox_changed("open_ended_main_count", value)
         )
 
         self.create_spinbox(layout, "open_ended_main_count", "Open-ended Questions (Main):", self.open_ended_main_count, row=3, col=0)
@@ -671,10 +715,10 @@ class GeneralTab(QWidget):
         self.open_ended_booster_count.setRange(0, 999)
         
         self.open_ended_booster_count.valueChanged.connect(
-            lambda value: self.project_model.update_general("open_ended_booster_count", value)
+            lambda value: self.handle_spinbox_changed("open_ended_booster_count", value)
         )
 
-        self.create_spinbox(layout, "open_ended_main_count", "Open-ended Questions (Booster):", self.open_ended_booster_count, row=3, col=2)
+        self.create_spinbox(layout, "open_ended_booster_count", "Open-ended Questions (Booster):", self.open_ended_booster_count, row=3, col=2)
 
         ### Data Processing
         data_processing_method_label = QLabel("Data Processing Method:")
@@ -690,6 +734,35 @@ class GeneralTab(QWidget):
         )
         
         layout.addWidget(self.data_processing_method, 4, 1, 1, 3)
+
+        return group_box
+
+    def create_region_qc_method(self):
+        group_box = QGroupBox("QC Method")
+
+        layout = QGridLayout(group_box)
+        layout.setColumnStretch(1, 1)
+        layout.setColumnStretch(3, 1)
+
+        qc_method_label = QLabel("QC Method:")
+        qc_method_label.setStyleSheet("margin-left: 10px;")
+
+        layout.addWidget(qc_method_label, 4, 0)
+
+        self.qc_methods = GenericEditorWidget(
+            title="QC Method",
+            field_config = [
+                { "name": "team", "label": "Team", "widget": QComboBox, "options" : TEAMS, "required": True, "duplicated" : True },
+                { "name": "qc_method", "label": "QC Method", "widget": QComboBox, "options": QC_METHODS, "required": True, "duplicated" : True},
+                { "name": "qc_rate", "label" : "Rate", "widget" : QSpinBox, "min": 0, "max": 100, "suffix": "%", "required": True, "min_range" : 1 } 
+            ]
+        )
+
+        self.qc_methods.selectionChanged.connect(
+            lambda items : self.project_model.update_qc_methods(items)
+        )
+        
+        layout.addWidget(self.qc_methods, 4, 1, 1, 3)
 
         return group_box
 
@@ -731,7 +804,7 @@ class GeneralTab(QWidget):
         self.hut_test_products.setRange(0, 999)
         layout.addRow("Number of Test Products:", self.hut_test_products)
         self.hut_test_products.valueChanged.connect(
-            lambda value: self.project_model.update_general("hut_test_products", value)
+            lambda value: self.project_model.update_hut_settings("hut_test_products", value)
         )
         
         # Product usage duration
@@ -739,62 +812,18 @@ class GeneralTab(QWidget):
         self.hut_usage_duration.setRange(0, 365)
         layout.addRow("Product Usage Duration (days):", self.hut_usage_duration)
         self.hut_usage_duration.valueChanged.connect(
-            lambda value: self.project_model.update_general("hut_usage_duration", value)
+            lambda value: self.project_model.update_hut_settings("hut_usage_duration", value)
         )
         
         return group_box
-        
-    def create_region_clt(self):
-        """Create the CLT (Central Location Test) region."""
-        group_box = QGroupBox("CLT (Central Location Test)")
-        layout = QFormLayout(group_box)
-        
-        # Number of test products
-        self.clt_test_products = QSpinBox()
-        self.clt_test_products.setRange(0, 999)
-        
-        self.clt_test_products.valueChanged.connect(
-            lambda value: self.project_model.update_general("clt_test_products", value)
-        )
+    
+    def create_region_device(self):
+        group_box = QGroupBox("Device")
 
-        layout.addRow("Number of Test Products:", self.clt_test_products)
-        
-        # Create a horizontal layout for respondent visits and failure rate
-        visits_layout = QHBoxLayout()
-        
-        # Number of respondent visits
-        self.clt_respondent_visits = QSpinBox()
-        self.clt_respondent_visits.setRange(1, 3)
+        layout = QGridLayout(group_box)
+        layout.setColumnStretch(1, 1)  # Make the second column stretch
+        layout.setColumnStretch(3, 1)  # Make the fourth column stretch
 
-        self.clt_respondent_visits.valueChanged.connect(
-            lambda value: self.handle_clt_respondent_visits_changed(value)
-        )
-
-        visits_layout.addWidget(self.clt_respondent_visits)
-
-        # Add spacing
-        visits_layout.addSpacing(20)
-        
-        # Failure Rate - only enabled when respondent visits > 1
-        visits_layout.addWidget(QLabel("Failure Rate:"))
-        self.clt_failure_rate = QSpinBox()
-        self.clt_failure_rate.setRange(0, 100)
-        self.clt_failure_rate.setSuffix("%")
-        self.clt_failure_rate.setEnabled(False)  # Initially disabled
-
-        visits_layout.addWidget(self.clt_failure_rate)
-        
-        visits_layout.addStretch()
-
-        layout.addRow("Number of Respondent Visits:", visits_layout)
-        
-        # Connect signals for respondent visits and failure rate
-        self.clt_respondent_visits.valueChanged.connect(self.update_respondent_visits)
-
-        self.clt_failure_rate.valueChanged.connect(
-            lambda value: self.project_model.update_general("clt_failure_rate", value)
-        )
-        
         # Tablet/Laptop selection
         self.device_type = QComboBox()
         self.device_type.addItem("-- Select --")
@@ -811,9 +840,8 @@ class GeneralTab(QWidget):
                 self.handle_device_type_changed(text)
             )
         )
-        
-        layout.addRow("Thuê tablet / laptop:", self.device_type)
-        # self.clt_device_type.currentTextChanged.connect(self.update_device_type)
+
+        self.create_combobox(layout, "device_type", "Thuê tablet / laptop:", self.device_type, row=0, col=0)
 
         # Tablet usage duration - only shown when "Tablet < 9 inch" is selected
         self.tablet_usage_duration = QComboBox()
@@ -832,146 +860,219 @@ class GeneralTab(QWidget):
             )
         )
 
-        layout.addRow("Thời gian sử dụng tablet:", self.tablet_usage_duration)
+        self.create_combobox(layout, "tablet_usage_duration", "Thời gian sử dụng tablet:", self.tablet_usage_duration, row=0, col=2)
+
+        return group_box
+
+    def create_region_clt(self):
+        """Create the CLT (Central Location Test) region."""
+        group_box = QGroupBox("CLT (Central Location Test)")
         
+        layout = QGridLayout(group_box)
+        layout.setColumnStretch(1, 1)
+        layout.setColumnStretch(3, 1)
+
+        layout.addWidget(self.create_group_header("CLT Settings"), 0, 0, 1, 4) 
+
+        # Number of test products
+        self.clt_test_products = QSpinBox()
+        self.clt_test_products.setRange(0, 999)
+        
+        self.clt_test_products.valueChanged.connect(
+            lambda value: self.handle_spinbox_changed("clt_test_products", value)
+        )
+
+        self.create_spinbox(layout, "clt_test_products", "Number of Test Products:", self.clt_test_products, row=1, col=0)
+        
+        # Number of respondent visits
+        self.clt_respondent_visits = QSpinBox()
+        self.clt_respondent_visits.setRange(1, 3)
+
+        self.clt_respondent_visits.valueChanged.connect(
+            lambda value: self.handle_spinbox_changed("clt_respondent_visits", value)
+        )
+
+        self.create_spinbox(layout, "clt_respondent_visits", "Number of Respondent Visits:", self.clt_respondent_visits, row=1, col=2)
+
+        # Failure Rate - only enabled when respondent visits > 1
+        self.clt_failure_rate = QSpinBox()
+        self.clt_failure_rate.setRange(0, 100)
+        self.clt_failure_rate.setSuffix("%")
+
+        self.clt_failure_rate.valueChanged.connect(
+            lambda value: self.handle_spinbox_changed("clt_failure_rate", value)
+        )
+
+        self.create_spinbox(layout, "clt_failure_rate", "Failure Rate:", self.clt_failure_rate, 2, 0)
+
+        layout.addWidget(self.create_group_header("CLT Specific"), 3, 0, 1, 4) 
+
         # Sample Recruit IDI
         self.clt_sample_recruit_idi = QSpinBox()
         self.clt_sample_recruit_idi.setRange(0, 10000)
-        layout.addRow("Sample Recruit IDI:", self.clt_sample_recruit_idi)
+        
         self.clt_sample_recruit_idi.valueChanged.connect(
-            lambda value: self.project_model.update_general("clt_sample_recruit_idi", value)
+            lambda value: self.handle_spinbox_changed("clt_sample_recruit_idi", value)
         )
+
+        self.create_spinbox(layout, "clt_sample_recruit_idi", "Sample Recruit IDI:", self.clt_sample_recruit_idi, 4, 0)
         
         # Assistant Set Up Days - NEW FIELD
         self.clt_assistant_setup_days = QSpinBox()
         self.clt_assistant_setup_days.setRange(1, 30)
         self.clt_assistant_setup_days.setValue(1)  # Default value
         self.clt_assistant_setup_days.setSuffix(" day(s)")
-        layout.addRow("Assistant set up needs:", self.clt_assistant_setup_days)
+        
         self.clt_assistant_setup_days.valueChanged.connect(
-            lambda value: self.project_model.update_general("clt_assistant_setup_days", value)
+            lambda value: self.handle_spinbox_changed("clt_assistant_setup_days", value)
         )
-        
+
+        self.create_spinbox(layout, "clt_assistant_setup_days", "Assistant set up needs:", self.clt_assistant_setup_days, 5, 0)
+
         # Dán mẫu checkbox and Số ngày dán mẫu spinbox
-        dan_mau_layout = QHBoxLayout()
-        self.clt_dan_mau = QCheckBox("Dán mẫu")
-        dan_mau_layout.addWidget(self.clt_dan_mau)
-        
-        dan_mau_layout.addSpacing(10)
-        dan_mau_layout.addWidget(QLabel("Số ngày dán mẫu:"))
         self.clt_dan_mau_days = QSpinBox()
         self.clt_dan_mau_days.setRange(0, 100)
-        self.clt_dan_mau_days.setEnabled(False)  # Initially disabled
-        dan_mau_layout.addWidget(self.clt_dan_mau_days)
-        dan_mau_layout.addStretch()
-        
-        layout.addRow("", dan_mau_layout)
-        
-        # Connect signals for Dán mẫu related widgets
-        self.clt_dan_mau.stateChanged.connect(self.update_dan_mau)
+
         self.clt_dan_mau_days.valueChanged.connect(
-            lambda value: self.project_model.update_general("clt_dan_mau_days", value)
+            lambda value: self.handle_spinbox_changed("clt_dan_mau_days", value)
         )
+
+        self.create_spinbox(layout, "clt_dan_mau_days", "Số ngày dán mẫu:", self.clt_dan_mau_days, 6, 0)
         
+        layout.addWidget(self.create_group_header("Daily Targets & Staffing"), 7, 0, 1, 4) 
+
         # Sample size target per day
         self.clt_sample_size_per_day = QSpinBox()
         self.clt_sample_size_per_day.setRange(0, 999)
-        layout.addRow("Sample Size Target per Day:", self.clt_sample_size_per_day)
+
         self.clt_sample_size_per_day.valueChanged.connect(
-            lambda value: self.project_model.update_general("clt_sample_size_per_day", value)
+            lambda value: self.handle_spinbox_changed("clt_sample_size_per_day", value)
         )
+
+        self.create_spinbox(layout, "clt_sample_size_per_day", "Sample Size Target per Day:", self.clt_sample_size_per_day, 8, 0)
 
         # Number of desk-based interviewers (NGỒI BÀN)
         self.clt_desk_interviewers_count = QSpinBox()
         self.clt_desk_interviewers_count.setRange(0, 999)
-        layout.addRow("Số lượng PVV tham gia dự án (NGỒI BÀN):", self.clt_desk_interviewers_count)
+        
         self.clt_desk_interviewers_count.valueChanged.connect(
-            lambda value: self.project_model.update_general("clt_desk_interviewers_count", value)
+            lambda value: self.handle_spinbox_changed("clt_desk_interviewers_count", value)
         )
+
+        self.create_spinbox(layout, "clt_desk_interviewers_count", "Số lượng PVV tham gia dự án (NGỒI BÀN):", self.clt_desk_interviewers_count, 9, 0)
 
         # Number of provincial desk-based interviewers
         self.clt_provincial_desk_interviewers_count = QSpinBox()
         self.clt_provincial_desk_interviewers_count.setRange(0, 999)
-        layout.addRow("Số lượng PVV đi tỉnh (NGỒI BÀN):", self.clt_provincial_desk_interviewers_count)
+        
         self.clt_provincial_desk_interviewers_count.valueChanged.connect(
-            lambda value: self.project_model.update_general("clt_provincial_desk_interviewers_count", value)
+            lambda value: self.handle_spinbox_changed("clt_provincial_desk_interviewers_count", value)
         )
+
+        self.create_spinbox(layout, "clt_provincial_desk_interviewers_count", "Số lượng PVV đi tỉnh (NGỒI BÀN):", self.clt_provincial_desk_interviewers_count, 10, 0)
 
         return group_box
         
     def create_region_printer(self):
         """Create the Printer region."""
         group_box = QGroupBox("Printer")
-        layout = QFormLayout(group_box)
+        
+        layout = QGridLayout(group_box)
+        layout.setColumnStretch(1, 1)
+        layout.setColumnStretch(3, 1)
         
         # BACKWHITE page count
         self.bw_page_count = QSpinBox()
         self.bw_page_count.setRange(0, 9999)
-        layout.addRow("Số trang photo trắng đen:", self.bw_page_count)
+
         self.bw_page_count.valueChanged.connect(
             lambda value: self.project_model.update_general("bw_page_count", value)
         )
+
+        self.create_spinbox(layout, "bw_page_count", "Số trang photo trắng đen:", self.bw_page_count, row=0, col=0)
         
         # SHOWPHOTO page count
         self.showphoto_page_count = QSpinBox()
         self.showphoto_page_count.setRange(0, 9999)
-        layout.addRow("Số trang shop photo:", self.showphoto_page_count)
+        
         self.showphoto_page_count.valueChanged.connect(
             lambda value: self.project_model.update_general("showphoto_page_count", value)
         )
+
+        self.create_spinbox(layout, "showphoto_page_count", "Số trang show photo:", self.showphoto_page_count, row=0, col=2)
         
         # SHOWCARD page count
         self.showcard_page_count = QSpinBox()
         self.showcard_page_count.setRange(0, 9999)
-        layout.addRow("Số trang showcard:", self.showcard_page_count)
+        
         self.showcard_page_count.valueChanged.connect(
             lambda value: self.project_model.update_general("showcard_page_count", value)
         )
+
+        self.create_spinbox(layout, "showcard_page_count", "Số trang show card:", self.showcard_page_count, row=1, col=0)
         
         # DROPCARD page count
         self.dropcard_page_count = QSpinBox()
         self.dropcard_page_count.setRange(0, 9999)
-        layout.addRow("Số trang dropcard:", self.dropcard_page_count)
+        
         self.dropcard_page_count.valueChanged.connect(
             lambda value: self.project_model.update_general("dropcard_page_count", value)
         )
+
+        self.create_spinbox(layout, "dropcard_page_count", "Số trang dropcard:", self.dropcard_page_count, row=1, col=2)
         
         # COLOR page count
         self.color_page_count = QSpinBox()
         self.color_page_count.setRange(0, 9999)
-        layout.addRow("Số trang in màu:", self.color_page_count)
+        
         self.color_page_count.valueChanged.connect(
             lambda value: self.project_model.update_general("color_page_count", value)
         )
+
+        self.create_spinbox(layout, "color_page_count", "Số trang in màu \ in concept:", self.color_page_count, row=2, col=0)
         
         # DECAL page count
         self.decal_page_count = QSpinBox()
         self.decal_page_count.setRange(0, 9999)
-        layout.addRow("Số decal dán mẫu:", self.decal_page_count)
+        
         self.decal_page_count.valueChanged.connect(
             lambda value: self.project_model.update_general("decal_page_count", value)
         )
+
+        self.create_spinbox(layout, "decal_page_count", "Số decal dán mẫu:", self.decal_page_count, row=2, col=2)
         
         # Laminated page count
         self.laminated_page_count = QSpinBox()
         self.laminated_page_count.setRange(0, 9999)
-        layout.addRow("Số trang ép plastic:", self.laminated_page_count)
+        
         self.laminated_page_count.valueChanged.connect(
             lambda value: self.project_model.update_general("laminated_page_count", value)
         )
-        
-        return group_box
 
-    def update_respondent_visits(self, value):
-        """Update failure rate field based on respondent visits value."""
-        self.project_model.update_general("clt_respondent_visits", value)
-        self.clt_failure_rate.setEnabled(value > 1)
-        
-    def update_dan_mau(self, state):
-        """Update Số ngày dán mẫu field based on Dán mẫu checkbox state."""
-        is_checked = bool(state)  # Any non-zero state means it's checked
-        self.project_model.update_general("clt_dan_mau", is_checked)
-        self.clt_dan_mau_days.setEnabled(is_checked)
+        self.create_spinbox(layout, "laminated_page_count", "Số trang ép plastic:", self.laminated_page_count, row=3, col=0)
+
+        # Hồ sơ biểu mẫu
+        self.interview_form_package_count = QSpinBox()
+        self.interview_form_package_count.setRange(0, 9999)
+
+        self.interview_form_package_count.valueChanged.connect(
+            lambda value: self.project_model.update_general("interview_form_package_count", value)
+        )
+
+        self.create_spinbox(layout, "interview_form_package_count", "Hồ sơ biểu mẫu:", self.interview_form_package_count, row=3, col=2)
+
+        # Đóng cuốn
+        self.stimulus_material_production_count = QSpinBox()
+        self.stimulus_material_production_count.setRange(0, 9999)
+
+        self.stimulus_material_production_count.valueChanged.connect(
+            lambda value: self.project_model.update_general("stimulus_material_production_count", value)
+        )
+
+        self.create_spinbox(layout, "stimulus_material_production_count", "Chi phí đóng cuốn:", self.stimulus_material_production_count, row=4, col=0)
+
+
+        return group_box
         
     def service_line_changed(self, service_line):
         """Handle service line change and update available industries."""
@@ -1022,6 +1123,8 @@ class GeneralTab(QWidget):
         else:
             self.project_type.setCurrentIndex(0) #--Select--
         self.project_type.blockSignals(False)  
+
+        self.project_model.qc_communication_costs("CLT" in value)
         
         # Clients
         self.clients.set_selected_items(self.project_model.general["clients"])
@@ -1119,6 +1222,11 @@ class GeneralTab(QWidget):
 
         self.interview_length.setValue(self.project_model.general["interview_length"])
         self.questionnaire_length.setValue(self.project_model.general["questionnaire_length"])
+
+        #QC Method
+        self.qc_methods.set_selected_items(self.project_model.qc_methods)
+
+        self.project_model.set_selected_qc_method_costs()
         
         # Scripting & Data Processing
         
@@ -1126,34 +1234,49 @@ class GeneralTab(QWidget):
         self.data_processing_checkbox.setCheckState(Qt.CheckState.Checked if self.project_model.general["data_processing"] else Qt.CheckState.Unchecked)
         self.coding_checkbox.setCheckState(Qt.CheckState.Checked if self.project_model.general["coding"] else Qt.CheckState.Unchecked)
 
+        self.open_ended_main_count.blockSignals(True)
+        self.open_ended_booster_count.blockSignals(True)
+
         is_check = self.project_model.general["coding"] and "Main" in self.project_model.general["sample_types"]
         self.open_ended_main_count.setEnabled(is_check)
         self.open_ended_main_count.setValue(self.project_model.general["open_ended_main_count"])
 
-        is_check = self.project_model.general["coding"] and "Boosters" in self.project_model.general["sample_types"]
+        is_check = self.project_model.general["coding"] and "Booster" in self.project_model.general["sample_types"]
         self.open_ended_booster_count.setEnabled(is_check)
         self.open_ended_booster_count.setValue(self.project_model.general["open_ended_booster_count"])
+
+        self.project_model.set_selected_dp_costs()
         
+        self.open_ended_main_count.blockSignals(False)
+        self.open_ended_booster_count.blockSignals(False)
+
         self.data_processing_method.set_enabled(bool(self.project_model.general["data_processing"]))
         self.data_processing_method.set_selected_items(self.project_model.general["data_processing_method"])
         
         # Update HUT
-        if "HUT" in self.project_model.general["project_type"]:
-            self.hut_test_products.setValue(self.project_model.general["hut_test_products"])
-            self.hut_usage_duration.setValue(self.project_model.general["hut_usage_duration"])
+        if "HUT" not in self.project_type.currentText():
+            self.project_model.hut_settings_clear()
+
+        self.hut_test_products.setValue(self.project_model.hut_settings.get("hut_test_products", 0))
+        self.hut_usage_duration.setValue(self.project_model.hut_settings.get("hut_usage_duration", 0))
         
         # Update CLT
-        self.clt_test_products.setValue(self.project_model.general["clt_test_products"])
-        self.clt_respondent_visits.setValue(self.project_model.general["clt_respondent_visits"])
-        self.clt_failure_rate.setValue(self.project_model.general.get("clt_failure_rate", 0))
+        if "CLT" not in self.project_type.currentText():
+            self.project_model.clt_settings_clear()
 
-        self.project_model.set_selected_failure_rate_costs(self.project_model.general.get("clt_failure_rate", 0) != 0)
-
-        self.clt_sample_size_per_day.setValue(self.project_model.general["clt_sample_size_per_day"])
-        self.clt_desk_interviewers_count.setValue(self.project_model.general["clt_desk_interviewers_count"])
-        self.clt_provincial_desk_interviewers_count.setValue(self.project_model.general["clt_provincial_desk_interviewers_count"])
-        self.clt_assistant_setup_days.setValue(self.project_model.general.get("clt_assistant_setup_days", 1))
+        self.clt_test_products.setValue(self.project_model.clt_settings.get("clt_test_products", 0))
+        self.clt_respondent_visits.setValue(self.project_model.clt_settings.get("clt_respondent_visits", 0))
+        self.clt_failure_rate.setValue(self.project_model.clt_settings.get("clt_failure_rate", 0))
+        self.clt_sample_recruit_idi.setValue(self.project_model.clt_settings.get("clt_sample_recruit_idi", 0))
+        self.clt_assistant_setup_days.setValue(self.project_model.clt_settings.get("clt_assistant_setup_days", 1))
+        self.clt_sample_recruit_idi.setValue(self.project_model.clt_settings.get("clt_sample_recruit_idi", 0))
+        self.clt_dan_mau_days.setValue(self.project_model.clt_settings.get("clt_dan_mau_days", 0))
+        self.clt_sample_size_per_day.setValue(self.project_model.clt_settings.get("clt_sample_size_per_day", 0))
+        self.clt_desk_interviewers_count.setValue(self.project_model.clt_settings.get("clt_desk_interviewers_count", 0))
+        self.clt_provincial_desk_interviewers_count.setValue(self.project_model.clt_settings.get("clt_provincial_desk_interviewers_count", 0))
         
+        self.project_model.set_selected_failure_rate_costs(self.project_model.clt_settings.get("clt_failure_rate", 0) != 0)
+        self.project_model.set_selected_idi_costs(self.project_model.clt_settings.get("clt_sample_recruit_idi", 0) != 0)
 
         value = self.project_model.general["device_type"]
         
@@ -1179,13 +1302,6 @@ class GeneralTab(QWidget):
 
         self.tablet_usage_duration.blockSignals(False)
 
-        self.clt_sample_recruit_idi.setValue(self.project_model.general.get("clt_sample_recruit_idi", 0))
-        self.clt_dan_mau.setChecked(self.project_model.general.get("clt_dan_mau", False))
-        self.clt_dan_mau_days.setValue(self.project_model.general.get("clt_dan_mau_days", 0))
-        self.clt_dan_mau_days.setEnabled(self.project_model.general.get("clt_dan_mau", False))
-
-        self.clt_sample_size_per_day.setValue(self.project_model.general["clt_sample_size_per_day"])
-
         # Update Printer
         self.bw_page_count.setValue(self.project_model.general["bw_page_count"])
         self.showphoto_page_count.setValue(self.project_model.general["showphoto_page_count"])
@@ -1194,6 +1310,13 @@ class GeneralTab(QWidget):
         self.color_page_count.setValue(self.project_model.general["color_page_count"])
         self.decal_page_count.setValue(self.project_model.general["decal_page_count"])
         self.laminated_page_count.setValue(self.project_model.general["laminated_page_count"])
+        self.interview_form_package_count.setValue(self.project_model.general["interview_form_package_count"])
+        self.stimulus_material_production_count.setValue(self.project_model.general["stimulus_material_production_count"])
+
+        self.project_model.set_selected_stationary_costs()
+
+        # Incentive
+        self.project_model.set_selected_incentive_costs()
 
         self.update_region_visibility()
 

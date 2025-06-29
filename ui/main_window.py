@@ -15,7 +15,6 @@ from PySide6.QtGui import QAction, QIcon
 
 from ui.tabs.general_tab import GeneralTab
 from ui.tabs.samples_tab import SamplesTab
-from ui.tabs.qc_tab import QCMethodTab
 from ui.tabs.element_costs_tab import ElementCostsTab
 from ui.tabs.assignment_tab import AssignmentTab
 from ui.dialogs.settings_dialog import SettingsDialog
@@ -57,7 +56,6 @@ class MainWindow(QMainWindow):
         # Create tabs
         self.general_tab = GeneralTab(self.project_model)
         self.samples_tab = SamplesTab(self.project_model)
-        self.qc_tab = QCMethodTab(self.project_model)
         # self.conditions_tab = ProjectConditionsTab(self.project_model)
         self.travel_tab = TravelTab(self.project_model) 
         self.element_costs_tab = ElementCostsTab(self.project_model)
@@ -66,9 +64,7 @@ class MainWindow(QMainWindow):
         
         # Add tabs to the widget
         self.tab_widget.addTab(self.general_tab, "General")
-        self.tab_widget.addTab(self.samples_tab, "Samples")
-        self.tab_widget.addTab(self.qc_tab, "QC Method")
-        # self.tab_widget.addTab(self.conditions_tab, "Project Conditions")    
+        self.tab_widget.addTab(self.samples_tab, "Samples")  
         self.tab_widget.addTab(self.assignment_tab, "Assignments")
         self.tab_widget.addTab(self.travel_tab, "Travel")
         self.tab_widget.addTab(self.additional_costs_tab, "Additional Costs")
@@ -335,10 +331,28 @@ class MainWindow(QMainWindow):
         for field_name, value in data["general"].items():
             if field_name == "quota_description":
                 valid, error = validator.validate(field_name, value, condition=self.project_model.general["type_of_quota_control"])
+            elif field_name == "open_ended_main_count":
+                valid, error = validator.validate(field_name, value, condition="Main" in self.project_model.general["sample_types"])
+            elif field_name == "open_ended_booster_count":
+                valid, error = validator.validate(field_name, value, condition="Booster" in self.project_model.general["sample_types"])
             else:
                 valid, error = validator.validate(field_name, value)
 
             if not valid:   
+                self.general_tab.show_warning_message(field_name, error)
+                return False
+        
+        for field_name, value in data["clt_settings"].items():
+            valid, error = validator.validate(field_name, value)
+            
+            if not valid:
+                self.general_tab.show_warning_message(field_name, error)
+                return False
+        
+        for field_name, value in data["hut_settings"].items():
+            valid, error = validator.validate(field_name, value)
+            
+            if not valid:
                 self.general_tab.show_warning_message(field_name, error)
                 return False
         

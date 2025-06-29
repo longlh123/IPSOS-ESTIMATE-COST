@@ -238,7 +238,7 @@
           {
             "code": 407,
             "unit": "0",
-            "description": "Chi phí Quản lý - Hỗ trợ clean data",
+            "description": "Chi phí Quản lý - On-field",
             "costs": {
               "L1": {
                 "< 30 phút": 220000.0,
@@ -290,6 +290,18 @@
           },
           {
             "code": 704,
+            "unit": "Phiếu",
+            "description": "Quà Phiếu PV - Non",
+            "costs": {
+              "L1": {
+                "< 30 phút": 40000.0,
+                "30-60 phút": 50000.0,
+                "> 60 phút": 50000.0
+              }
+            }
+          },
+          {
+            "code": 705,
             "unit": "Phiếu",
             "description": "Quà Phiếu PV - IDI",
             "costs": {
@@ -369,18 +381,6 @@
             }
           },
           {
-            "code": 1001,
-            "unit": "Tờ",
-            "description": "Photo trắng đen",
-            "costs": {
-              "L1": {
-                "< 30 phút": 350.0,
-                "30-60 phút": 350.0,
-                "> 60 phút": 350.0
-              }
-            }
-          },
-          {
             "code": 1003,
             "unit": "Tờ",
             "description": "Showphoto",
@@ -389,6 +389,66 @@
                 "< 30 phút": 2500.0,
                 "30-60 phút": 2500.0,
                 "> 60 phút": 2500.0
+              }
+            }
+          },
+          {
+            "code": 1002,
+            "unit": "Tờ",
+            "description": "Showcard",
+            "costs": {
+              "L1": {
+                "< 30 phút": 2500.0,
+                "30-60 phút": 2500.0,
+                "> 60 phút": 2500.0
+              }
+            }
+          },
+          {
+            "code": 1006,
+            "unit": "Tờ",
+            "description": "Dropcard",
+            "costs": {
+              "L1": {
+                "< 30 phút": 9000.0,
+                "30-60 phút": 9000.0,
+                "> 60 phút": 9000.0
+              }
+            }
+          },
+          {
+            "code": 1004,
+            "unit": "Tờ",
+            "description": "In màu \\ In concept",
+            "costs": {
+              "L1": {
+                "< 30 phút": 2500.0,
+                "30-60 phút": 2500.0,
+                "> 60 phút": 2500.0
+              }
+            }
+          },
+          {
+            "code": 1007,
+            "unit": "Tờ",
+            "description": "Decal",
+            "costs": {
+              "L1": {
+                "< 30 phút": 3500.0,
+                "30-60 phút": 3500.0,
+                "> 60 phút": 3500.0
+              }
+            }
+          },
+          {
+            "code": 1005,
+            "unit": "Tờ",
+            "description": "Ép Plastic",
+            "costs": {
+              "L1": {
+                "< 30 phút": 6000.0,
+                "30-60 phút": 6000.0,
+                "> 60 phút": 6000.0
               }
             }
           },
@@ -406,61 +466,13 @@
           },
           {
             "code": 1011,
-            "unit": "Tờ",
+            "unit": "Cuốn",
             "description": "Chi phí đóng cuốn",
             "costs": {
               "L1": {
                 "< 30 phút": 4000.0,
                 "30-60 phút": 4000.0,
                 "> 60 phút": 4000.0
-              }
-            }
-          },
-          {
-            "code": 1007,
-            "unit": "Tờ",
-            "description": "Decal",
-            "costs": {
-              "L1": {
-                "< 30 phút": 3500.0,
-                "30-60 phút": 3500.0,
-                "> 60 phút": 3500.0
-              }
-            }
-          },
-          {
-            "code": 1004,
-            "unit": "Tờ",
-            "description": "In màu \\ In concept",
-            "costs": {
-              "L1": {
-                "< 30 phút": 2500.0,
-                "30-60 phút": 2500.0,
-                "> 60 phút": 2500.0
-              }
-            }
-          },
-          {
-            "code": 1005,
-            "unit": "Tờ",
-            "description": "Ép Plastic",
-            "costs": {
-              "L1": {
-                "< 30 phút": 6000.0,
-                "30-60 phút": 6000.0,
-                "> 60 phút": 6000.0
-              }
-            }
-          },
-          {
-            "code": 1006,
-            "unit": "Tờ",
-            "description": "Dropcard",
-            "costs": {
-              "L1": {
-                "< 30 phút": 9000.0,
-                "30-60 phút": 9000.0,
-                "> 60 phút": 9000.0
               }
             }
           }

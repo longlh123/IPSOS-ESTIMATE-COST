@@ -30,7 +30,7 @@ PROJECT_TYPES = [
 SAMPLE_TYPES = [
     "Pilot",
     "Main",
-    "Boosters",
+    "Booster",
     "Non"
 ]
 
@@ -149,22 +149,21 @@ TARGET_AUDIENCE_INTERVIEWER_TARGETS = {
     "Nhân viên y tế cấp quản lý": 2
 }
 
-# QC Teams
-QC_TEAMS = [
+TEAMS = [
     "FW", "QC", "DP"
 ]
 
 # QC Methods
 QC_METHODS = [
-    "QC tại nhà",
-    "QC qua điện thoại",
-    "QC qua điện thoại kiểm tra sự tồn tại",
-    "QC qua điện thoại (khoán nguyên dự án)",
-    "QC nghe file ghi âm",
-    "QC DP",
-    "QC phiếu Non",
-    "QC tại CLT",
-    "QC Coding",
+    "QC - In home",
+    "QC - In Location",
+    "QC - Qua điện thoại",
+    "QC - Qua điện thoại kiểm tra sự tồn tại",
+    "QC - Qua điện thoại (khoán nguyên dự án)",
+    "QC - Nghe file ghi âm",
+    "QC - DP",
+    "QC - Phiếu Non",
+    "QC - Coding",
 ]
 
 # Level definitions for assigned people

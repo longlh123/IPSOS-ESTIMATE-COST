@@ -59,13 +59,39 @@ class FieldValidator:
                     "check" : lambda v: not (v == "-- Select --"),
                     "error" : "Please select a respondent classification"
                 }
+            ],
+            "open_ended_main_count": [
+                {
+                    "condition" : True,
+                    "check" : lambda v: not (v == 0),
+                    "error" : "Please enter a value greater than 0."
+                }
+            ],
+            "open_ended_booster_count": [
+                {
+                    "condition" : True,
+                    "check" : lambda v: not (v == 0),
+                    "error" : "Please enter a value greater than 0."
+                }
+            ],
+            "clt_sample_size_per_day" : [
+                {
+                    "check" : lambda v: not (v == 0),
+                    "error" : "Please enter a value greater than 0."
+                }
+            ],
+            "clt_desk_interviewers_count" : [
+                {
+                    "check" : lambda v: not (v == 0),
+                    "error" : "Please enter a value greater than 0."
+                }
             ]
         }
 
     def validate(self, field_name, value, condition=None):
         field_rules = self.rules.get(field_name, [])
 
-        if field_name == "quota_description":
+        if field_name in ["quota_description", "open_ended_main_count", "open_ended_booster_count"]:
             for rule in field_rules:
                 if condition and rule.get("condition") == condition:
                     if not rule["check"](value):
