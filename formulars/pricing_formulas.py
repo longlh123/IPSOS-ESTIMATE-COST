@@ -5,15 +5,6 @@ def calculate_sample_size(sample_size, extra_rate):
     sample_size_extra = round(sample_size * extra_rate / 100) 
     return sample_size + sample_size_extra
 
-def calculate_device_rental_costs(device_type, tablet_duration, base_element_cost):
-    if device_type == "Tablet < 9 inch":
-        cost = 5000 if tablet_duration == "<= 15 phút" else 8000
-    else:
-        cost = base_element_cost
-    return cost
-
-        
-
 def calculate_daily_sup_target(sample_size, target_for_interviewer, interviewers_per_supervisor):
     """
     Calculate the daily supervisor target based on sample size, target for interviewers, and interviewers per supervisor.
