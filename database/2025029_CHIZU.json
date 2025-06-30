@@ -227,7 +227,7 @@
       "Chi phí thuê laptop": true,
       "Chi phí Quản lý - On-field": true
     },
-    "qc_communication_cost": {
+    "qc_communication_costs": {
       "Chi phí Card điện thoại": true
     },
     "dp_costs": {
@@ -251,6 +251,9 @@
       "Ép Plastic": false,
       "Hồ sơ biểu mẫu": false,
       "Chi phí đóng cuốn": false
+    },
+    "qc_communication_cost": {
+      "Chi phí Card điện thoại": true
     }
   },
   "settings": {
@@ -322,31 +325,17 @@
   "samples": {
     "Hà Nội": {
       "Main - Người dùng Sản phẩm về bánh kẹo nói chung": {
-        "age_range": [
-          0,
-          0
-        ],
-        "comment": {
-          "target_for_interviewer": "fdas afds fasd",
-          "daily_sup_target": "fads fadsf adsf asd"
-        },
-        "complexity": "Standard",
-        "daily_sup_target": 6.25,
-        "description": "",
-        "extra_rate": 5,
-        "gender": "Both",
-        "id": null,
-        "incident_rate": 100,
-        "income_range": [
-          0,
-          0
-        ],
         "name": "Người dùng Sản phẩm về bánh kẹo nói chung",
+        "sample_type": "Main",
+        "sample_size": 100,
+        "extra_rate": 5,
         "pricing": [
           {
-            "comment": {},
+            "comment": {
+              "price_growth": "Tang do doi tuong"
+            },
             "price": 84000,
-            "price_growth": 0,
+            "price_growth": 10.0,
             "type": "recruit"
           },
           {
@@ -356,9 +345,24 @@
             "type": "location"
           }
         ],
-        "sample_size": 100,
-        "sample_type": "Main",
-        "target_for_interviewer": 2
+        "target_for_interviewer": 2,
+        "daily_sup_target": 6.25,
+        "gender": "Both",
+        "age_range": [
+          0,
+          0
+        ],
+        "income_range": [
+          0,
+          0
+        ],
+        "incident_rate": 100,
+        "complexity": "Standard",
+        "description": "",
+        "comment": {
+          "daily_sup_target": "fads fadsf adsf asd",
+          "target_for_interviewer": "fdas afds fasd"
+        }
       },
       "Pilot - Người dùng Sản phẩm về bánh kẹo nói chung": {
         "age_range": [

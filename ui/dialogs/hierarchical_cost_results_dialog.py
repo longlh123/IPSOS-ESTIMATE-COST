@@ -344,55 +344,115 @@ class HierarchicalCostResultsDialog(QDialog):
         sheet = wb.create_sheet("Estimate Cost")
         
         # Set column widths for initial columns
-        sheet.column_dimensions['A'].width = 40  # Subtitle / Component
-        sheet.column_dimensions['B'].width = 15  # Code
-        sheet.column_dimensions['C'].width = 10  # Unit
-        sheet.column_dimensions['D'].width = 20  # Target Audience
-        sheet.column_dimensions['E'].width = 15  # Qty (moved before Unit Cost)
-        sheet.column_dimensions['F'].width = 20  # Unit Cost
-        sheet.column_dimensions['G'].width = 20  # Total Cost
-        sheet.column_dimensions['H'].width = 50  # Note
+        estimate_cost_sheet = {
+            'table' : {
+                'headers' : {
+                    "Subtitle / Component" : {
+                        "column_dimension" : "A",
+                        "width" : 40 ,
+                        "format": "#,##0",  # format Excel
+                        "align": "right",   # align cell
+                        "visible": False    
+                    }, 
+                    "Code" : {
+                        'column_dimension' : 'B',
+                        'width' : 15
+                    }, 
+                    "Unit" : {
+                        'column_dimension' : 'C',
+                        'width' : 10  
+                    },
+                    "Target Audience" : {
+                        'column_dimension' : 'D',
+                        'width' : 20  
+                    },
+                    "Qty" : {
+                        'column_dimension' : 'E',
+                        'width' : 15  
+                    },
+                    "Unit Cost (VND)" : {
+                        'column_dimension' : 'F',
+                        'width' : 20  
+                    },
+                    "Total Cost (VND)" : {
+                        'column_dimension' : 'G',
+                        'width' : 20
+                    },
+                    "Note" : {
+                        'column_dimension' : 'H',
+                        'width' : 20  
+                    }
+                }
+            }
+        }
         
-        # Add title
-        sheet['A1'] = "Summary of All Provinces"
-        sheet['A1'].font = Font(bold=True, size=16)
-        sheet.merge_cells('A1:H1')
         
-        # Add total cost
-        sheet['A2'] = "Total Project Cost:"
-        sheet['A2'].font = Font(bold=True)
-        sheet['B2'] = self.cost_data.get("total_cost", 0)
-        sheet['B2'].number_format = '#,##0 "VND"'
-        sheet.merge_cells('B2:H2')
         
-        # Get provinces
-        provinces = self.cost_data.get("provinces", {})
-        province_names = list(provinces.keys())
+
+        for name in estimate_cost_sheet.get('column_dimenstions', []):
+            sheet.column_dimensions[name].width = estimate_cost_sheet.get('columns_widths', [])[name]
+
+        for col, header in enumerate(headers, 1):
+            cell = sheet.cell(row=header_row, column=col)
+            cell.value = header
+            cell.font = Font(bold=True)
+            cell.alignment = Alignment(horizontal='center', vertical='center')
+            cell.border = Border(
+                left=Side(style='thin'),
+                right=Side(style='thin'),
+                top=Side(style='thin'),
+                bottom=Side(style='thin')
+            )
+
         
-        # Add province links section
-        row = 4
-        sheet.cell(row=row, column=1).value = "Province Cost Sheets:"
-        sheet.cell(row=row, column=1).font = Font(bold=True)
-        row += 1
         
-        # Add hyperlinks to each province sheet
-        for province in province_names:
-            cell = sheet.cell(row=row, column=1)
-            cell.value = f"Go to {province}"
-            # Create internal hyperlink to the province sheet
-            cell.hyperlink = f"#{province}!A1"
-            cell.font = Font(color="0000FF", underline="single")
+        # # Add title
+        # sheet['A1'] = "Summary of All Provinces"
+        # sheet['A1'].font = Font(bold=True, size=16)
+        # sheet.merge_cells('A1:H1')
+        
+        # # Add total cost
+        # sheet['A2'] = "Total Project Cost:"
+        # sheet['A2'].font = Font(bold=True)
+        # sheet['B2'] = self.cost_data.get("total_cost", 0)
+        # sheet['B2'].number_format = '#,##0 "VND"'
+        # sheet.merge_cells('B2:H2')
+        
+        # # Get provinces
+        # provinces = self.cost_data.get("provinces", {})
+        # province_names = list(provinces.keys())
+        
+        # # Add province links section
+        # row = 4
+        # sheet.cell(row=row, column=1).value = "Province Cost Sheets:"
+        # sheet.cell(row=row, column=1).font = Font(bold=True)
+        # row += 1
+        
+        # # Add hyperlinks to each province sheet
+        # for province in province_names:
+        #     cell = sheet.cell(row=row, column=1)
+        #     cell.value = f"Go to {province}"
+        #     # Create internal hyperlink to the province sheet
+        #     cell.hyperlink = f"#{province}!A1"
+        #     cell.font = Font(color="0000FF", underline="single")
             
-            # Add province total cost
-            province_cost = provinces[province].get("total_cost", 0)
-            sheet.cell(row=row, column=2).value = province_cost
-            sheet.cell(row=row, column=2).number_format = '#,##0 "VND"'
+        #     # Add province total cost
+        #     province_cost = provinces[province].get("total_cost", 0)
+        #     sheet.cell(row=row, column=2).value = province_cost
+        #     sheet.cell(row=row, column=2).number_format = '#,##0 "VND"'
             
-            row += 1
+        #     row += 1
         
-        row += 2  # Add spacing
+        # row += 2  # Add spacing
         
         # Add headers for the main data table
+        row = 2
+
+        sheet[f'A{row}'] = "ESTIMATE COST"
+        sheet.merge_cells('A{row}:H{row}')
+
+        row = 9
+
         headers = [
             "Subtitle / Component", 
             "Code", 
@@ -405,6 +465,7 @@ class HierarchicalCostResultsDialog(QDialog):
         ]
         
         header_row = row
+
         for col, header in enumerate(headers, 1):
             cell = sheet.cell(row=header_row, column=col)
             cell.value = header
@@ -419,11 +480,11 @@ class HierarchicalCostResultsDialog(QDialog):
         
         row = header_row + 1  # Start of data rows
         
-        # Get a combined hierarchy of all provinces
-        combined_hierarchy = self.get_combined_hierarchy(provinces)
+        # # Get a combined hierarchy of all provinces
+        # combined_hierarchy = self.get_combined_hierarchy(provinces)
         
-        # Add hierarchical data with totals
-        self.add_combined_hierarchy_totals_to_sheet(sheet, combined_hierarchy, row, 0, provinces)
+        # # Add hierarchical data with totals
+        # self.add_combined_hierarchy_totals_to_sheet(sheet, combined_hierarchy, row, 0, provinces)
         
         return sheet
 

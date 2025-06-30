@@ -553,7 +553,7 @@ class ProjectModel(QObject):
         def create_element_from_pricing(current_title, province, target_audience):
             
             for price in target_audience.get('pricing', {}):
-                cost = price.get('price', 0)
+                cost = price.get('price', 0) * abs(1 + price.get('price_growth', 0) / 100) 
                 quanty = map_quanty_for_price(self, price, province, target_audience)
                 total_cost = quanty * cost
                 comment = get_comment(price.get('comment', {}))
