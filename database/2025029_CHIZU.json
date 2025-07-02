@@ -42,42 +42,6 @@
         "complexity": "Standard",
         "daily_sup_target": 0,
         "description": "",
-        "extra_rate": 5,
-        "gender": "Both",
-        "id": null,
-        "incident_rate": 100,
-        "income_range": [
-          0,
-          0
-        ],
-        "name": "Người dùng Sản phẩm về bánh kẹo nói chung",
-        "pricing": [
-          {
-            "comment": {},
-            "price": 84000,
-            "price_growth": 0,
-            "type": "recruit"
-          },
-          {
-            "comment": {},
-            "price": 25000,
-            "price_growth": 0,
-            "type": "location"
-          }
-        ],
-        "sample_size": 100,
-        "sample_type": "Main",
-        "target_for_interviewer": 2
-      },
-      {
-        "age_range": [
-          0,
-          0
-        ],
-        "comment": {},
-        "complexity": "Standard",
-        "daily_sup_target": 0,
-        "description": "",
         "extra_rate": 0,
         "gender": "Both",
         "id": null,
@@ -163,6 +127,42 @@
         ],
         "sample_size": 100,
         "sample_type": "Booster",
+        "target_for_interviewer": 2
+      },
+      {
+        "age_range": [
+          0,
+          0
+        ],
+        "comment": {},
+        "complexity": "Standard",
+        "daily_sup_target": 0,
+        "description": "",
+        "extra_rate": 10,
+        "gender": "Both",
+        "id": null,
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Người dùng Sản phẩm về bánh kẹo nói chung",
+        "pricing": [
+          {
+            "comment": {},
+            "price": 115000,
+            "price_growth": 0,
+            "type": "recruit"
+          },
+          {
+            "comment": {},
+            "price": 41000,
+            "price_growth": 0,
+            "type": "location"
+          }
+        ],
+        "sample_size": 100,
+        "sample_type": "Main",
         "target_for_interviewer": 2
       }
     ],
@@ -324,46 +324,6 @@
   },
   "samples": {
     "Hà Nội": {
-      "Main - Người dùng Sản phẩm về bánh kẹo nói chung": {
-        "name": "Người dùng Sản phẩm về bánh kẹo nói chung",
-        "sample_type": "Main",
-        "sample_size": 100,
-        "extra_rate": 5,
-        "pricing": [
-          {
-            "comment": {
-              "price_growth": "Tang do doi tuong"
-            },
-            "price": 84000,
-            "price_growth": 10.0,
-            "type": "recruit"
-          },
-          {
-            "comment": {},
-            "price": 25000,
-            "price_growth": 0,
-            "type": "location"
-          }
-        ],
-        "target_for_interviewer": 2,
-        "daily_sup_target": 6.25,
-        "gender": "Both",
-        "age_range": [
-          0,
-          0
-        ],
-        "income_range": [
-          0,
-          0
-        ],
-        "incident_rate": 100,
-        "complexity": "Standard",
-        "description": "",
-        "comment": {
-          "daily_sup_target": "fads fadsf adsf asd",
-          "target_for_interviewer": "fdas afds fasd"
-        }
-      },
       "Pilot - Người dùng Sản phẩm về bánh kẹo nói chung": {
         "age_range": [
           0,
@@ -385,7 +345,7 @@
         "pricing": [
           {
             "comment": {},
-            "price": 120000,
+            "price": 0,
             "price_growth": 0,
             "type": "pilot"
           }
@@ -458,46 +418,49 @@
         ],
         "sample_size": 100,
         "sample_type": "Booster",
+        "target_for_interviewer": 2
+      },
+      "Main - Người dùng Sản phẩm về bánh kẹo nói chung": {
+        "age_range": [
+          0,
+          0
+        ],
+        "comment": {
+          "daily_sup_target": "fads fadsf adsf asd",
+          "target_for_interviewer": "fdas afds fasd"
+        },
+        "complexity": "Standard",
+        "daily_sup_target": 6.25,
+        "description": "",
+        "extra_rate": 10,
+        "gender": "Both",
+        "id": null,
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Người dùng Sản phẩm về bánh kẹo nói chung",
+        "pricing": [
+          {
+            "comment": {},
+            "price": 115000,
+            "price_growth": 0,
+            "type": "recruit"
+          },
+          {
+            "comment": {},
+            "price": 41000,
+            "price_growth": 0,
+            "type": "location"
+          }
+        ],
+        "sample_size": 100,
+        "sample_type": "Main",
         "target_for_interviewer": 2
       }
     },
     "Hồ Chí Minh": {
-      "Main - Người dùng Sản phẩm về bánh kẹo nói chung": {
-        "age_range": [
-          0,
-          0
-        ],
-        "comment": {},
-        "complexity": "Standard",
-        "daily_sup_target": 6.25,
-        "description": "",
-        "extra_rate": 5,
-        "gender": "Both",
-        "id": null,
-        "incident_rate": 100,
-        "income_range": [
-          0,
-          0
-        ],
-        "name": "Người dùng Sản phẩm về bánh kẹo nói chung",
-        "pricing": [
-          {
-            "comment": {},
-            "price": 84000,
-            "price_growth": 0,
-            "type": "recruit"
-          },
-          {
-            "comment": {},
-            "price": 25000,
-            "price_growth": 0,
-            "type": "location"
-          }
-        ],
-        "sample_size": 100,
-        "sample_type": "Main",
-        "target_for_interviewer": 2
-      },
       "Pilot - Người dùng Sản phẩm về bánh kẹo nói chung": {
         "age_range": [
           0,
@@ -519,7 +482,7 @@
         "pricing": [
           {
             "comment": {},
-            "price": 120000,
+            "price": 0,
             "price_growth": 0,
             "type": "pilot"
           }
@@ -592,6 +555,42 @@
         ],
         "sample_size": 100,
         "sample_type": "Booster",
+        "target_for_interviewer": 2
+      },
+      "Main - Người dùng Sản phẩm về bánh kẹo nói chung": {
+        "age_range": [
+          0,
+          0
+        ],
+        "comment": {},
+        "complexity": "Standard",
+        "daily_sup_target": 6.25,
+        "description": "",
+        "extra_rate": 10,
+        "gender": "Both",
+        "id": null,
+        "incident_rate": 100,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Người dùng Sản phẩm về bánh kẹo nói chung",
+        "pricing": [
+          {
+            "comment": {},
+            "price": 115000,
+            "price_growth": 0,
+            "type": "recruit"
+          },
+          {
+            "comment": {},
+            "price": 41000,
+            "price_growth": 0,
+            "type": "location"
+          }
+        ],
+        "sample_size": 100,
+        "sample_type": "Main",
         "target_for_interviewer": 2
       }
     }

@@ -3,6 +3,18 @@ from formulars.pricing_formulas import (
     calculate_sample_size
 )
 
+MAPPING_STATIONARY = {
+    "Photo trắng đen" : "bw_page_count",
+    "Showphoto" : "showphoto_page_count",
+    "Showcard" : "showcard_page_count",
+    "Dropcard" : "dropcard_page_count",
+    "In màu \ In concept" : "color_page_count",
+    "Decal" : "decal_page_count",
+    "Ép Plastic" : "laminated_page_count",
+    "Hồ sơ biểu mẫu" : "interview_form_package_count",
+    "Chi phí đóng cuốn" : "stimulus_material_production_count"
+}
+
 def get_chi_phi_phieu_pv_title(type):
     if type == 'pilot':
         return "Chi phí Phiếu PV - Pilot"
@@ -18,18 +30,6 @@ def get_chi_phi_phieu_pv_title(type):
         return "Chi phí Phiếu PV - In Location"
     else:
         return None
-    
-MAPPING_STATIONARY = {
-    "Photo trắng đen" : "bw_page_count",
-    "Showphoto" : "showphoto_page_count",
-    "Showcard" : "showcard_page_count",
-    "Dropcard" : "dropcard_page_count",
-    "In màu \ In concept" : "color_page_count",
-    "Decal" : "decal_page_count",
-    "Ép Plastic" : "laminated_page_count",
-    "Hồ sơ biểu mẫu" : "interview_form_package_count",
-    "Chi phí đóng cuốn" : "stimulus_material_production_count"
-}
 
 def get_sample_size(project, element, province, excluding_items=list()):
     sample_size = 0
@@ -175,10 +175,56 @@ def get_chiphi_carddienthoai(project, element, province, title=""):
             return round(sample_size / 75, 2)
         if titles[len(titles) - 1] == "QC":
             return round(sample_size / 150, 2)
-        
-def get_stationary_quanty(project, element, province, title=""):
-    field_name = MAPPING_STATIONARY[element.get('description', '')]
-    quanty = project.general.get(field_name, 0)
+
+def get_photo_trangden(project, element, province, title=""):
+    sample_size = get_sample_size(project, element, province, excluding_items=["Pilot", "Non"])
+    bw_page_count = project.general.get('bw_page_count', 0)
+    quanty = sample_size * 1.3 * bw_page_count
+    return quanty
+
+def get_show_photo(project, element, province, title=""):
+    showphoto_page_count = project.general.get("showphoto_page_count", 0)
+    clt_provincial_desk_interviewers_count = project.general.get("clt_provincial_desk_interviewers_count", 0)
+    quanty = clt_provincial_desk_interviewers_count * showphoto_page_count
+    return quanty
+
+def get_show_card(project, element, province, title=""):
+    showcard_page_count = project.general.get("showcard_page_count", 0)
+    quanty = showcard_page_count
+    return quanty
+
+def get_drop_card(project, element, province, title=""):
+    dropcard_page_count = project.general.get("dropcard_page_count", 0)
+    clt_provincial_desk_interviewers_count = project.general.get("clt_provincial_desk_interviewers_count", 0)
+    quanty = clt_provincial_desk_interviewers_count * dropcard_page_count
+    return quanty
+
+def get_inmau_inconcept(project, element, province, title=""):
+    color_page_count = project.general.get("color_page_count", 0)
+    clt_provincial_desk_interviewers_count = project.general.get("clt_provincial_desk_interviewers_count", 0)
+    quanty = clt_provincial_desk_interviewers_count * color_page_count
+    return quanty
+
+def get_decal(project, element, province, title=""):
+    sample_size = get_sample_size(project, element, province, excluding_items=["Pilot", "Non"])
+    decal_page_count = project.general.get("decal_page_count", 0)
+    quanty = (sample_size / decal_page_count) if decal_page_count > 0 else 0
+    return quanty
+
+def get_ep_flastic(project, element, province, title=""):
+    laminated_page_count = project.general.get('laminated_page_count', 0)
+    clt_provincial_desk_interviewers_count = project.general.get("clt_provincial_desk_interviewers_count", 0)
+    quanty = clt_provincial_desk_interviewers_count * laminated_page_count
+    return quanty
+
+def get_hosobieumau(project, element, province, title=""):
+    sample_size = get_sample_size(project, element, province, excluding_items=["Pilot", "Non"])
+    quanty = sample_size
+    return quanty
+
+def get_chiphidongcuon(project, element, province, title=""):
+    stimulus_material_production_count = project.general.get('stimulus_material_production_count', 0)
+    quanty = stimulus_material_production_count
     return quanty
 
 def get_sample_recruit_idi(project, element, province, title=""):
@@ -233,6 +279,8 @@ def get_tien_nuocuong_khangiay_banhlat(project, element, province, title=""):
     sample_size = get_sample_size(project, element, province, excluding_items=["Pilot", "Non"])
     return sample_size
 
+
+
 QUANTY_MAPPINGS = {
     "default" : get_sample_size,
     "Chi phí thuê tablet < 9 inch" : get_chiphithue_thietbi,
@@ -272,15 +320,15 @@ QUANTY_MAPPINGS = {
     "Chi phí Card điện thoại" : get_chiphi_carddienthoai,
 
     #--STATIONARY
-    "Photo trắng đen" : get_stationary_quanty,
-    "Showphoto" : get_stationary_quanty,
-    "Showcard" : get_stationary_quanty,
-    "Dropcard" : get_stationary_quanty,
-    "In màu \ In concept" : get_stationary_quanty,
-    "Decal" : get_stationary_quanty,
-    "Ép Plastic" : get_stationary_quanty,
-    "Hồ sơ biểu mẫu" : get_stationary_quanty,
-    "Chi phí đóng cuốn" : get_stationary_quanty,
+    "Photo trắng đen" : get_photo_trangden,
+    "Showphoto" : get_show_photo,
+    "Showcard" : get_show_card,
+    "Dropcard" : get_drop_card,
+    "In màu \ In concept" : get_inmau_inconcept,
+    "Decal" : get_decal,
+    "Ép Plastic" : get_ep_flastic,
+    "Hồ sơ biểu mẫu" : get_hosobieumau,
+    "Chi phí đóng cuốn" : get_chiphidongcuon,
 
     #--OTHER
     "other_default" : get_other_default,

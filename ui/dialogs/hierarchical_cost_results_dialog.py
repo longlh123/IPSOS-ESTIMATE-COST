@@ -9,7 +9,10 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont, QColor
 import openpyxl
 from openpyxl.styles import Font, Alignment, Border, Side, PatternFill
-from openpyxl.utils import get_column_letter
+from openpyxl.utils import (
+    get_column_letter,
+    column_index_from_string
+)
 from openpyxl.worksheet.dimensions import ColumnDimension, DimensionHolder
 import pandas as pd
 
@@ -306,7 +309,7 @@ class HierarchicalCostResultsDialog(QDialog):
         if hasattr(self.parent(), 'project_model'):
             project_model = self.parent().project_model
         
-        self.create_estimate_cost_sheet(wb)
+        self.create_estimate_cost_sheet(wb, project_model=project_model)
 
         # Create Project Information sheet
         # self.create_project_info_sheet(wb, project_model)
@@ -349,52 +352,140 @@ class HierarchicalCostResultsDialog(QDialog):
                 'headers' : {
                     "Subtitle / Component" : {
                         "column_dimension" : "A",
-                        "width" : 40 ,
-                        "format": "#,##0",  # format Excel
-                        "align": "right",   # align cell
+                        "width" : 40,
+                        "format": "",  # format Excel
+                        "align": "left",   # align cell
                         "visible": False    
                     }, 
                     "Code" : {
                         'column_dimension' : 'B',
-                        'width' : 15
+                        'width' : 15,
+                        "format": "",  # format Excel
+                        "align": "right",   # align cell
+                        "visible": False
                     }, 
                     "Unit" : {
                         'column_dimension' : 'C',
-                        'width' : 10  
+                        'width' : 10,
+                        "format": "",  # format Excel
+                        "align": "right",   # align cell
+                        "visible": False  
                     },
                     "Target Audience" : {
                         'column_dimension' : 'D',
-                        'width' : 20  
+                        'width' : 20,
+                        "format": "",  # format Excel
+                        "align": "right",   # align cell
+                        "visible": False  
                     },
                     "Qty" : {
                         'column_dimension' : 'E',
-                        'width' : 15  
+                        'width' : 15,
+                        "format": "",  # format Excel
+                        "align": "right",   # align cell
+                        "visible": False  
                     },
                     "Unit Cost (VND)" : {
                         'column_dimension' : 'F',
-                        'width' : 20  
+                        'width' : 20,
+                        "format": "",  # format Excel
+                        "align": "right",   # align cell
+                        "visible": False  
                     },
                     "Total Cost (VND)" : {
                         'column_dimension' : 'G',
-                        'width' : 20
+                        'width' : 20,
+                        "format": "",  # format Excel
+                        "align": "right",   # align cell
+                        "visible": False
                     },
                     "Note" : {
                         'column_dimension' : 'H',
-                        'width' : 20  
+                        'width' : 20,
+                        "format": "",  # format Excel
+                        "align": "right",   # align cell
+                        "visible": False  
                     }
                 }
             }
         }
-        
-        
-        
 
-        for name in estimate_cost_sheet.get('column_dimenstions', []):
-            sheet.column_dimensions[name].width = estimate_cost_sheet.get('columns_widths', [])[name]
+        row = 2
 
-        for col, header in enumerate(headers, 1):
-            cell = sheet.cell(row=header_row, column=col)
+        column_dimensions = [properties.get('column_dimension') for properties in estimate_cost_sheet['table']['headers'].values()]
+
+        cell = sheet.cell(row=row, column=1)
+        cell.value = "ESTIMATE COST"
+        cell.font = Font(bold=True, size=28)
+        cell.alignment = Alignment(horizontal='center', vertical='center')
+        estimate_cost_sheet['table']['headers']
+        sheet.merge_cells(f'{column_dimensions[0]}{row}:{column_dimensions[-1]}{row}')
+
+        # Thông tin dự án
+        row = 4
+
+        project_mappings = {
+            "project_name" : "Internal Job:",
+            "internal_job" : "Project name:",
+            "project_type" : "Method:"
+        }
+
+        for key, value in project_mappings.items():
+            cell = sheet.cell(row=row, column=1)
+            cell.value = value
+            cell.font = Font(bold=True)
+            cell.alignment = Alignment(horizontal='right', vertical='center')
+
+            cell = sheet.cell(row=row, column=2)
+            cell.value = project_model.general.get(key, "")
+
+            row += 1
+
+        # Thông tin Sample Size theo từng thành phố
+        row, column = 4, 4
+
+        headers = ["Location", "Target Audience", "Sample", "Over sample", "Total"]
+
+        for header in headers:
+            cell = sheet.cell(row=row, column=column)
             cell.value = header
+
+            column += 1
+
+        row, column = 5, 4
+        
+        for province, target_audiences in project_model.samples.items():
+            for key, target_audience in target_audiences.items():
+                for _col, header in enumerate(headers):
+                    cell = sheet.cell(row=row, column=column + _col)
+                    total = 0
+                    if header == "Location":
+                        cell.value = f"{province} - {target_audience.get('sample_type')}"
+                    elif header == "Target Audience":
+                        cell.value = target_audience.get('name')
+                    elif header == "Sample":
+                        cell.value = target_audience.get('sample_size')
+                        total += cell.value
+                    elif header == "Over sample":
+                        cell.value = round(target_audience.get('sample_size') * target_audience.get('extra_rate') / 100, 0)
+                        total += cell.value
+                    else:
+                        cell.value = total
+            
+                row += 1
+
+        row = 9 if row < 9 else row
+        
+        for key, properties in estimate_cost_sheet['table']['headers'].items():
+            column_dimension = properties.get('column_dimension')
+            column_width = properties.get('width')
+
+            sheet.column_dimensions[column_dimension].width = column_width
+
+            col = column_index_from_string(column_dimension)
+            
+            cell = sheet.cell(row=row, column=col)
+            cell.value = key
             cell.font = Font(bold=True)
             cell.alignment = Alignment(horizontal='center', vertical='center')
             cell.border = Border(
@@ -446,39 +537,39 @@ class HierarchicalCostResultsDialog(QDialog):
         # row += 2  # Add spacing
         
         # Add headers for the main data table
-        row = 2
+        # row = 2
 
-        sheet[f'A{row}'] = "ESTIMATE COST"
-        sheet.merge_cells('A{row}:H{row}')
+        # sheet[f'A{row}'] = "ESTIMATE COST"
+        # sheet.merge_cells('A{row}:H{row}')
 
-        row = 9
+        # row = 9
 
-        headers = [
-            "Subtitle / Component", 
-            "Code", 
-            "Unit",
-            "Target Audience",
-            "Qty",  # Moved before Unit Cost
-            "Unit Cost (VND)",
-            "Total Cost (VND)",
-            "Note"
-        ]
+        # headers = [
+        #     "Subtitle / Component", 
+        #     "Code", 
+        #     "Unit",
+        #     "Target Audience",
+        #     "Qty",  # Moved before Unit Cost
+        #     "Unit Cost (VND)",
+        #     "Total Cost (VND)",
+        #     "Note"
+        # ]
         
-        header_row = row
+        # header_row = row
 
-        for col, header in enumerate(headers, 1):
-            cell = sheet.cell(row=header_row, column=col)
-            cell.value = header
-            cell.font = Font(bold=True)
-            cell.alignment = Alignment(horizontal='center', vertical='center')
-            cell.border = Border(
-                left=Side(style='thin'),
-                right=Side(style='thin'),
-                top=Side(style='thin'),
-                bottom=Side(style='thin')
-            )
+        # for col, header in enumerate(headers, 1):
+        #     cell = sheet.cell(row=header_row, column=col)
+        #     cell.value = header
+        #     cell.font = Font(bold=True)
+        #     cell.alignment = Alignment(horizontal='center', vertical='center')
+        #     cell.border = Border(
+        #         left=Side(style='thin'),
+        #         right=Side(style='thin'),
+        #         top=Side(style='thin'),
+        #         bottom=Side(style='thin')
+        #     )
         
-        row = header_row + 1  # Start of data rows
+        # row = header_row + 1  # Start of data rows
         
         # # Get a combined hierarchy of all provinces
         # combined_hierarchy = self.get_combined_hierarchy(provinces)

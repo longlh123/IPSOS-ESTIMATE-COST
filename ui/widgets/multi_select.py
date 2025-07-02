@@ -99,7 +99,9 @@ class MultiSelectWidget(QWidget):
         print(f"Updating display with: {self.selected_items}")
         
         if not self.selected_items:
+            self.blockSignals(True)
             self.selection_display.setText("")
+            self.blockSignals(False)
             self.selection_display.repaint()
             print("Display cleared - no selections")
             return
@@ -112,7 +114,9 @@ class MultiSelectWidget(QWidget):
             display_text = f"{self.selected_items[0]}, {self.selected_items[1]} +{len(self.selected_items) - 2} more"
             
         print(f"Setting display text to: '{display_text}'")
+        self.blockSignals(True)
         self.selection_display.setText(display_text)
+        self.blockSignals(False)
         self.selection_display.repaint()  # Force UI update
         
     def set_items(self, items):
@@ -137,6 +141,7 @@ class MultiSelectWidget(QWidget):
             selected_items (list): List of items to select
         """
         # For widgets with allow_adding=True, we accept items not in the original list
+        self.blockSignals(True)
         if self.allow_adding:
             self.selected_items = selected_items.copy()
             
@@ -149,6 +154,7 @@ class MultiSelectWidget(QWidget):
             self.selected_items = [item for item in selected_items if item in self.items]
             
         self.update_display()
+        self.blockSignals(False)
         
     def get_selected_items(self):
         """
