@@ -100,8 +100,8 @@
     ],
     "interview_length": 60,
     "questionnaire_length": 0,
-    "device_type": "",
-    "tablet_usage_duration": "",
+    "device_type": "Tablet < 9 inch",
+    "tablet_usage_duration": "<= 15 phút",
     "bw_page_count": 0,
     "showphoto_page_count": 0,
     "showcard_page_count": 0,
@@ -126,9 +126,9 @@
     "clt_sample_recruit_idi": 5,
     "clt_assistant_setup_days": 1,
     "clt_number_of_samples_to_label": 100,
-    "clt_description_howtolabelthesample": "Hướng dẫn dán mẫu, và cách thức dán mẫu",
+    "clt_description_howtolabelthesample": " Hướng dẫn dán mẫu",
     "clt_dan_mau_days": 0,
-    "clt_sample_size_per_day": 0,
+    "clt_sample_size_per_day": 50,
     "clt_desk_interviewers_count": 0,
     "clt_provincial_desk_interviewers_count": 0
   },
@@ -139,8 +139,8 @@
   "cost_toggles": {
     "device_rental_costs": {
       "Chi phí thuê tablet < 9 inch": true,
-      "Chi phí thuê tablet >= 9 inch": true,
-      "Chi phí thuê laptop": true
+      "Chi phí thuê tablet >= 9 inch": false,
+      "Chi phí thuê laptop": false
     },
     "idi_costs": {
       "Chi phí Tuyển đáp viên IDI": true,

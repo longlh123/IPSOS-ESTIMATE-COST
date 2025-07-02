@@ -81,7 +81,7 @@ class OperationsTab(QWidget):
 
         # Connect to model's data changed signal
         self.project_model.dataChanged.connect(self.update_from_model)
-        
+
         # Initial update from model
         self.update_from_model()
 
@@ -121,7 +121,7 @@ class OperationsTab(QWidget):
         bind_spinbox_handler(self, "clt_dan_mau_days", validator=self.validator, update_func=self.project_model.update_clt_settings)
 
         # Sample size target per day
-        create_spinbox_field(layout, self, "clt_sample_size_per_day", "Sample Size Target per Day:", range=(0, 30), suffix="", row=3, col=0)
+        create_spinbox_field(layout, self, "clt_sample_size_per_day", "Sample Size Target per Day:", range=(0, 100), suffix="", row=3, col=0)
 
         bind_spinbox_handler(self, "clt_sample_size_per_day", validator=self.validator, update_func=self.project_model.update_clt_settings)
 
@@ -191,6 +191,10 @@ class OperationsTab(QWidget):
     def update_from_model(self):
         """Update the UI elements from the model data."""
 
+        self.clt_assistant_setup_days_spinbox.setValue(self.project_model.clt_settings["clt_assistant_setup_days"])
+        self.clt_dan_mau_days_spinbox.setValue(self.project_model.clt_settings["clt_dan_mau_days"])
+        self.clt_sample_size_per_day_spinbox.setValue(self.project_model.clt_settings["clt_sample_size_per_day"])
+
         #QC Method
         self.qc_methods.set_selected_items(self.project_model.qc_methods)
 
@@ -217,6 +221,8 @@ class OperationsTab(QWidget):
             self.tablet_usage_duration_combobox.setCurrentText(value)
         else:
             self.tablet_usage_duration_combobox.setCurrentIndex(0)
+        
+        self.tablet_usage_duration_combobox.setEnabled(self.project_model.general["device_type"] == "Tablet < 9 inch")
 
         self.tablet_usage_duration_combobox.blockSignals(False)
 
