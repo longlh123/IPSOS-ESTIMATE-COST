@@ -345,7 +345,7 @@ class TargetAudienceDialog(QDialog):
     def add_target_audience(self):
         
         sample_type = self.sample_type.currentText()
-        if sample_type == "-- Select -- ":
+        if sample_type == "-- Select --":
             QMessageBox.warning(self, "Missing Sample Type", "Please choose a sample type.")
             return
 
