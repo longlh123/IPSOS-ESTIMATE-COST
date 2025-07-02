@@ -173,7 +173,7 @@ class GeneralTab(QWidget):
         ### Project Objectives
         create_textedit_field(layout, self, "project_objectives", "Project Objectives:", placeholder="Enter your text here...", row=4, col=0, rowspan=1, colspan=4)
         
-        bind_textedit_handler(self, "project_objectives", validator=self.validator, update_func=self.project_model.update_general)
+        bind_textedit_handler(self, "project_objectives", validator=None, update_func=self.project_model.update_general)
 
         ### Platform Details Group
         create_header_label(layout, "Platform Details", row=6, col=0, rowspan=1, colspan=4)
@@ -444,61 +444,7 @@ class GeneralTab(QWidget):
         ### Description of label application method
         create_textedit_field(layout, self, "clt_description_howtolabelthesample", "Description of how to label the sample:", placeholder="Enter your text here...", row=7, col=0, rowspan=1, colspan=4)
         
-        bind_textedit_handler(self, "clt_description_howtolabelthesample", validator=self.validator, update_func=self.project_model.update_general)
-
-        # # Assistant Set Up Days - NEW FIELD
-        # self.clt_assistant_setup_days = QSpinBox()
-        # self.clt_assistant_setup_days.setRange(1, 30)
-        # self.clt_assistant_setup_days.setValue(1)  # Default value
-        # self.clt_assistant_setup_days.setSuffix(" day(s)")
-        
-        # self.clt_assistant_setup_days.valueChanged.connect(
-        #     lambda value: self.handle_spinbox_changed("clt_assistant_setup_days", value)
-        # )
-
-        # self.create_spinbox(layout, "clt_assistant_setup_days", "Assistant set up needs:", self.clt_assistant_setup_days, 5, 0)
-
-        # #--Số ngày dán mẫu
-        # self.clt_dan_mau_days = QSpinBox()
-        # self.clt_dan_mau_days.setRange(0, 100)
-
-        # self.clt_dan_mau_days.valueChanged.connect(
-        #     lambda value: self.handle_spinbox_changed("clt_dan_mau_days", value)
-        # )
-
-        # self.create_spinbox(layout, "clt_dan_mau_days", "Số ngày dán mẫu:", self.clt_dan_mau_days, 9, 0)
-        
-        # layout.addWidget(self.create_group_header("Daily Targets & Staffing"), 10, 0, 1, 4) 
-
-        # # Sample size target per day
-        # self.clt_sample_size_per_day = QSpinBox()
-        # self.clt_sample_size_per_day.setRange(0, 999)
-
-        # self.clt_sample_size_per_day.valueChanged.connect(
-        #     lambda value: self.handle_spinbox_changed("clt_sample_size_per_day", value)
-        # )
-
-        # self.create_spinbox(layout, "clt_sample_size_per_day", "Sample Size Target per Day:", self.clt_sample_size_per_day, 11, 0)
-
-        # # Number of desk-based interviewers (NGỒI BÀN)
-        # self.clt_desk_interviewers_count = QSpinBox()
-        # self.clt_desk_interviewers_count.setRange(0, 999)
-        
-        # self.clt_desk_interviewers_count.valueChanged.connect(
-        #     lambda value: self.handle_spinbox_changed("clt_desk_interviewers_count", value)
-        # )
-
-        # self.create_spinbox(layout, "clt_desk_interviewers_count", "Số lượng PVV tham gia dự án (NGỒI BÀN):", self.clt_desk_interviewers_count, 12, 0)
-
-        # # Number of provincial desk-based interviewers
-        # self.clt_provincial_desk_interviewers_count = QSpinBox()
-        # self.clt_provincial_desk_interviewers_count.setRange(0, 999)
-        
-        # self.clt_provincial_desk_interviewers_count.valueChanged.connect(
-        #     lambda value: self.handle_spinbox_changed("clt_provincial_desk_interviewers_count", value)
-        # )
-
-        # self.create_spinbox(layout, "clt_provincial_desk_interviewers_count", "Số lượng PVV đi tỉnh (NGỒI BÀN):", self.clt_provincial_desk_interviewers_count, 13, 0)
+        bind_textedit_handler(self, "clt_description_howtolabelthesample", validator=None, update_func=self.project_model.update_clt_settings)
 
         return group_box
         
@@ -747,7 +693,7 @@ class GeneralTab(QWidget):
 
         self.clt_description_howtolabelthesample_textedit.setPlainText(self.project_model.clt_settings["clt_description_howtolabelthesample"])
 
-        cursor.setPosition(min(pos, len(self.project_model.general["project_objectives"])))
+        cursor.setPosition(min(pos, len(self.project_model.clt_settings["clt_description_howtolabelthesample"])))
         self.clt_description_howtolabelthesample_textedit.setTextCursor(cursor)
 
         self.clt_description_howtolabelthesample_textedit.setEnabled(self.project_model.clt_settings.get("clt_number_of_samples_to_label", 0) != 0)

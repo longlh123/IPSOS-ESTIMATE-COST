@@ -73,19 +73,19 @@ class FieldValidator:
                     "check" : lambda v: not (v == 0),
                     "error" : "Please enter a value greater than 0."
                 }
-            ],
-            "clt_sample_size_per_day" : [
-                {
-                    "check" : lambda v: not (v == 0),
-                    "error" : "Please enter a value greater than 0."
-                }
-            ],
-            "clt_desk_interviewers_count" : [
-                {
-                    "check" : lambda v: not (v == 0),
-                    "error" : "Please enter a value greater than 0."
-                }
             ]
+            # "clt_sample_size_per_day" : [
+            #     {
+            #         "check" : lambda v: not (v == 0),
+            #         "error" : "Please enter a value greater than 0."
+            #     }
+            # ],
+            # "clt_desk_interviewers_count" : [
+            #     {
+            #         "check" : lambda v: not (v == 0),
+            #         "error" : "Please enter a value greater than 0."
+            #     }
+            # ]
         }
 
     def validate(self, field_name, value, condition=None):

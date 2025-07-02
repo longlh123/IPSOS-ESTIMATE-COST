@@ -295,7 +295,17 @@ class MainWindow(QMainWindow):
     def save_project(self):
         """Save the current project to a file."""
         # Open file dialog
-        if self.validate_project_model():
+        field_name, is_valid, error_message = self.project_model.validate()
+
+        if not is_valid:
+            self.logger.error(f"Failed to save project: {error_message}")
+            self.show_warning_message(field_name, error_message)
+            QMessageBox.critical(
+                    self, 
+                    "Error", 
+                    f"Failed to save project: {field_name} - {error_message}"
+                )
+        else:
             internal_job = re.sub(pattern=r"[-]", repl='', string=self.project_model.general["internal_job"])
             project_name = re.sub(pattern='\s', repl=' ', string=self.project_model.general["project_name"].strip())
             
@@ -332,39 +342,7 @@ class MainWindow(QMainWindow):
                     f"Failed to save project: {str(e)}"
                 )
 
-    def validate_project_model(self) -> bool:
-        validator = FieldValidator()
-        data = self.project_model.to_dict()
-
-        for field_name, value in data["general"].items():
-            if field_name == "quota_description":
-                valid, error = validator.validate(field_name, value, condition=self.project_model.general["type_of_quota_control"])
-            elif field_name == "open_ended_main_count":
-                valid, error = validator.validate(field_name, value, condition="Main" in self.project_model.general["sample_types"])
-            elif field_name == "open_ended_booster_count":
-                valid, error = validator.validate(field_name, value, condition="Booster" in self.project_model.general["sample_types"])
-            else:
-                valid, error = validator.validate(field_name, value)
-
-            if not valid:   
-                self.general_tab.show_warning_message(field_name, error)
-                return False
-        
-        for field_name, value in data["clt_settings"].items():
-            valid, error = validator.validate(field_name, value)
-            
-            if not valid:
-                self.general_tab.show_warning_message(field_name, error)
-                return False
-        
-        for field_name, value in data["hut_settings"].items():
-            valid, error = validator.validate(field_name, value)
-            
-            if not valid:
-                self.general_tab.show_warning_message(field_name, error)
-                return False
-        
-        return True
+    
 
     def show_warning_message(self, field_name:str, message: str):
         label_name = f"{field_name}_warning"

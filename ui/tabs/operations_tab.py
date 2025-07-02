@@ -110,7 +110,7 @@ class OperationsTab(QWidget):
         create_header_label(layout, "CLT Settings", row=0, col=0, rowspan=1, colspan=4)
 
         # Assistant Set Up Days - NEW FIELD
-        create_spinbox_field(layout, self, "clt_assistant_setup_days", "Assistant set up needs:", range=(1, 30), suffix="", row=1, col=0)
+        create_spinbox_field(layout, self, "clt_assistant_setup_days", "Assistant set up needs:", range=(0, 30), suffix="", row=1, col=0)
 
         bind_spinbox_handler(self, "clt_assistant_setup_days", validator=self.validator, update_func=self.project_model.update_clt_settings)
 
@@ -120,19 +120,19 @@ class OperationsTab(QWidget):
         bind_spinbox_handler(self, "clt_dan_mau_days", validator=self.validator, update_func=self.project_model.update_clt_settings)
 
         # Sample size target per day
-        create_spinbox_field(layout, self, "clt_sample_size_per_day", "Sample Size Target per Day:", range=(1, 30), suffix="", row=3, col=0)
+        create_spinbox_field(layout, self, "clt_sample_size_per_day", "Sample Size Target per Day:", range=(0, 30), suffix="", row=3, col=0)
 
         bind_spinbox_handler(self, "clt_sample_size_per_day", validator=self.validator, update_func=self.project_model.update_clt_settings)
 
         create_header_label(layout, "NGỒI BÀN Settings", row=4, col=0, rowspan=1, colspan=4)
 
         # Number of desk-based interviewers (NGỒI BÀN)
-        create_spinbox_field(layout, self, "clt_desk_interviewers_count", "Số lượng PVV tham gia dự án (NGỒI BÀN):", range=(1, 999), suffix="", row=5, col=0)
+        create_spinbox_field(layout, self, "clt_desk_interviewers_count", "Số lượng PVV tham gia dự án (NGỒI BÀN):", range=(0, 999), suffix="", row=5, col=0)
 
         bind_spinbox_handler(self, "clt_desk_interviewers_count", validator=self.validator, update_func=self.project_model.update_clt_settings)
 
         # Number of provincial desk-based interviewers
-        create_spinbox_field(layout, self, "clt_provincial_desk_interviewers_count", "Số lượng PVV đi tỉnh (NGỒI BÀN):", range=(1, 999), suffix="", row=5, col=2)
+        create_spinbox_field(layout, self, "clt_provincial_desk_interviewers_count", "Số lượng PVV đi tỉnh (NGỒI BÀN):", range=(0, 999), suffix="", row=5, col=2)
 
         bind_spinbox_handler(self, "clt_provincial_desk_interviewers_count", validator=self.validator, update_func=self.project_model.update_clt_settings)
 

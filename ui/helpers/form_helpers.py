@@ -187,7 +187,7 @@ def create_spinbox_field(layout: QGridLayout, target, field_name: str, label: st
     layout.addWidget(label_widget, row, col)
 
     container = QWidget()
-    container_layout = QHBoxLayout(container)
+    container_layout = QVBoxLayout(container)
     container_layout.setContentsMargins(
         margins.get('left', 0),
         margins.get('top', 0),
