@@ -104,6 +104,8 @@ class ProjectModel(QObject):
             "clt_failure_rate": 0,
             "clt_sample_recruit_idi" : 0,
             "clt_assistant_setup_days": 1,
+            "clt_number_of_samples_to_label" : 0,
+            "clt_description_howtolabelthesample" : "",
             "clt_dan_mau_days": 0,
             "clt_sample_size_per_day": 0,
             "clt_desk_interviewers_count": 0,
@@ -527,10 +529,12 @@ class ProjectModel(QObject):
 
     def clt_settings_clear(self):
         for key, value in self.clt_settings.items():
-            self.clt_settings[key] = 0
-
             if key == "clt_assistant_setup_days":
                 self.clt_settings[key] = 1
+            elif key == "clt_description_howtolabelthesample":
+                self.clt_settings[key] = ""
+            else:
+                self.clt_settings[key] = 0
 
     def update_hut_settings(self, field, value):
         self.hut_settings[field] = value

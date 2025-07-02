@@ -12,6 +12,7 @@ from PySide6.QtWidgets import (
     QButtonGroup, QRadioButton, QTextEdit, QCheckBox
 )
 from PySide6.QtCore import Qt, Signal, Slot
+from PySide6.QtCore import Signal
 
 from models.project_model import ProjectModel
 from config.predefined_values import *
@@ -19,13 +20,19 @@ from ui.widgets.multi_select import MultiSelectWidget
 from ui.widgets.target_audience_widget import TargetAudienceWidget
 from ui.widgets.generic_editor_widget import GenericEditorWidget
 from components.validation_field import FieldValidator
-from ui.events.wheelBlocker import WheelBlocker 
+from ui.events.wheelBlocker import WheelBlocker
+from ui.helpers.form_helpers import (create_header_label, create_input_field, create_combobox, create_multiselected_field, create_textedit_field, 
+                                     create_radiobuttons_group, create_spinbox_field
+                                     )
+from ui.helpers.form_events import bind_input_handler, bind_combobox_handler, bind_multiselection_handler, bind_textedit_handler, bind_radiogroup_handler, bind_spinbox_handler
 
 class GeneralTab(QWidget):
     """
     Tab for general project information, divided into four regions.
     """
     
+    projectTypeChanged = Signal(str)
+
     def __init__(self, project_model):
         super().__init__()
         self.project_model = project_model
@@ -53,23 +60,11 @@ class GeneralTab(QWidget):
         # Apply filter cho tất cả các QComboBox và QSpinBox trong form
         for widget in self.region_general_information.findChildren(QSpinBox) + self.region_general_information.findChildren(QComboBox):
             widget.installEventFilter(self.wheel_blocker)
-
-        self.region_qc_methods = self.create_region_qc_method()
-
-        # Apply filter cho tất cả các QComboBox và QSpinBox trong form
-        for widget in self.region_qc_methods.findChildren(QSpinBox) + self.region_qc_methods.findChildren(QComboBox):
-            widget.installEventFilter(self.wheel_blocker)
         
         self.region_dp = self.create_region_dp()
 
         # Apply filter cho tất cả các QComboBox và QSpinBox trong form
         for widget in self.region_dp.findChildren(QSpinBox) + self.region_dp.findChildren(QComboBox):
-            widget.installEventFilter(self.wheel_blocker)
-
-        self.region_device = self.create_region_device()
-
-        # Apply filter cho tất cả các QComboBox và QSpinBox trong form
-        for widget in self.region_device.findChildren(QSpinBox) + self.region_device.findChildren(QComboBox):
             widget.installEventFilter(self.wheel_blocker)
 
         self.region_subcontract = self.create_region_subcontract()
@@ -96,9 +91,7 @@ class GeneralTab(QWidget):
         scroll_layout.addWidget(self.region_general_information)
         scroll_layout.addWidget(self.region_clt)
         scroll_layout.addWidget(self.region_hut)
-        scroll_layout.addWidget(self.region_qc_methods)
         scroll_layout.addWidget(self.region_dp)
-        scroll_layout.addWidget(self.region_device)
         scroll_layout.addWidget(self.region_printer)
         
         scroll_layout.addStretch()
@@ -111,11 +104,11 @@ class GeneralTab(QWidget):
         
         # After setting up all UI elements, explicitly trigger updates for comboboxes
         # This ensures initial values are saved to the model
-        if self.project_type.currentText():
-            self.project_model.update_general("project_type", self.project_type.currentText())
+        if self.project_type_combobox.currentText():
+            self.project_model.update_general("project_type", self.project_type_combobox.currentText())
         
-        if self.sampling_method.currentText():
-            self.project_model.update_general("sampling_method", self.sampling_method.currentText())
+        if self.sampling_method_combobox.currentText():
+            self.project_model.update_general("sampling_method", self.sampling_method_combobox.currentText())
         
         # Connect to model's data changed signal
         self.project_model.dataChanged.connect(self.update_from_model)
@@ -136,149 +129,9 @@ class GeneralTab(QWidget):
         # Show/hide CLT region  
         if hasattr(self, 'region_clt'):
             self.region_clt.setVisible("CLT" in project_type)
-    
-    def show_warning_message(self, field_name:str, message: str):
-        label_name = f"{field_name}_warning"
-        label = getattr(self, label_name, None)
-        
-        if label:
-            label.setText(message)
-            label.setVisible(bool(message))
 
-    def handle_text_changed(self, field_name:str, value: str):
-        is_valid, error = self.validator.validate(field_name, value)
-        self.show_warning_message(field_name, error)
-
-        if is_valid:
-            self.project_model.update_general(field_name, value)
-        else:
-            field = getattr(self, field_name, None)
-
-            if field:
-                field.setFocus()
-
-    def handle_combobox_changed(self, field_name:str, value:str):
-        is_valid, error = self.validator.validate(field_name, value)
-        self.show_warning_message(field_name, error)
-
-        if is_valid:
-            self.project_model.update_general(field_name, value)
-            
-            # Add this line to handle region visibility when project type changes
-            if field_name == "project_type":
-                self.update_region_visibility()
-    
-    def handle_spinbox_changed(self, field_name:str, value):
-        if field_name == "open_ended_main_count":
-            is_valid, error = self.validator.validate(field_name, value, condition="Main" in self.project_model.general["sample_types"])
-        elif field_name == "open_ended_booster_count":
-            is_valid, error = self.validator.validate(field_name, value, condition="Booster" in self.project_model.general["sample_types"])
-        else:
-            is_valid, error = self.validator.validate(field_name, value)
-
-        self.show_warning_message(field_name, error)
-
-        if is_valid:
-            if field_name in self.project_model.clt_settings.keys():
-                self.project_model.update_clt_settings(field_name, value)
-            elif field_name in self.project_model.hut_settings.keys():
-                self.project_model.update_hut_settings(field_name, value)
-            else:
-                self.project_model.update_general(field_name, value)
-        else:
-            field = getattr(self, field_name, None)
-
-            if field:
-                field.setFocus()
-
-    def create_input_field(self, layout, field_name, label, widget, row= 0, col= 0, rowspan= 0, colspan= 0, margins = None):
-        if margins is None:
-            margins = { "left": 0, "top": 0, "right": 0, "bottom": 0}
-
-        label_widget = QLabel(label)
-        label_widget.setStyleSheet("margin-left: 10px;")
-        layout.addWidget(label_widget, row, col)
-
-        container = QWidget()
-        container_layout = QVBoxLayout(container)
-        container_layout.setContentsMargins(
-            margins["left"], margins["top"], margins["right"], margins["bottom"]
-        )
-        container_layout.addWidget(widget)
-
-        warning_label = QLabel("")
-        warning_label.setStyleSheet("color: red; font-size: 12px;")
-        warning_label.setVisible(False)
-        container_layout.addWidget(warning_label)
-
-        # Gán warning label thành thuộc tính self
-        setattr(self, f"{field_name}_warning", warning_label)
-
-        layout.addWidget(container, row, col + 1)
-
-    def create_combobox(self, layout, field_name, label, widget, row= 0, col= 0, margins = None):
-        if margins is None:
-            margins = { "left": 0, "top": 0, "right": 0, "bottom": 0}
-
-        label_widget = QLabel(label)
-        label_widget.setStyleSheet("margin-left: 10px;")
-        layout.addWidget(label_widget, row, col)
-
-        container = QWidget()
-        container_layout = QVBoxLayout(container)
-        container_layout.setContentsMargins(0, 0, 0, 0)
-        container_layout.addWidget(widget)
-
-        warning_label = QLabel("")
-        warning_label.setStyleSheet("color: red; font-size: 12px")
-        warning_label.setVisible(False)
-        container_layout.addWidget(warning_label)
-
-        # Gán warning label thành thuộc tính self
-        setattr(self, f"{field_name}_warning", warning_label)
-
-        layout.addWidget(container, row, col + 1)
-
-    def create_spinbox(self, layout, field_name, label, widget, row=0, col=0, margins=None):
-        if margins is None:
-            margins = {"left": 0, "top": 0, "right": 0, "bottom": 0}
-        
-        label_widget = QLabel(label)
-        label_widget.setStyleSheet("margin-left: 10px")
-        layout.addWidget(label_widget, row, col)
-
-        container = QWidget()
-        container_layout = QVBoxLayout(container)
-        container_layout.setContentsMargins(
-            margins["left"], margins["top"], margins["right"], margins["bottom"]
-        )
-        container_layout.addWidget(widget)
-
-        warning_label = QLabel("")
-        warning_label.setStyleSheet("color: red; font-size: 12px")
-        warning_label.setVisible(False)
-        container_layout.addWidget(warning_label)
-
-        setattr(self, f"{field_name}_warning", warning_label)
-
-        layout.addWidget(container, row, col + 1)
-
-    def create_group_header(self, title:str):
-        container = QWidget()
-        
-        layout = QHBoxLayout(container)
-        layout.setContentsMargins(0, 5, 0, 5)
-        layout.setSpacing(10)
-
-        label = QLabel(title)
-        label.setStyleSheet("font-weight: bold;")
-
-        layout.addWidget(label)
-        return container
-
-    def handle_platform_changed(self, button):
-        platform = button.text()
-        self.project_model.update_general("platform", platform)        
+    def on_project_type_changed(self, value: str):
+        self.projectTypeChanged.emit(value)
 
     def create_region_general_information(self):
         """Create the General Information region."""
@@ -288,299 +141,108 @@ class GeneralTab(QWidget):
         layout.setColumnStretch(1, 1)  # Make the second column stretch
         layout.setColumnStretch(3, 1)  # Make the fourth column stretch
         
-        row = 0
-
-        layout.addWidget(self.create_group_header("Project Information"), row, 0, 1, 4) 
-        row += 1
-
-        ### Row 0 - Cell 0
-        self.internal_job = QLineEdit()
-        self.internal_job.textChanged.connect(
-            lambda text: self.handle_text_changed("internal_job", text)
-        )
-        self.create_input_field(layout, "internal_job", "Internal Job:", self.internal_job, row=row, col=0)
+        create_header_label(layout, "Project Information", row=0, col=0, rowspan=1, colspan=4)
         
-        ### Row 0 - Cell 1
-        self.symphony = QLineEdit()
-        self.symphony.textChanged.connect(
-            lambda text: self.handle_text_changed("symphony", text)
-        )
-        self.create_input_field(layout, "symphony", "Symphony:", self.symphony, row=row, col=2)
-        
-        row += 1
+        ### Internal Job
+        create_input_field(layout, self, "internal_job", "Internal Job:", row=1, col=0)
 
-        ### Row 1 - Cell 0
-        self.project_name = QLineEdit()
-        self.project_name.textChanged.connect(
-            lambda text: self.handle_text_changed("project_name", text)
-        )
-        self.create_input_field(layout, "project_name", "Project Name:", self.project_name, row=row, col=0)
+        bind_input_handler(self, "internal_job", validator=self.validator, update_func=self.project_model.update_general)
+        
+        ### Symphony 
+        create_input_field(layout, self, "symphony", "Symphony:", row=1, col=2)
+
+        bind_input_handler(self, "symphony", validator=self.validator, update_func=self.project_model.update_general)
+
+        ### Project Name
+        create_input_field(layout, self, "project_name", "Project Name:", row=2, col=0)
+
+        bind_input_handler(self, "project_name", validator=self.validator, update_func=self.project_model.update_general)
         
         ### Project Type
-        self.project_type = QComboBox()
-        self.project_type.addItem("-- Select --")
-        self.project_type.addItems(PROJECT_TYPES)
-        
-        # Set item đầu tiên là mặc định
-        self.project_type.setCurrentIndex(0)
+        create_combobox(layout, self, "project_type", "Project Type:", PROJECT_TYPES, row=2, col=2)
 
-        # Set item đầu tiên là không thể chọn
-        self.project_type.model().item(0).setEnabled(False)
-        
-        self.project_type.currentTextChanged.connect(
-            lambda text: (
-                self.handle_combobox_changed("project_type", text)
-            )
-        )
+        bind_combobox_handler(self, "project_type", validator=self.validator, update_func=self.project_model.update_general)
 
-        self.create_combobox(layout, "project_type", "Project Type:", self.project_type, row=row, col=2)
-        row += 1
+        self.project_type_combobox.currentTextChanged.connect(self.on_project_type_changed)
         
         ### Clients
-        clients_label = QLabel("Clients:")
-        clients_label.setStyleSheet("margin-left: 10px;")
+        create_multiselected_field(layout, self, "clients", "Clients:", CLIENTS, allow_adding=True, row=3, col=0, rowspan=1, colspan=3)
 
-        layout.addWidget(clients_label, row, 0)
-
-        self.clients = MultiSelectWidget(CLIENTS, allow_adding=True)
-        
-        self.clients.selectionChanged.connect(
-            lambda items: self.project_model.update_general("clients", items)
-        )
-        
-        layout.addWidget(self.clients, row, 1, 1, 3)
-        row += 1
+        bind_multiselection_handler(self, "clients", validator=self.validator, update_func=self.project_model.update_general)
         
         ### Project Objectives
-        project_objectives_label = QLabel("Project Objectives:")
-        project_objectives_label.setStyleSheet("margin-left: 10px;")
-
-        layout.addWidget(project_objectives_label, row, 0, 1, 4)
-
-        row += 1
-
-        self.project_objectives_container = QWidget()
-
-        project_objectives_layout = QHBoxLayout(self.project_objectives_container)
-        project_objectives_layout.setContentsMargins(0, 0, 0, 0)
-
-        self.project_objectives_line_input = QTextEdit()
-        self.project_objectives_line_input.setStyleSheet("margin-left: 10px;")
-        self.project_objectives_line_input.setPlaceholderText("Enter your text here...")
-        self.project_objectives_line_input.setAcceptRichText(True)
-
-        self.project_objectives_line_input.textChanged.connect(
-            lambda: self.project_model.update_general("project_objectives", self.project_objectives_line_input.toPlainText())
-        )
-
-        project_objectives_layout.addWidget(self.project_objectives_line_input)
-
-        layout.addWidget(self.project_objectives_container, row, 0, 1, 4)
-
-        row += 1
-
-        layout.addWidget(self.create_group_header("Platform Details"), row, 0, 1, 4)
-        row += 1
-
-        ### Row 2 - Cell 0
-        platform_label = QLabel("Platform:")
-        platform_label.setStyleSheet("margin-left: 10px;")
-
-        layout.addWidget(platform_label, row, 0)
+        create_textedit_field(layout, self, "project_objectives", "Project Objectives:", placeholder="Enter your text here...", row=4, col=0, rowspan=1, colspan=4)
         
-        platform_layout = QHBoxLayout()
-        platform_layout.setContentsMargins(0, 5, 0, 5)
+        bind_textedit_handler(self, "project_objectives", validator=self.validator, update_func=self.project_model.update_general)
 
-        self.platform_button_group = QButtonGroup(self)
-        self.ifield_radio = QRadioButton("iField")
-        self.dimension_radio = QRadioButton("Dimension")
-        
-        self.platform_button_group.addButton(self.ifield_radio, 0)
-        self.platform_button_group.addButton(self.dimension_radio, 1)
-        
-        self.platform_button_group.buttonClicked.connect(self.handle_platform_changed)
-        
-        # Set default to iField
-        self.ifield_radio.setChecked(True)
-        
-        platform_layout.addWidget(self.ifield_radio)
-        platform_layout.addWidget(self.dimension_radio)
-        platform_layout.addStretch()
-        
-        layout.addLayout(platform_layout, row, 1, 1, 3)
-        row += 1
+        ### Platform Details Group
+        create_header_label(layout, "Platform Details", row=6, col=0, rowspan=1, colspan=4)
 
-        layout.addWidget(self.create_group_header("Quota & Sampling"), row, 0, 1, 4)
-        row += 1
+        ### Platform
+        radio_items = [
+            { 'name': 'ifield', 'label': 'iField'},
+            { 'name': 'dimension', 'label': 'Dimension'}
+        ]
+        create_radiobuttons_group(layout, self, "platform", "Platform:", radio_items=radio_items, row=7, col=0, rowspan=1, colspan=3, margins={"left": 0, "top": 5, "right": 0, "bottom": 5})
+
+        bind_radiogroup_handler(self, "platform", update_func=self.project_model.update_general)
+
+        ### Quota & Sampling Group
+        create_header_label(layout, "Quota & Sampling", row=8, col=0, rowspan=1, colspan=4)
 
         ### Interview Methods
-        interview_methods_label = QLabel("Interview Methods:")
-        interview_methods_label.setStyleSheet("margin-left: 10px;")
+        create_multiselected_field(layout, self, "interview_methods", "Interview Methods:", INTERVIEW_METHODS, allow_adding=False, row=9, col=0, rowspan=1, colspan=3)
 
-        layout.addWidget(interview_methods_label, row, 0)
-
-        self.interview_methods = MultiSelectWidget(INTERVIEW_METHODS)
-        
-        self.interview_methods.selectionChanged.connect(
-            lambda items: self.project_model.update_general("interview_methods", items)
-        )
-        
-        layout.addWidget(self.interview_methods, row, 1, 1, 3)
-        row += 1
+        bind_multiselection_handler(self, "interview_methods", validator=self.validator, update_func=self.project_model.update_general)
 
         ### Sampling Method
-        self.sampling_method = QComboBox()
-        self.sampling_method.addItem("-- Select --")
-        self.sampling_method.addItems(SAMPLING_METHODS)
+        create_combobox(layout, self, "sampling_method", "Sampling Method:", SAMPLING_METHODS, row=10, col=0)
 
-        # Set item đầu tiên là mặc định
-        self.sampling_method.setCurrentIndex(0)
+        bind_combobox_handler(self, "sampling_method", validator=self.validator, update_func=self.project_model.update_general)
 
-        # Set item đầu tiên là không thể chọn
-        self.sampling_method.model().item(0).setEnabled(False)
-
-        self.sampling_method.currentTextChanged.connect(
-            lambda text: self.handle_combobox_changed("sampling_method", text)
-        )
-
-        self.create_combobox(layout, "sampling_method", "Sampling Method", self.sampling_method, row=row, col=0)
-        
         ### Recruit Method
-        recruit_method_label = QLabel("Recruit Method:")
-        recruit_method_label.setStyleSheet("margin-left: 10px;")
+        create_multiselected_field(layout, self, "recruit_method", "Recruit Method:", RECRUIT_METHOD, allow_adding=False, row=10, col=2)
 
-        layout.addWidget(recruit_method_label, row, 2)
-
-        self.recruit_method = MultiSelectWidget(RECRUIT_METHOD)
-
-        self.recruit_method.selectionChanged.connect(
-            lambda items: self.project_model.update_general("recruit_method", items)
-        )
-
-        layout.addWidget(self.recruit_method, row, 3)
-        row += 1
+        bind_multiselection_handler(self, "recruit_method", validator=self.validator, update_func=self.project_model.update_general)
         
         ### Type of Quota Controls
-        self.type_of_quota_control = QComboBox()
-        self.type_of_quota_control.addItem("--Select--")
-        self.type_of_quota_control.addItems(TYPE_OF_QUOTA_CONTROLS)
+        create_combobox(layout, self, "type_of_quota_control", "Type of Quota Control:", TYPE_OF_QUOTA_CONTROLS, row=11, col=0)
 
-        # Set item đầu tiên là mặc định
-        self.type_of_quota_control.setCurrentIndex(0)
+        bind_combobox_handler(self, "type_of_quota_control", validator=self.validator, update_func=self.project_model.update_general)
 
-        # Set item đầu tiên là không thể chọn
-        self.type_of_quota_control.model().item(0).setEnabled(False)
-
-        self.type_of_quota_control.currentTextChanged.connect(
-            lambda text: self.handle_combobox_changed("type_of_quota_control", text)
-        )
-
-        self.create_combobox(layout, "type_of_quota_control", "Type of Quota Control:", self.type_of_quota_control, row=row, col=0)
-        
         ### Quota Description
-        quota_description_label = QLabel("Quota Description:")
-        quota_description_label.setStyleSheet("margin-left: 10px;")
+        create_multiselected_field(layout, self, "quota_description", "Quota Description:", QUOTA_DESCRIPTION, allow_adding=False, row=11, col=2)
 
-        layout.addWidget(quota_description_label, row, 2)
-
-        self.quota_description = MultiSelectWidget(QUOTA_DESCRIPTION)
-
-        self.quota_description.selectionChanged.connect(
-            lambda items: self.project_model.update_general("quota_description", items)
-        )
+        bind_multiselection_handler(self, "quota_description", validator=self.validator, update_func=self.project_model.update_general)
         
-        quota_description_container = QWidget()
-        quota_description_layout = QVBoxLayout(quota_description_container)
-        quota_description_layout.setContentsMargins(0, 0, 0, 0)
-        quota_description_layout.addWidget(self.quota_description)
-
-        self.quota_description_warning = QLabel("")
-        self.quota_description_warning.setStyleSheet("color: red; font-size: 12px")
-        self.quota_description_warning.setVisible(False)
-        quota_description_layout.addWidget(self.quota_description_warning)
-
-        layout.addWidget(quota_description_container, row, 3)
-        row += 1
-
-        layout.addWidget(self.create_group_header("Target Audience"), row, 0, 1, 4)
-        row += 1
+        ### "Target Audience Group" 
+        create_header_label(layout, "Target Audience", row=12, col=0, rowspan=1, colspan=4)
 
         ### Service Lines
-        self.service_line = QComboBox()
-        self.service_line.addItem("-- Select --")
-        self.service_line.addItems(SERVICE_LINES)
+        create_combobox(layout, self, "service_line", "Service Line:", SERVICE_LINES, row=13, col=0)
 
-        # Set item đầu tiên là mặc định
-        self.service_line.setCurrentIndex(0)
-
-        # Set item đầu tiên là không thể chọn
-        self.service_line.model().item(0).setEnabled(False)
-
-        self.service_line.currentTextChanged.connect(
-            lambda text: self.project_model.update_general("service_line", text)
-            if text != "-- Select --" else None # bỏ qua nếu đang là placeholder
-        )
-
-        self.create_combobox(layout, "service_line", "Service Line:", self.service_line, row=row, col=0)
-
-        row += 1
+        bind_combobox_handler(self, "service_line", validator=self.validator, update_func=self.project_model.update_general)
 
         ### Provinces
-        provinces_label = QLabel("Provinces:")
-        provinces_label.setStyleSheet("margin-left: 10px;")
+        create_multiselected_field(layout, self, "provinces", "Provinces:", VIETNAM_PROVINCES, allow_adding=False, row=14, col=0, rowspan=1, colspan=3)
 
-        layout.addWidget(provinces_label, row, 0)
-        
-        self.provinces = MultiSelectWidget(VIETNAM_PROVINCES)
-        
-        self.provinces.selectionChanged.connect(
-            lambda items: self.project_model.update_general("provinces", items)
-        )
-
-        layout.addWidget(self.provinces, row, 1, 1, 3)
-        row += 1
+        bind_multiselection_handler(self, "provinces", validator=self.validator, update_func=self.project_model.update_general)
 
         ### Sample Types
-        sample_types_label = QLabel("Sample Types:")
-        sample_types_label.setStyleSheet("margin-left: 10px;")
+        create_multiselected_field(layout, self, "sample_types", "Sample Types:", SAMPLE_TYPES, allow_adding=False, row=15, col=0, rowspan=1, colspan=3)
 
-        layout.addWidget(sample_types_label, row, 0)
-        
-        self.sample_types = MultiSelectWidget(SAMPLE_TYPES)
-        
-        self.sample_types.selectionChanged.connect(
-            lambda items: self.project_model.update_general("sample_types", items)
-        )
-        
-        layout.addWidget(self.sample_types, row, 1, 1, 3)
-        row += 1
+        bind_multiselection_handler(self, "sample_types", validator=self.validator, update_func=self.project_model.update_general)
         
         ### Industries
-        industries_label = QLabel("Industries:")
-        industries_label.setStyleSheet("margin-left: 10px;")
+        create_multiselected_field(layout, self, "industries", "Industries:", list(self.project_model.industries_data), allow_adding=False, row=16, col=0, rowspan=1, colspan=3)
 
-        layout.addWidget(industries_label, row, 0)
-        
-        self.industries = MultiSelectWidget(list(self.project_model.industries_data))
-        
-        self.industries.selectionChanged.connect(
-            lambda items: (
-                # Cập nhật model
-                self.project_model.update_general("industries", items),
-            
-                # Bật hoặc tắt Target Audience Widget
-                self.target_audiences.set_enabled(len(items) > 0)
-            )
-        )
-
-        layout.addWidget(self.industries, row, 1, 1, 3)
-        row += 1
+        bind_multiselection_handler(self, "industries", validator=self.validator, update_func=self.project_model.update_general)
 
         ### Target Audience
         target_audience_label = QLabel("Target Audiences:")
         target_audience_label.setStyleSheet("margin-left: 10px;")
 
-        layout.addWidget(target_audience_label, row, 0)
+        layout.addWidget(target_audience_label, 17, 0)
 
         self.target_audiences = TargetAudienceWidget(self.project_model.industries_data)
 
@@ -591,45 +253,20 @@ class GeneralTab(QWidget):
             )
         )
 
-        layout.addWidget(self.target_audiences, row, 1, 1, 3)
-        row += 1
-        
-        layout.addWidget(self.create_group_header("Timing & Description"))
-        row += 1
-        
-        ### Length of Interview (min)
-        length_of_interview_label = QLabel("Length of Interview (min):")
-        length_of_interview_label.setStyleSheet("margin-left: 10px;")
+        layout.addWidget(self.target_audiences, 17, 1, 1, 3)
 
-        layout.addWidget(length_of_interview_label, row, 0)
+        ### Timing & Description Group
+        create_header_label(layout, "Timing & Description", row=18, col=0, rowspan=1, colspan=4)
 
-        self.interview_length = QSpinBox()
-        self.interview_length.setRange(0, 999)
+        ### Length of Interview
+        create_spinbox_field(layout, self, "interview_length", "Length of Interview", range=(0, 999), suffix=" (minutes)", row=19, col=0)
         
-        self.interview_length.valueChanged.connect(
-            lambda value: self.project_model.update_general("interview_length", value)
-        )
+        bind_spinbox_handler(self, "interview_length", validator=self.validator, update_func=self.project_model.update_general)
 
-        layout.addWidget(self.interview_length, row, 1)
-        
         ### Length of Questionnaire
-        length_of_questionaire_label = QLabel("Length of Questionnaire:")
-        length_of_questionaire_label.setStyleSheet("margin-left: 10px;")
+        create_spinbox_field(layout, self, "questionnaire_length", "Length of Questionnaire", range=(0, 999), suffix=" (pages)", row=19, col=2)
 
-        layout.addWidget(length_of_questionaire_label, row, 2)
-
-        self.questionnaire_length = QSpinBox()
-        self.questionnaire_length.setRange(0, 999)
-        
-        self.questionnaire_length.valueChanged.connect(
-            lambda value: self.project_model.update_general("questionnaire_length", value)
-        )
-        
-        layout.addWidget(self.questionnaire_length, row, 3)
-        row += 1
-        
-        # Connect platform radio buttons to model
-        self.platform_button_group.buttonClicked.connect(self.platform_changed)
+        bind_spinbox_handler(self, "questionnaire_length", validator=self.validator, update_func=self.project_model.update_general)
 
         return group_box
     
@@ -667,8 +304,7 @@ class GeneralTab(QWidget):
         layout.setColumnStretch(1, 1)  # Make the second column stretch
         layout.setColumnStretch(3, 1)  # Make the fourth column stretch
         
-        ### Row 1 - Cell 0
-        layout.addWidget(QLabel("Choose the relevant tasks for this project"), 0, 0, 1, 3)
+        create_header_label(layout, "Choose the relevant tasks for this project", row=0, col=0, rowspan=1, colspan=4)
 
         ### Row 2 - Cell 0
         self.relevant_task_container = QWidget()
@@ -700,69 +336,20 @@ class GeneralTab(QWidget):
 
         layout.addWidget(self.relevant_task_container, 2, 0)
         
-        ### Row 3 - Cell 0
-        self.open_ended_main_count = QSpinBox()
-        self.open_ended_main_count.setRange(0, 999)
+        ### Open-ended Questions (Main)
+        create_spinbox_field(layout, self, "open_ended_main_count", "Open-ended Questions (Main):", range=(0, 999), suffix=" (questions)", row=3, col=0)
         
-        self.open_ended_main_count.valueChanged.connect(
-            lambda value: self.handle_spinbox_changed("open_ended_main_count", value)
-        )
+        bind_spinbox_handler(self, "open_ended_main_count", validator=self.validator, update_func=self.project_model.update_general)
 
-        self.create_spinbox(layout, "open_ended_main_count", "Open-ended Questions (Main):", self.open_ended_main_count, row=3, col=0)
-
-        ### Row 3 - Cell 1
-        self.open_ended_booster_count = QSpinBox()
-        self.open_ended_booster_count.setRange(0, 999)
+        ### Open-ended Questions (Booster)
+        create_spinbox_field(layout, self, "open_ended_booster_count", "Open-ended Questions (Booster):", range=(0, 999), suffix=" (questions)", row=3, col=2)
         
-        self.open_ended_booster_count.valueChanged.connect(
-            lambda value: self.handle_spinbox_changed("open_ended_booster_count", value)
-        )
-
-        self.create_spinbox(layout, "open_ended_booster_count", "Open-ended Questions (Booster):", self.open_ended_booster_count, row=3, col=2)
+        bind_spinbox_handler(self, "open_ended_booster_count", validator=self.validator, update_func=self.project_model.update_general)
 
         ### Data Processing
-        data_processing_method_label = QLabel("Data Processing Method:")
-        data_processing_method_label.setStyleSheet("margin-left: 10px;")
+        create_multiselected_field(layout, self, "data_processing_method", "Data Processing Method:", DATA_PROCESSING_METHOD, allow_adding=True, row=4, col=0, rowspan=1, colspan=3)
 
-        layout.addWidget(data_processing_method_label, 4, 0)
-
-        self.data_processing_method = MultiSelectWidget(DATA_PROCESSING_METHOD, allow_adding=True)
-        
-        self.data_processing_method.selectionChanged.connect(
-            lambda items: self.project_model.update_general("data_processing_method", items)
-            
-        )
-        
-        layout.addWidget(self.data_processing_method, 4, 1, 1, 3)
-
-        return group_box
-
-    def create_region_qc_method(self):
-        group_box = QGroupBox("QC Method")
-
-        layout = QGridLayout(group_box)
-        layout.setColumnStretch(1, 1)
-        layout.setColumnStretch(3, 1)
-
-        qc_method_label = QLabel("QC Method:")
-        qc_method_label.setStyleSheet("margin-left: 10px;")
-
-        layout.addWidget(qc_method_label, 4, 0)
-
-        self.qc_methods = GenericEditorWidget(
-            title="QC Method",
-            field_config = [
-                { "name": "team", "label": "Team", "widget": QComboBox, "options" : TEAMS, "required": True, "duplicated" : True },
-                { "name": "qc_method", "label": "QC Method", "widget": QComboBox, "options": QC_METHODS, "required": True, "duplicated" : True},
-                { "name": "qc_rate", "label" : "Rate", "widget" : QSpinBox, "min": 0, "max": 100, "suffix": "%", "required": True, "min_range" : 1 } 
-            ]
-        )
-
-        self.qc_methods.selectionChanged.connect(
-            lambda items : self.project_model.update_qc_methods(items)
-        )
-        
-        layout.addWidget(self.qc_methods, 4, 1, 1, 3)
+        bind_multiselection_handler(self, "data_processing_method", validator=self.validator, update_func=self.project_model.update_general)
 
         return group_box
 
@@ -816,53 +403,6 @@ class GeneralTab(QWidget):
         )
         
         return group_box
-    
-    def create_region_device(self):
-        group_box = QGroupBox("Device")
-
-        layout = QGridLayout(group_box)
-        layout.setColumnStretch(1, 1)  # Make the second column stretch
-        layout.setColumnStretch(3, 1)  # Make the fourth column stretch
-
-        # Tablet/Laptop selection
-        self.device_type = QComboBox()
-        self.device_type.addItem("-- Select --")
-        self.device_type.addItems(DEVIVE_TYPES)
-
-        # Set item đầu tiên là mặc định
-        self.device_type.setCurrentIndex(0)
-
-        # Set item đầu tiên là không thể chọn
-        self.device_type.model().item(0).setEnabled(False)
-
-        self.device_type.currentTextChanged.connect(
-            lambda text: (
-                self.handle_device_type_changed(text)
-            )
-        )
-
-        self.create_combobox(layout, "device_type", "Thuê tablet / laptop:", self.device_type, row=0, col=0)
-
-        # Tablet usage duration - only shown when "Tablet < 9 inch" is selected
-        self.tablet_usage_duration = QComboBox()
-        self.tablet_usage_duration.addItem("-- Select --")
-        self.tablet_usage_duration.addItems(TABLET_USAGE_DURATIONS)
-
-        # Set item đầu tiên là mặc định
-        self.tablet_usage_duration.setCurrentIndex(0)
-
-        # Set item đầu tiên là không thể chọn
-        self.tablet_usage_duration.model().item(0).setEnabled(False)
-
-        self.tablet_usage_duration.currentTextChanged.connect(
-            lambda text: (
-                self.handle_combobox_changed("tablet_usage_duration", text)
-            )
-        )
-
-        self.create_combobox(layout, "tablet_usage_duration", "Thời gian sử dụng tablet:", self.tablet_usage_duration, row=0, col=2)
-
-        return group_box
 
     def create_region_clt(self):
         """Create the CLT (Central Location Test) region."""
@@ -872,104 +412,93 @@ class GeneralTab(QWidget):
         layout.setColumnStretch(1, 1)
         layout.setColumnStretch(3, 1)
 
-        layout.addWidget(self.create_group_header("CLT Settings"), 0, 0, 1, 4) 
+        create_header_label(layout, "CLT Settings", row=0, col=0, rowspan=1, colspan=4)
 
         # Number of test products
-        self.clt_test_products = QSpinBox()
-        self.clt_test_products.setRange(0, 999)
-        
-        self.clt_test_products.valueChanged.connect(
-            lambda value: self.handle_spinbox_changed("clt_test_products", value)
-        )
+        create_spinbox_field(layout, self, "clt_test_products", "Number of Test Products:", range=(0, 999), suffix="", row=1, col=0)
 
-        self.create_spinbox(layout, "clt_test_products", "Number of Test Products:", self.clt_test_products, row=1, col=0)
-        
+        bind_spinbox_handler(self, "clt_test_products", validator=self.validator, update_func=self.project_model.update_clt_settings)
+
         # Number of respondent visits
-        self.clt_respondent_visits = QSpinBox()
-        self.clt_respondent_visits.setRange(1, 3)
+        create_spinbox_field(layout, self, "clt_respondent_visits", "Number of Respondent Visits:", range=(0, 999), suffix="", row=2, col=0)
 
-        self.clt_respondent_visits.valueChanged.connect(
-            lambda value: self.handle_spinbox_changed("clt_respondent_visits", value)
-        )
+        bind_spinbox_handler(self, "clt_respondent_visits", validator=self.validator, update_func=self.project_model.update_clt_settings)
 
-        self.create_spinbox(layout, "clt_respondent_visits", "Number of Respondent Visits:", self.clt_respondent_visits, row=1, col=2)
+        # Failure Rate
+        create_spinbox_field(layout, self, "clt_failure_rate", "Failure Rate:", range=(0, 999), suffix="%", row=3, col=0)
 
-        # Failure Rate - only enabled when respondent visits > 1
-        self.clt_failure_rate = QSpinBox()
-        self.clt_failure_rate.setRange(0, 100)
-        self.clt_failure_rate.setSuffix("%")
-
-        self.clt_failure_rate.valueChanged.connect(
-            lambda value: self.handle_spinbox_changed("clt_failure_rate", value)
-        )
-
-        self.create_spinbox(layout, "clt_failure_rate", "Failure Rate:", self.clt_failure_rate, 2, 0)
-
-        layout.addWidget(self.create_group_header("CLT Specific"), 3, 0, 1, 4) 
+        bind_spinbox_handler(self, "clt_failure_rate", validator=self.validator, update_func=self.project_model.update_clt_settings)
 
         # Sample Recruit IDI
-        self.clt_sample_recruit_idi = QSpinBox()
-        self.clt_sample_recruit_idi.setRange(0, 10000)
+        create_spinbox_field(layout, self, "clt_sample_recruit_idi", "Sample Recruit IDI:", range=(0, 999), suffix="", row=4, col=0)
+
+        bind_spinbox_handler(self, "clt_sample_recruit_idi", validator=self.validator, update_func=self.project_model.update_clt_settings)
         
-        self.clt_sample_recruit_idi.valueChanged.connect(
-            lambda value: self.handle_spinbox_changed("clt_sample_recruit_idi", value)
-        )
+        create_header_label(layout, "Dán mẫu settings", row=5, col=0, rowspan=1, colspan=4)
 
-        self.create_spinbox(layout, "clt_sample_recruit_idi", "Sample Recruit IDI:", self.clt_sample_recruit_idi, 4, 0)
+        # Dán mẫu
+        create_spinbox_field(layout, self, "clt_number_of_samples_to_label", "Number of samples to label:", range=(0, 999), suffix="", row=6, col=0)
+
+        bind_spinbox_handler(self, "clt_number_of_samples_to_label", validator=self.validator, update_func=self.project_model.update_clt_settings)
+
+        ### Description of label application method
+        create_textedit_field(layout, self, "clt_description_howtolabelthesample", "Description of how to label the sample:", placeholder="Enter your text here...", row=7, col=0, rowspan=1, colspan=4)
         
-        # Assistant Set Up Days - NEW FIELD
-        self.clt_assistant_setup_days = QSpinBox()
-        self.clt_assistant_setup_days.setRange(1, 30)
-        self.clt_assistant_setup_days.setValue(1)  # Default value
-        self.clt_assistant_setup_days.setSuffix(" day(s)")
+        bind_textedit_handler(self, "clt_description_howtolabelthesample", validator=self.validator, update_func=self.project_model.update_general)
+
+        # # Assistant Set Up Days - NEW FIELD
+        # self.clt_assistant_setup_days = QSpinBox()
+        # self.clt_assistant_setup_days.setRange(1, 30)
+        # self.clt_assistant_setup_days.setValue(1)  # Default value
+        # self.clt_assistant_setup_days.setSuffix(" day(s)")
         
-        self.clt_assistant_setup_days.valueChanged.connect(
-            lambda value: self.handle_spinbox_changed("clt_assistant_setup_days", value)
-        )
+        # self.clt_assistant_setup_days.valueChanged.connect(
+        #     lambda value: self.handle_spinbox_changed("clt_assistant_setup_days", value)
+        # )
 
-        self.create_spinbox(layout, "clt_assistant_setup_days", "Assistant set up needs:", self.clt_assistant_setup_days, 5, 0)
+        # self.create_spinbox(layout, "clt_assistant_setup_days", "Assistant set up needs:", self.clt_assistant_setup_days, 5, 0)
 
-        # Dán mẫu checkbox and Số ngày dán mẫu spinbox
-        self.clt_dan_mau_days = QSpinBox()
-        self.clt_dan_mau_days.setRange(0, 100)
+        # #--Số ngày dán mẫu
+        # self.clt_dan_mau_days = QSpinBox()
+        # self.clt_dan_mau_days.setRange(0, 100)
 
-        self.clt_dan_mau_days.valueChanged.connect(
-            lambda value: self.handle_spinbox_changed("clt_dan_mau_days", value)
-        )
+        # self.clt_dan_mau_days.valueChanged.connect(
+        #     lambda value: self.handle_spinbox_changed("clt_dan_mau_days", value)
+        # )
 
-        self.create_spinbox(layout, "clt_dan_mau_days", "Số ngày dán mẫu:", self.clt_dan_mau_days, 6, 0)
+        # self.create_spinbox(layout, "clt_dan_mau_days", "Số ngày dán mẫu:", self.clt_dan_mau_days, 9, 0)
         
-        layout.addWidget(self.create_group_header("Daily Targets & Staffing"), 7, 0, 1, 4) 
+        # layout.addWidget(self.create_group_header("Daily Targets & Staffing"), 10, 0, 1, 4) 
 
-        # Sample size target per day
-        self.clt_sample_size_per_day = QSpinBox()
-        self.clt_sample_size_per_day.setRange(0, 999)
+        # # Sample size target per day
+        # self.clt_sample_size_per_day = QSpinBox()
+        # self.clt_sample_size_per_day.setRange(0, 999)
 
-        self.clt_sample_size_per_day.valueChanged.connect(
-            lambda value: self.handle_spinbox_changed("clt_sample_size_per_day", value)
-        )
+        # self.clt_sample_size_per_day.valueChanged.connect(
+        #     lambda value: self.handle_spinbox_changed("clt_sample_size_per_day", value)
+        # )
 
-        self.create_spinbox(layout, "clt_sample_size_per_day", "Sample Size Target per Day:", self.clt_sample_size_per_day, 8, 0)
+        # self.create_spinbox(layout, "clt_sample_size_per_day", "Sample Size Target per Day:", self.clt_sample_size_per_day, 11, 0)
 
-        # Number of desk-based interviewers (NGỒI BÀN)
-        self.clt_desk_interviewers_count = QSpinBox()
-        self.clt_desk_interviewers_count.setRange(0, 999)
+        # # Number of desk-based interviewers (NGỒI BÀN)
+        # self.clt_desk_interviewers_count = QSpinBox()
+        # self.clt_desk_interviewers_count.setRange(0, 999)
         
-        self.clt_desk_interviewers_count.valueChanged.connect(
-            lambda value: self.handle_spinbox_changed("clt_desk_interviewers_count", value)
-        )
+        # self.clt_desk_interviewers_count.valueChanged.connect(
+        #     lambda value: self.handle_spinbox_changed("clt_desk_interviewers_count", value)
+        # )
 
-        self.create_spinbox(layout, "clt_desk_interviewers_count", "Số lượng PVV tham gia dự án (NGỒI BÀN):", self.clt_desk_interviewers_count, 9, 0)
+        # self.create_spinbox(layout, "clt_desk_interviewers_count", "Số lượng PVV tham gia dự án (NGỒI BÀN):", self.clt_desk_interviewers_count, 12, 0)
 
-        # Number of provincial desk-based interviewers
-        self.clt_provincial_desk_interviewers_count = QSpinBox()
-        self.clt_provincial_desk_interviewers_count.setRange(0, 999)
+        # # Number of provincial desk-based interviewers
+        # self.clt_provincial_desk_interviewers_count = QSpinBox()
+        # self.clt_provincial_desk_interviewers_count.setRange(0, 999)
         
-        self.clt_provincial_desk_interviewers_count.valueChanged.connect(
-            lambda value: self.handle_spinbox_changed("clt_provincial_desk_interviewers_count", value)
-        )
+        # self.clt_provincial_desk_interviewers_count.valueChanged.connect(
+        #     lambda value: self.handle_spinbox_changed("clt_provincial_desk_interviewers_count", value)
+        # )
 
-        self.create_spinbox(layout, "clt_provincial_desk_interviewers_count", "Số lượng PVV đi tỉnh (NGỒI BÀN):", self.clt_provincial_desk_interviewers_count, 10, 0)
+        # self.create_spinbox(layout, "clt_provincial_desk_interviewers_count", "Số lượng PVV đi tỉnh (NGỒI BÀN):", self.clt_provincial_desk_interviewers_count, 13, 0)
 
         return group_box
         
@@ -982,95 +511,49 @@ class GeneralTab(QWidget):
         layout.setColumnStretch(3, 1)
         
         # BACKWHITE page count
-        self.bw_page_count = QSpinBox()
-        self.bw_page_count.setRange(0, 9999)
-
-        self.bw_page_count.valueChanged.connect(
-            lambda value: self.project_model.update_general("bw_page_count", value)
-        )
-
-        self.create_spinbox(layout, "bw_page_count", "Số trang photo trắng đen:", self.bw_page_count, row=0, col=0)
+        create_spinbox_field(layout, self, "bw_page_count", "Số trang photo trắng đen:", range=(0, 999), suffix=" (pages)", row=0, col=0)
+        
+        bind_spinbox_handler(self, "bw_page_count", validator=self.validator, update_func=self.project_model.update_general)
         
         # SHOWPHOTO page count
-        self.showphoto_page_count = QSpinBox()
-        self.showphoto_page_count.setRange(0, 9999)
+        create_spinbox_field(layout, self, "showphoto_page_count", "Số trang showphoto:", range=(0, 999), suffix=" (pages)", row=0, col=2)
         
-        self.showphoto_page_count.valueChanged.connect(
-            lambda value: self.project_model.update_general("showphoto_page_count", value)
-        )
-
-        self.create_spinbox(layout, "showphoto_page_count", "Số trang show photo:", self.showphoto_page_count, row=0, col=2)
+        bind_spinbox_handler(self, "showphoto_page_count", validator=self.validator, update_func=self.project_model.update_general)
         
         # SHOWCARD page count
-        self.showcard_page_count = QSpinBox()
-        self.showcard_page_count.setRange(0, 9999)
+        create_spinbox_field(layout, self, "showcard_page_count", "Số trang showcard:", range=(0, 999), suffix=" (pages)", row=1, col=0)
         
-        self.showcard_page_count.valueChanged.connect(
-            lambda value: self.project_model.update_general("showcard_page_count", value)
-        )
-
-        self.create_spinbox(layout, "showcard_page_count", "Số trang show card:", self.showcard_page_count, row=1, col=0)
+        bind_spinbox_handler(self, "showcard_page_count", validator=self.validator, update_func=self.project_model.update_general)
         
         # DROPCARD page count
-        self.dropcard_page_count = QSpinBox()
-        self.dropcard_page_count.setRange(0, 9999)
+        create_spinbox_field(layout, self, "dropcard_page_count", "Số trang dropcard:", range=(0, 999), suffix=" (pages)", row=1, col=2)
         
-        self.dropcard_page_count.valueChanged.connect(
-            lambda value: self.project_model.update_general("dropcard_page_count", value)
-        )
-
-        self.create_spinbox(layout, "dropcard_page_count", "Số trang dropcard:", self.dropcard_page_count, row=1, col=2)
+        bind_spinbox_handler(self, "dropcard_page_count", validator=self.validator, update_func=self.project_model.update_general)
         
         # COLOR page count
-        self.color_page_count = QSpinBox()
-        self.color_page_count.setRange(0, 9999)
+        create_spinbox_field(layout, self, "color_page_count", "Số trang in màu \ in concept:", range=(0, 999), suffix=" (pages)", row=2, col=0)
         
-        self.color_page_count.valueChanged.connect(
-            lambda value: self.project_model.update_general("color_page_count", value)
-        )
-
-        self.create_spinbox(layout, "color_page_count", "Số trang in màu \ in concept:", self.color_page_count, row=2, col=0)
+        bind_spinbox_handler(self, "color_page_count", validator=self.validator, update_func=self.project_model.update_general)
         
         # DECAL page count
-        self.decal_page_count = QSpinBox()
-        self.decal_page_count.setRange(0, 9999)
+        create_spinbox_field(layout, self, "decal_page_count", "Số decal dán mẫu:", range=(0, 999), suffix=" (pages)", row=2, col=2)
         
-        self.decal_page_count.valueChanged.connect(
-            lambda value: self.project_model.update_general("decal_page_count", value)
-        )
-
-        self.create_spinbox(layout, "decal_page_count", "Số decal dán mẫu:", self.decal_page_count, row=2, col=2)
+        bind_spinbox_handler(self, "decal_page_count", validator=self.validator, update_func=self.project_model.update_general)
         
         # Laminated page count
-        self.laminated_page_count = QSpinBox()
-        self.laminated_page_count.setRange(0, 9999)
+        create_spinbox_field(layout, self, "laminated_page_count", "Số trang ép plastic:", range=(0, 999), suffix=" (pages)", row=3, col=0)
         
-        self.laminated_page_count.valueChanged.connect(
-            lambda value: self.project_model.update_general("laminated_page_count", value)
-        )
-
-        self.create_spinbox(layout, "laminated_page_count", "Số trang ép plastic:", self.laminated_page_count, row=3, col=0)
+        bind_spinbox_handler(self, "laminated_page_count", validator=self.validator, update_func=self.project_model.update_general)
 
         # Hồ sơ biểu mẫu
-        self.interview_form_package_count = QSpinBox()
-        self.interview_form_package_count.setRange(0, 9999)
-
-        self.interview_form_package_count.valueChanged.connect(
-            lambda value: self.project_model.update_general("interview_form_package_count", value)
-        )
-
-        self.create_spinbox(layout, "interview_form_package_count", "Hồ sơ biểu mẫu:", self.interview_form_package_count, row=3, col=2)
+        create_spinbox_field(layout, self, "interview_form_package_count", "Hồ sơ biểu mẫu:", range=(0, 999), suffix=" (pages)", row=3, col=2)
+        
+        bind_spinbox_handler(self, "interview_form_package_count", validator=self.validator, update_func=self.project_model.update_general)
 
         # Đóng cuốn
-        self.stimulus_material_production_count = QSpinBox()
-        self.stimulus_material_production_count.setRange(0, 9999)
-
-        self.stimulus_material_production_count.valueChanged.connect(
-            lambda value: self.project_model.update_general("stimulus_material_production_count", value)
-        )
-
-        self.create_spinbox(layout, "stimulus_material_production_count", "Chi phí đóng cuốn:", self.stimulus_material_production_count, row=4, col=0)
-
+        create_spinbox_field(layout, self, "stimulus_material_production_count", "Chi phí đóng cuốn:", range=(0, 999), suffix=" (pages)", row=4, col=0)
+        
+        bind_spinbox_handler(self, "stimulus_material_production_count", validator=self.validator, update_func=self.project_model.update_general)
 
         return group_box
         
@@ -1085,129 +568,116 @@ class GeneralTab(QWidget):
         else:
             self.industries.set_items([])
 
-    def platform_changed(self, button):
-        """
-        Handle platform radio button change.
-        
-        Args:
-            button (QRadioButton): The selected radio button
-        """
-        if button == self.ifield_radio:
-            self.project_model.update_general("platform", "iField")
-        else:  # dimension_radio
-            self.project_model.update_general("platform", "Dimension")
-
     @Slot()
     def update_from_model(self):
         """Update the UI elements from the model data."""
         # Project Information
-        self.internal_job.blockSignals(True)
-        self.internal_job.setText(self.project_model.general["internal_job"])
-        self.internal_job.blockSignals(False)
+        self.internal_job_input.blockSignals(True)
+        self.internal_job_input.setText(self.project_model.general["internal_job"])
+        self.internal_job_input.blockSignals(False)
 
-        self.symphony.blockSignals(True)
-        self.symphony.setText(self.project_model.general["symphony"])
-        self.symphony.blockSignals(False)
+        self.symphony_input.blockSignals(True)
+        self.symphony_input.setText(self.project_model.general["symphony"])
+        self.symphony_input.blockSignals(False)
 
-        self.project_name.blockSignals(True)
-        self.project_name.setText(self.project_model.general["project_name"])
-        self.project_name.blockSignals(False)
+        self.project_name_input.blockSignals(True)
+        self.project_name_input.setText(self.project_model.general["project_name"])
+        self.project_name_input.blockSignals(False)
 
         # Project Type
         value = self.project_model.general["project_type"]
 
-        self.project_type.blockSignals(True)
+        self.project_type_combobox.blockSignals(True)
 
         if value and value in PROJECT_TYPES:
-            self.project_type.setCurrentText(value)
+            self.project_type_combobox.setCurrentText(value)
         else:
-            self.project_type.setCurrentIndex(0) #--Select--
-        self.project_type.blockSignals(False)  
+            self.project_type_combobox.setCurrentIndex(0) #--Select--
+        self.project_type_combobox.blockSignals(False)  
 
         self.project_model.qc_communication_costs("CLT" in value)
         
         # Clients
-        self.clients.set_selected_items(self.project_model.general["clients"])
+        self.clients_multiselecttion.set_selected_items(self.project_model.general["clients"])
         
         # Project Objectives
-        self.project_objectives_line_input.blockSignals(True)
+        self.project_objectives_textedit.blockSignals(True)
         
-        cursor = self.project_objectives_line_input.textCursor()
+        cursor = self.project_objectives_textedit.textCursor()
         pos = cursor.position()
 
-        self.project_objectives_line_input.setPlainText(self.project_model.general["project_objectives"])
+        self.project_objectives_textedit.setPlainText(self.project_model.general["project_objectives"])
 
         cursor.setPosition(min(pos, len(self.project_model.general["project_objectives"])))
-        self.project_objectives_line_input.setTextCursor(cursor)
+        self.project_objectives_textedit.setTextCursor(cursor)
 
-        self.project_objectives_line_input.blockSignals(False)
+        self.project_objectives_textedit.blockSignals(False)
 
         # Platform Details
         platform = self.project_model.general.get("platform", "iField")
 
         if platform == "iField":
-            self.ifield_radio.setChecked(True)
+            self.ifield_radioitem.setChecked(True)
         else:  # Dimension
-            self.dimension_radio.setChecked(True)
+            self.dimension_radioitem.setChecked(True)
 
         # Quota & Sampling
-        self.interview_methods.set_selected_items(self.project_model.general["interview_methods"])
+        self.interview_methods_multiselecttion.set_selected_items(self.project_model.general["interview_methods"])
 
         # Sampling Method
         value = self.project_model.general["sampling_method"]
         
-        self.sampling_method.blockSignals(True)
+        self.sampling_method_combobox.blockSignals(True)
 
         if value and value in SAMPLING_METHODS:
-            self.sampling_method.setCurrentText(value)
+            self.sampling_method_combobox.setCurrentText(value)
         else:
-            self.sampling_method.setCurrentIndex(0)
-        self.sampling_method.blockSignals(False)
+            self.sampling_method_combobox.setCurrentIndex(0)
+        self.sampling_method_combobox.blockSignals(False)
         
-        self.recruit_method.set_selected_items(self.project_model.general["recruit_method"])
+        self.recruit_method_multiselecttion.set_selected_items(self.project_model.general["recruit_method"])
 
         # Type of Quota Control
         value = self.project_model.general["type_of_quota_control"]
         
-        self.type_of_quota_control.blockSignals(True)
+        self.type_of_quota_control_combobox.blockSignals(True)
 
         if value and value in TYPE_OF_QUOTA_CONTROLS:
-            self.type_of_quota_control.setCurrentText(value)
+            self.type_of_quota_control_combobox.setCurrentText(value)
         else:
-            self.type_of_quota_control.setCurrentIndex(0)
+            self.type_of_quota_control_combobox.setCurrentIndex(0)
 
-        self.type_of_quota_control.blockSignals(False)
+        self.type_of_quota_control_combobox.blockSignals(False)
 
-        self.quota_description.set_enabled(self.project_model.general["type_of_quota_control"] == "Interlocked Quota")
-        self.quota_description.set_selected_items(self.project_model.general["quota_description"])
-        self.quota_description_warning.setVisible(False)
-
+        self.quota_description_multiselecttion.set_enabled(self.project_model.general["type_of_quota_control"] == "Interlocked Quota")
+        self.quota_description_multiselecttion.set_selected_items(self.project_model.general["quota_description"])
+        
         # Service Line
         value = self.project_model.general["service_line"]
         
-        self.service_line.blockSignals(True)
+        self.service_line_combobox.blockSignals(True)
 
         if value and value in SERVICE_LINES:
-            self.service_line.setCurrentText(value)
+            self.service_line_combobox.setCurrentText(value)
         else:
-            self.service_line.setCurrentIndex(0)
-        self.service_line.blockSignals(False)
+            self.service_line_combobox.setCurrentIndex(0)
+        self.service_line_combobox.blockSignals(False)
 
-        self.provinces.set_enabled(bool(self.project_model.general["service_line"]))
-        self.provinces.set_selected_items(self.project_model.general["provinces"])
+        self.provinces_multiselecttion.set_enabled(bool(self.project_model.general["service_line"]))
+        self.provinces_multiselecttion.set_selected_items(self.project_model.general["provinces"])
 
-        self.sample_types.set_enabled(
+        self.sample_types_multiselecttion.set_enabled(
             bool(self.project_model.general["service_line"]) and 
             bool(self.project_model.general["provinces"])
         )            
-        self.sample_types.set_selected_items(self.project_model.general["sample_types"])
+        self.sample_types_multiselecttion.set_selected_items(self.project_model.general["sample_types"])
 
-        self.industries.set_enabled(
+        self.industries_multiselecttion.set_enabled(
             bool(self.project_model.general["service_line"]) and 
             bool(self.project_model.general["provinces"]) and 
             bool(self.project_model.general["sample_types"])
         )
-        self.industries.set_selected_items(self.project_model.general["industries"])
+        self.industries_multiselecttion.set_selected_items(self.project_model.general["industries"])
 
         self.target_audiences.set_enabled(
             bool(self.project_model.general["service_line"]) and 
@@ -1220,13 +690,8 @@ class GeneralTab(QWidget):
         self.target_audiences.set_selected_industries(self.project_model.general["industries"])
         self.target_audiences.set_selected_audiences(self.project_model.general["target_audiences"])
 
-        self.interview_length.setValue(self.project_model.general["interview_length"])
-        self.questionnaire_length.setValue(self.project_model.general["questionnaire_length"])
-
-        #QC Method
-        self.qc_methods.set_selected_items(self.project_model.qc_methods)
-
-        self.project_model.set_selected_qc_method_costs()
+        self.interview_length_spinbox.setValue(self.project_model.general["interview_length"])
+        self.questionnaire_length_spinbox.setValue(self.project_model.general["questionnaire_length"])
         
         # Scripting & Data Processing
         
@@ -1234,84 +699,71 @@ class GeneralTab(QWidget):
         self.data_processing_checkbox.setCheckState(Qt.CheckState.Checked if self.project_model.general["data_processing"] else Qt.CheckState.Unchecked)
         self.coding_checkbox.setCheckState(Qt.CheckState.Checked if self.project_model.general["coding"] else Qt.CheckState.Unchecked)
 
-        self.open_ended_main_count.blockSignals(True)
-        self.open_ended_booster_count.blockSignals(True)
+        self.open_ended_main_count_spinbox.blockSignals(True)
+        self.open_ended_booster_count_spinbox.blockSignals(True)
 
         is_check = self.project_model.general["coding"] and "Main" in self.project_model.general["sample_types"]
-        self.open_ended_main_count.setEnabled(is_check)
-        self.open_ended_main_count.setValue(self.project_model.general["open_ended_main_count"])
+        self.open_ended_main_count_spinbox.setEnabled(is_check)
+        self.open_ended_main_count_spinbox.setValue(self.project_model.general["open_ended_main_count"])
 
         is_check = self.project_model.general["coding"] and "Booster" in self.project_model.general["sample_types"]
-        self.open_ended_booster_count.setEnabled(is_check)
-        self.open_ended_booster_count.setValue(self.project_model.general["open_ended_booster_count"])
+        self.open_ended_booster_count_spinbox.setEnabled(is_check)
+        self.open_ended_booster_count_spinbox.setValue(self.project_model.general["open_ended_booster_count"])
 
         self.project_model.set_selected_dp_costs()
         
-        self.open_ended_main_count.blockSignals(False)
-        self.open_ended_booster_count.blockSignals(False)
+        self.open_ended_main_count_spinbox.blockSignals(False)
+        self.open_ended_booster_count_spinbox.blockSignals(False)
 
-        self.data_processing_method.set_enabled(bool(self.project_model.general["data_processing"]))
-        self.data_processing_method.set_selected_items(self.project_model.general["data_processing_method"])
+        self.data_processing_method_multiselecttion.set_enabled(bool(self.project_model.general["data_processing"]))
+        self.data_processing_method_multiselecttion.set_selected_items(self.project_model.general["data_processing_method"])
         
         # Update HUT
-        if "HUT" not in self.project_type.currentText():
+        if "HUT" not in self.project_type_combobox.currentText():
             self.project_model.hut_settings_clear()
 
         self.hut_test_products.setValue(self.project_model.hut_settings.get("hut_test_products", 0))
         self.hut_usage_duration.setValue(self.project_model.hut_settings.get("hut_usage_duration", 0))
         
         # Update CLT
-        if "CLT" not in self.project_type.currentText():
+        if "CLT" not in self.project_type_combobox.currentText():
             self.project_model.clt_settings_clear()
 
-        self.clt_test_products.setValue(self.project_model.clt_settings.get("clt_test_products", 0))
-        self.clt_respondent_visits.setValue(self.project_model.clt_settings.get("clt_respondent_visits", 0))
-        self.clt_failure_rate.setValue(self.project_model.clt_settings.get("clt_failure_rate", 0))
-        self.clt_sample_recruit_idi.setValue(self.project_model.clt_settings.get("clt_sample_recruit_idi", 0))
-        self.clt_assistant_setup_days.setValue(self.project_model.clt_settings.get("clt_assistant_setup_days", 1))
-        self.clt_sample_recruit_idi.setValue(self.project_model.clt_settings.get("clt_sample_recruit_idi", 0))
-        self.clt_dan_mau_days.setValue(self.project_model.clt_settings.get("clt_dan_mau_days", 0))
-        self.clt_sample_size_per_day.setValue(self.project_model.clt_settings.get("clt_sample_size_per_day", 0))
-        self.clt_desk_interviewers_count.setValue(self.project_model.clt_settings.get("clt_desk_interviewers_count", 0))
-        self.clt_provincial_desk_interviewers_count.setValue(self.project_model.clt_settings.get("clt_provincial_desk_interviewers_count", 0))
+        self.clt_test_products_spinbox.setValue(self.project_model.clt_settings.get("clt_test_products", 0))
+        self.clt_respondent_visits_spinbox.setValue(self.project_model.clt_settings.get("clt_respondent_visits", 0))
         
+        self.clt_failure_rate_spinbox.setValue(self.project_model.clt_settings.get("clt_failure_rate", 0))
         self.project_model.set_selected_failure_rate_costs(self.project_model.clt_settings.get("clt_failure_rate", 0) != 0)
+
+        self.clt_sample_recruit_idi_spinbox.setValue(self.project_model.clt_settings.get("clt_sample_recruit_idi", 0))
         self.project_model.set_selected_idi_costs(self.project_model.clt_settings.get("clt_sample_recruit_idi", 0) != 0)
-
-        value = self.project_model.general["device_type"]
         
-        self.device_type.blockSignals(True)
-
-        if value and value in DEVIVE_TYPES:
-            self.device_type.setCurrentText(value)
-        else:
-            self.device_type.setCurrentIndex(0)
-
-        self.project_model.set_selected_device_cost(value)
-
-        self.device_type.blockSignals(False)
+        self.clt_number_of_samples_to_label_spinbox.setValue(self.project_model.clt_settings.get("clt_number_of_samples_to_label", 0))
         
-        value = self.project_model.general["tablet_usage_duration"]
+        self.clt_description_howtolabelthesample_textedit.blockSignals(True)
+        
+        cursor = self.clt_description_howtolabelthesample_textedit.textCursor()
+        pos = cursor.position()
 
-        self.tablet_usage_duration.blockSignals(True)
+        self.clt_description_howtolabelthesample_textedit.setPlainText(self.project_model.clt_settings["clt_description_howtolabelthesample"])
 
-        if value and value in TABLET_USAGE_DURATIONS:
-            self.tablet_usage_duration.setCurrentText(value)
-        else:
-            self.tablet_usage_duration.setCurrentIndex(0)
+        cursor.setPosition(min(pos, len(self.project_model.general["project_objectives"])))
+        self.clt_description_howtolabelthesample_textedit.setTextCursor(cursor)
 
-        self.tablet_usage_duration.blockSignals(False)
+        self.clt_description_howtolabelthesample_textedit.setEnabled(self.project_model.clt_settings.get("clt_number_of_samples_to_label", 0) != 0)
+
+        self.clt_description_howtolabelthesample_textedit.blockSignals(False)
 
         # Update Printer
-        self.bw_page_count.setValue(self.project_model.general["bw_page_count"])
-        self.showphoto_page_count.setValue(self.project_model.general["showphoto_page_count"])
-        self.showcard_page_count.setValue(self.project_model.general["showcard_page_count"])
-        self.dropcard_page_count.setValue(self.project_model.general["dropcard_page_count"])
-        self.color_page_count.setValue(self.project_model.general["color_page_count"])
-        self.decal_page_count.setValue(self.project_model.general["decal_page_count"])
-        self.laminated_page_count.setValue(self.project_model.general["laminated_page_count"])
-        self.interview_form_package_count.setValue(self.project_model.general["interview_form_package_count"])
-        self.stimulus_material_production_count.setValue(self.project_model.general["stimulus_material_production_count"])
+        self.bw_page_count_spinbox.setValue(self.project_model.general["bw_page_count"])
+        self.showphoto_page_count_spinbox.setValue(self.project_model.general["showphoto_page_count"])
+        self.showcard_page_count_spinbox.setValue(self.project_model.general["showcard_page_count"])
+        self.dropcard_page_count_spinbox.setValue(self.project_model.general["dropcard_page_count"])
+        self.color_page_count_spinbox.setValue(self.project_model.general["color_page_count"])
+        self.decal_page_count_spinbox.setValue(self.project_model.general["decal_page_count"])
+        self.laminated_page_count_spinbox.setValue(self.project_model.general["laminated_page_count"])
+        self.interview_form_package_count_spinbox.setValue(self.project_model.general["interview_form_package_count"])
+        self.stimulus_material_production_count_spinbox.setValue(self.project_model.general["stimulus_material_production_count"])
 
         self.project_model.set_selected_stationary_costs()
 

@@ -17,7 +17,7 @@ from PySide6.QtGui import QAction, QIcon
 
 from ui.tabs.general_tab import GeneralTab
 from ui.tabs.samples_tab import SamplesTab
-from ui.tabs.element_costs_tab import ElementCostsTab
+from ui.tabs.operations_tab import OperationsTab
 from ui.tabs.assignment_tab import AssignmentTab
 from ui.dialogs.settings_dialog import SettingsDialog
 from ui.tabs.travel_tab import TravelTab
@@ -63,19 +63,18 @@ class MainWindow(QMainWindow):
         # Create tabs
         self.general_tab = GeneralTab(self.project_model)
         self.samples_tab = SamplesTab(self.project_model)
-        # self.conditions_tab = ProjectConditionsTab(self.project_model)
-        self.travel_tab = TravelTab(self.project_model) 
-        self.element_costs_tab = ElementCostsTab(self.project_model)
+        self.operations_tab = OperationsTab(self.project_model)
+        self.travel_tab = TravelTab(self.project_model)
         self.assignment_tab = AssignmentTab(self.project_model)
         self.additional_costs_tab = AdditionalCostsTab(self.project_model)
         
         # Add tabs to the widget
         self.tab_widget.addTab(self.general_tab, "General")
-        self.tab_widget.addTab(self.samples_tab, "Samples")  
+        self.tab_widget.addTab(self.samples_tab, "Samples")
+        self.tab_widget.addTab(self.operations_tab, "Operations")  
         self.tab_widget.addTab(self.assignment_tab, "Assignments")
         self.tab_widget.addTab(self.travel_tab, "Travel")
         self.tab_widget.addTab(self.additional_costs_tab, "Additional Costs")
-        self.tab_widget.addTab(self.element_costs_tab, "Element Costs")
         
         # Add tab widget to main layout
         main_layout.addWidget(self.tab_widget)
@@ -94,8 +93,10 @@ class MainWindow(QMainWindow):
         
         # Connect signals
         self.project_model.dataChanged.connect(self.update_status)
-        self.project_model.element_costs.costsChanged.connect(self.update_status)
+        # self.project_model.element_costs.costsChanged.connect(self.update_status)
         
+        self.general_tab.projectTypeChanged.connect(self.operations_tab.handle_project_type_changed)
+
     def create_menu_bar(self):
         """Create the application menu bar."""
         # Create menu bar
@@ -121,13 +122,13 @@ class MainWindow(QMainWindow):
         
         file_menu.addSeparator()
         
-        import_costs_action = QAction("Import Element Costs...", self)
-        import_costs_action.triggered.connect(self.import_element_costs)
-        file_menu.addAction(import_costs_action)
+        # import_costs_action = QAction("Import Element Costs...", self)
+        # import_costs_action.triggered.connect(self.import_element_costs)
+        # file_menu.addAction(import_costs_action)
         
-        export_costs_action = QAction("Export Element Costs...", self)
-        export_costs_action.triggered.connect(self.export_element_costs)
-        file_menu.addAction(export_costs_action)
+        # export_costs_action = QAction("Export Element Costs...", self)
+        # export_costs_action.triggered.connect(self.export_element_costs)
+        # file_menu.addAction(export_costs_action)
         
         file_menu.addSeparator()
         
