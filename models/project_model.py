@@ -17,6 +17,7 @@ from config.predefined_values import *
 from config.settings import COST_CONSTANTS
 from config.predefined_values import ASSIGNED_PEOPLE_LEVELS, DEFAULT_TRAVEL_COSTS, SAMPLE_TYPES
 from models.element_costs_model import ElementCostsModel
+from components.validation_field import FieldValidator
 from formulars.pricing_formulas import (
     calculate_daily_sup_target
 )
@@ -103,7 +104,7 @@ class ProjectModel(QObject):
             "clt_respondent_visits": 0,
             "clt_failure_rate": 0,
             "clt_sample_recruit_idi" : 0,
-            "clt_assistant_setup_days": 1,
+            "clt_assistant_setup_days": 0,
             "clt_number_of_samples_to_label" : 0,
             "clt_description_howtolabelthesample" : "",
             "clt_dan_mau_days": 0,
@@ -281,6 +282,50 @@ class ProjectModel(QObject):
             self.industries_data = json.load(f)
 
         self.dataChanged.emit()
+
+    ### Validate
+    def validate(self) -> bool:
+        validator = FieldValidator()
+        is_valid, error_message = True, ""
+
+        for field_name, value in self.general.items():
+            if field_name == "quota_description":
+                is_valid, error_message = validator.validate(field_name, value, condition=self.general["type_of_quota_control"])
+            elif field_name == "open_ended_main_count":
+                is_valid, error_message = validator.validate(field_name, value, condition=self.general["coding"] and "Main" in self.general["sample_types"])
+            elif field_name == "open_ended_booster_count":
+                is_valid, error_message = validator.validate(field_name, value, condition=self.general["coding"] and "Booster" in self.general["sample_types"])
+            else:
+                is_valid, error_message = validator.validate(field_name, value)
+
+            if not is_valid:
+                return field_name, is_valid, error_message
+        
+        for field_name, value in self.clt_settings.items():
+            is_valid, error_message = validator.validate(field_name, value)
+
+            if not is_valid:
+                return field_name, is_valid, error_message
+        
+        for field_name, value in self.hut_settings.items():
+            is_valid, error_message = validator.validate(field_name, value)
+
+            if not is_valid:
+                return field_name, is_valid, error_message
+        
+        return "", True, ""
+        
+        
+    
+    def check_open_ended_questions(self, sample_type) -> bool:
+        if self.general['coding']:
+            open_ended_questions = self.general['open_ended_main_count'] if sample_type == "Main" else self.general['open_ended_booster_count']
+
+            if ((sample_type in self.general['sample_types'] and open_ended_questions == 0) or 
+                (sample_type not in self.general['sample_types'] and open_ended_questions != 0)):
+                    return False
+            
+        return True
 
     def set_selected_device_cost(self, selected_name: str):
         for name in self.cost_toggles.get('device_rental_costs', {}).keys():

@@ -14,7 +14,7 @@ def bind_input_handler(target, field_name: str, validator=None, update_func=None
         raise ValueError(f"Không tìm thấy field '{field_name}' trong {target}")
     
     def on_text_changed(value: str):
-        is_valid, error_msg = validator.validate(field_name, value)
+        is_valid, error_msg = validator.validate(field_name, value) if validator else (True, "")
 
         if warning_label:
             if not is_valid:
@@ -41,8 +41,9 @@ def bind_textedit_handler(target, field_name: str, validator=None, update_func=N
     if field_widget is None:
         raise ValueError(f"Không tìm thấy field '{field_name}' trong {target}")
     
-    def on_text_changed(value: str):
-        is_valid, error_msg = validator.validate(field_name, value)
+    def on_text_changed():
+        value = field_widget.toPlainText()
+        is_valid, error_msg = validator.validate(field_name, value) if validator else (True, "")
 
         if warning_label:
             if not is_valid:

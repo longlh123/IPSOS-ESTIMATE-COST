@@ -72,10 +72,7 @@ class SamplesTab(QWidget):
         self.collapsed = False
         self.max_lines = 2
         self.full_text = (
-            "Define sample sizes, price growth rates, Target for Interviewers, and daily supervisor targets "
-            "for each target audience and sample type in each province.\n"
-            "Click the Edit button to modify row details. Hover over comments to see full text. "
-            "This information will be used for cost calculation."
+            "..."
         )
 
         # Main layout
@@ -147,6 +144,7 @@ class SamplesTab(QWidget):
         else:
             self.instruction_label.setTextFormat(Qt.PlainText)
             self.full_text = (
+                "<b>Hướng dẫn:</b><br>"
                 "Define sample sizes, price growth rates, Target for Interviewers, and daily supervisor targets "
                 "for each target audience and sample type in each province.\n"
                 "Click the Edit button to modify row details. Hover over comments to see full text. "
