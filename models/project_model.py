@@ -5,8 +5,8 @@ Central data model for the Project Cost Calculator application.
 Handles all data storage, validation, and emits signals when data changes.
 """
 
-import os
 import sys
+import os
 import logging
 import math
 import pandas as pd
@@ -35,18 +35,17 @@ class ProjectModel(QObject):
     """
     dataChanged = Signal()  # Signal emitted whenever data changes
     
-    def resource_path(relative_path):
-        """Get absolute path to resource (for PyInstaller compatibility)."""
-        if hasattr(sys, '_MEIPASS'):
-            return os.path.join(sys._MEIPASS, relative_path)
-        return os.path.join(os.path.abspath("."), relative_path)
-
     def __init__(self):
         super().__init__()
         self.reset()
         
         # Initialize element costs model
         self.element_costs = ElementCostsModel()
+    
+    def resource_path(self, path):
+        if hasattr(sys, '_MEIPASS'):
+            return os.path.join(sys._MEIPASS, path)
+        return os.path.join(os.getcwd(), path)
     
     def reset(self):
         """Reset the model to its initial state."""
@@ -274,7 +273,8 @@ class ProjectModel(QObject):
         # Tab 7: Additional Costs data
         self.additional_costs = []  # List of dictionaries with category, name, unit_price, quantity, description, is_dp_coding
 
-        json_path = r'config/industries.json'
+        json_path = self.resource_path(r'config/industries.json')
+
         with open(json_path, mode = 'r', encoding="utf-8") as f:
             self.industries_data = json.load(f)
 

@@ -4,6 +4,8 @@
 Main window for the Project Cost Calculator application.
 Contains the tab widget and menu structure.
 """
+import sys
+import os
 
 from PySide6.QtWidgets import (
     QMainWindow, QTabWidget, QMenuBar, QMenu, QToolBar,
@@ -32,6 +34,11 @@ class MainWindow(QMainWindow):
     """
     Main application window with tabs, menus and toolbars.
     """
+    def resource_path(self, path):
+        if hasattr(sys, '_MEIPASS'):
+            return os.path.join(sys._MEIPASS, path)
+        return os.path.join(os.getcwd(), path)
+    
     def __init__(self):
         super().__init__()
         
@@ -433,7 +440,9 @@ class MainWindow(QMainWindow):
         """Calculate and display hierarchical project cost results."""
         try:
             # Calculate hierarchical costs
-            with open("config/clt_cost_hierarchy.json", "r", encoding="utf-8") as file:
+            path_file = self.resource_path("config/clt_cost_hierarchy.json")
+
+            with open(path_file, "r", encoding="utf-8") as file:
                 hierarchy_data = json.load(file)
             
             cost_data = self.project_model.flatten_cost_hierarchy(hierarchy_data)
