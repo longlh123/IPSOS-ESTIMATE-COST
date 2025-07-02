@@ -79,10 +79,11 @@ class OperationsTab(QWidget):
         # Add scroll area to main layout
         main_layout.addWidget(scroll_area)
 
+        # Connect to model's data changed signal
+        self.project_model.dataChanged.connect(self.update_from_model)
+        
         # Initial update from model
         self.update_from_model()
-
-        self.update_region_visibility()
 
     def update_region_visibility(self):
         """Show/hide regions based on project type selection."""
