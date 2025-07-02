@@ -314,18 +314,16 @@ class ProjectModel(QObject):
                 return field_name, is_valid, error_message
         
         return "", True, ""
-        
-        
-    
-    def check_open_ended_questions(self, sample_type) -> bool:
-        if self.general['coding']:
-            open_ended_questions = self.general['open_ended_main_count'] if sample_type == "Main" else self.general['open_ended_booster_count']
 
-            if ((sample_type in self.general['sample_types'] and open_ended_questions == 0) or 
-                (sample_type not in self.general['sample_types'] and open_ended_questions != 0)):
-                    return False
-            
-        return True
+    def set_tablet_usage_duration(self, value):
+        if self.general["device_type"] != "Tablet < 9 inch":
+            self.general["tablet_usage_duration"] = ""
+
+    def set_clt_description_howtolabelthesample(self, value):
+        if value == 0:
+            self.clt_settings["clt_description_howtolabelthesample"] = ""
+
+        
 
     def set_selected_device_cost(self, selected_name: str):
         for name in self.cost_toggles.get('device_rental_costs', {}).keys():
@@ -457,6 +455,7 @@ class ProjectModel(QObject):
         self.general[field] = value
         
         if field == "device_type":
+            self.set_tablet_usage_duration(value)
             self.set_selected_device_cost(value)
 
         if field == "type_of_quota_control":
@@ -569,7 +568,11 @@ class ProjectModel(QObject):
         self.dataChanged.emit()
 
     def update_clt_settings(self, field, value):
+        if field == "clt_number_of_samples_to_label":
+            self.set_clt_description_howtolabelthesample(value)
+
         self.clt_settings[field] = value
+
         self.dataChanged.emit()
 
     def clt_settings_clear(self):
