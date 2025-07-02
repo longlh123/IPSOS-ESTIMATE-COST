@@ -116,8 +116,6 @@ class GeneralTab(QWidget):
         # Initial update from model
         self.update_from_model()
 
-        self.update_region_visibility()
-
     def update_region_visibility(self):
         """Show/hide regions based on project type selection."""
         project_type = self.project_model.general.get("project_type", "")
