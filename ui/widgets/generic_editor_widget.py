@@ -68,6 +68,8 @@ class GenericEditorWidget(QWidget):
         for item in self.selected_items:
             if 'qc_method' in item.keys():
                 names.append(item.get('qc_method', ""))
+            if 'cost_type' in item.keys():
+                names.append(item.get('cost_type', ""))
 
         names = list(set(names))
         display = ", ".join(names[:4]) + (f" +{len(names)-4} more" if len(names) > 4 else "")

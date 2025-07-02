@@ -167,6 +167,8 @@ class ProjectModel(QObject):
             }
         }
 
+        self.subcontracts = []
+
         # Application settings
         self.settings = {
             "interviewers_per_supervisor": 10,   # Default value
@@ -392,6 +394,10 @@ class ProjectModel(QObject):
         self.qc_methods = items.copy()
         self.dataChanged.emit()
 
+    def update_subcontracts(self, items):
+        self.subcontracts = items.copy()
+        self.dataChanged.emit()
+
     def update_settings(self, field, value):
         """
         Update a field in the settings.
@@ -419,7 +425,8 @@ class ProjectModel(QObject):
             "qc_methods": self.qc_methods,
             "travel": self.travel,
             "assignments": self.assignments,  # Add assignments to saved data
-            "additional_costs": self.additional_costs
+            "additional_costs": self.additional_costs,
+            "subcontracts": self.subcontracts
         }
         
         return data
@@ -440,6 +447,7 @@ class ProjectModel(QObject):
         self.travel = data.get("travel", {})
         self.assignments = data.get("assignments", [])  # Load assignments data
         self.additional_costs = data.get("additional_costs", [])
+        self.subcontracts = data.get("subcontracts", [])
 
         # Emit signal for UI update
         self.dataChanged.emit()

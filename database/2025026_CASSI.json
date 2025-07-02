@@ -102,9 +102,9 @@
     "questionnaire_length": 0,
     "device_type": "Tablet < 9 inch",
     "tablet_usage_duration": "<= 15 phút",
-    "bw_page_count": 0,
+    "bw_page_count": 10,
     "showphoto_page_count": 0,
-    "showcard_page_count": 0,
+    "showcard_page_count": 10,
     "dropcard_page_count": 0,
     "color_page_count": 0,
     "decal_page_count": 0,
@@ -173,9 +173,9 @@
       "Quà Phiếu PV - Non": false
     },
     "stationary_costs": {
-      "Photo trắng đen": false,
+      "Photo trắng đen": true,
       "Showphoto": false,
-      "Showcard": false,
+      "Showcard": true,
       "Dropcard": false,
       "In màu \\ In concept": false,
       "Decal": false,
@@ -401,5 +401,15 @@
   "qc_methods": [],
   "travel": {},
   "assignments": [],
-  "additional_costs": []
+  "additional_costs": [],
+  "subcontracts": [
+    {
+      "cost_type": "Scripting link",
+      "currency": "USD",
+      "optional_detail": "",
+      "subcontractor": "External Subcontract",
+      "unit": 1,
+      "unit_cost": 100
+    }
+  ]
 }
