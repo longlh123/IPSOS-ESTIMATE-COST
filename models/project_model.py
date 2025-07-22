@@ -29,7 +29,6 @@ from models.quanty_mappings import (
     MAPPING_STATIONARY
 )
 
-
 class ProjectModel(QObject):
     """
     Central model class that stores all project data and emits signals when data changes.
@@ -61,13 +60,11 @@ class ProjectModel(QObject):
             "project_objectives" : "",
             "platform": "iField",  # Default platform value
             "interview_methods": [],
-            "sampling_method": "",
-            "recruit_method": [],
+            "recruit_methods": [],
             "type_of_quota_control": "",
             "quota_description": [],
             "service_line": "",
             "provinces": [],
-            "sample_types": [],
             "industries": [],
             "target_audiences": [],
             "interview_length": 0,
@@ -98,19 +95,34 @@ class ProjectModel(QObject):
             "data_processing_method": []
         }
 
+        self.sampling_methods = []
+
         self.clt_settings = {
             # Region - CLT
-            "clt_test_products": 0,
-            "clt_respondent_visits": 0,
-            "clt_failure_rate": 0,
-            "clt_sample_recruit_idi" : 0,
-            "clt_assistant_setup_days": 0,
-            "clt_number_of_samples_to_label" : 0,
-            "clt_description_howtolabelthesample" : "",
+            "clt_test_products": 0, #Tổng số lượng sản phẩm trên dự án
+            "clt_respondent_visits": 0, #Tổng số lượng mẫu dùng trên một đáp viên
+            "clt_sample_usage_details": "", #Chi tiết về cách sử dụng
+            "clt_number_of_samples_to_label" : 0, #Số mẫu cần dán mẫu
+            "clt_description_howtolabelthesample" : "", # Mô tả cách dán mẫu
+            "clt_sample_split_method": "", # Yêu cầu về chiết mẫu
+            "clt_preparation_steps": "", # Chi tiết về cách chuẩn bị mẫu
+            "clt_supplies_required": "", # Yêu cầu mua vật dụng
+            "clt_sample_delivery_method": "", # yêu cầu về chuyển mẫu
+            "clt_other_requirements": "", # Các yêu cầu khác
+            "clt_return_unused_samples": "Yes", #Có thu hồi mẫu nguyên vẹn còn dư không?
+            "clt_return_used_samples": "Yes", #Có thu hồi sản phẩm đã dùng không?
+
+            "clt_total_concepts": 0,
+            "clt_concepts_per_respondent": 0,
+
             "clt_dan_mau_days": 0,
             "clt_sample_size_per_day": 0,
             "clt_desk_interviewers_count": 0,
-            "clt_provincial_desk_interviewers_count": 0
+            "clt_provincial_desk_interviewers_count": 0,
+
+            "clt_assistant_setup_days": 0,
+            "clt_failure_rate": 0,
+            "clt_sample_recruit_idi" : 0,
         } 
 
         self.hut_settings = {
@@ -245,11 +257,11 @@ class ProjectModel(QObject):
         }
 
         # Initialize travel cost settings
-        for level in ASSIGNED_PEOPLE_LEVELS:
-            for cost_type in ["hotel", "food"]:
-                setting_key = f"travel_{level.lower()}_{cost_type}"
-                if setting_key not in self.settings:
-                    self.settings[setting_key] = DEFAULT_TRAVEL_COSTS[level][cost_type]
+        # for level in ASSIGNED_PEOPLE_LEVELS:
+        #     for cost_type in ["hotel", "food"]:
+        #         setting_key = f"travel_{level.lower()}_{cost_type}"
+        #         if setting_key not in self.settings:
+        #             self.settings[setting_key] = DEFAULT_TRAVEL_COSTS[level][cost_type]
 
         # Tab 2: Samples data
         # Structure: {province: {target_audience: {sample_type: {"sample_size": int, "price_growth": float}}}}
@@ -283,6 +295,13 @@ class ProjectModel(QObject):
         with open(json_path, mode = 'r', encoding="utf-8") as f:
             self.industries_data = json.load(f)
 
+        self.rate_card_settings = {}
+
+        json_path = self.resource_path(r'config/rate_card_settings.json')
+
+        with open(json_path, mode='r', encoding="utf-8") as f:
+            self.rate_card_settings = json.load(f)
+
         self.dataChanged.emit()
 
     ### Validate
@@ -304,7 +323,10 @@ class ProjectModel(QObject):
                 return field_name, is_valid, error_message
         
         for field_name, value in self.clt_settings.items():
-            is_valid, error_message = validator.validate(field_name, value)
+            if field_name == "clt_concepts_per_respondent":
+                is_valid, error_message = validator.validate(field_name, value, condition=self.clt_settings["clt_total_concepts"] > 0)
+            else:
+                is_valid, error_message = validator.validate(field_name, value)
 
             if not is_valid:
                 return field_name, is_valid, error_message
@@ -320,12 +342,6 @@ class ProjectModel(QObject):
     def set_tablet_usage_duration(self, value):
         if self.general["device_type"] != "Tablet < 9 inch":
             self.general["tablet_usage_duration"] = ""
-
-    def set_clt_description_howtolabelthesample(self, value):
-        if value == 0:
-            self.clt_settings["clt_description_howtolabelthesample"] = ""
-
-        
 
     def set_selected_device_cost(self, selected_name: str):
         for name in self.cost_toggles.get('device_rental_costs', {}).keys():
@@ -369,7 +385,6 @@ class ProjectModel(QObject):
         for name in self.cost_toggles.get('qc_communication_costs', {}).keys():
             self.cost_toggles['qc_communication_costs'][name] = selected
 
-
     def set_selected_dp_costs(self):
         self.cost_toggles['dp_costs']["Chi phí Coding"] = self.general.get('coding', False)
         self.cost_toggles['dp_costs']["Chi phí Input"] = self.general.get('data_entry', False)
@@ -390,12 +405,70 @@ class ProjectModel(QObject):
                         return enabled
             return True
 
+    def generate_settings_table(self) -> str:
+        rows = ""
+
+        objectives = self.general.get("project_objectives", "").strip()
+        rows += f"<tr><td style='border: 1px solid black;'><b>Project Objectives</b></td><td style='border: 1px solid black;'>{objectives}</td></tr>"
+
+        if self.general['project_type'] == 'CLT':
+            clt_mappings = {
+                "clt_test_products": "Tổng số lượng sản phẩm trên dự án",
+                "clt_respondent_visits": "Tổng số lượng mẫu dùng trên một đáp viên",
+                "clt_sample_usage_details": "Chi tiết về cách sử dụng",
+                "clt_number_of_samples_to_label" : "Số mẫu cần dán mẫu",
+                "clt_description_howtolabelthesample" : "Mô tả cách dán mẫu",
+                "clt_sample_split_method": "Yêu cầu về chiết mẫu",
+                "clt_preparation_steps": "Chi tiết về cách chuẩn bị mẫu",
+                "clt_supplies_required": "Yêu cầu mua vật dụng",
+                "clt_sample_delivery_method": "yêu cầu về chuyển mẫu",
+                "clt_other_requirements": "Các yêu cầu khác",
+                "clt_return_unused_samples": "Có thu hồi mẫu nguyên vẹn còn dư không?",
+                "clt_return_used_samples": "Có thu hồi sản phẩm đã dùng không?",
+            }
+            
+            for key, label in clt_mappings.items():
+                if key in ["clt_test_products", "clt_respondent_visits", "clt_number_of_samples_to_label"]:
+                    if self.clt_settings[key] > 0: 
+                        rows += f"<tr><td style='border: 1px solid black;'><b>{clt_mappings[key]}</b></td><td style='border: 1px solid black;'>{self.clt_settings[key]}</td></tr>"
+                else:
+                    if len(self.clt_settings[key]) > 0: 
+                        rows += f"<tr><td style='border: 1px solid black;'><b>{clt_mappings[key]}</b></td><td style='border: 1px solid black;'>{self.clt_settings[key]}</td></tr>"
+
+        html_table = f"""
+            <table border="1" cellspacing="0" cellpadding="4" style="border-collapse: collapse; width: 100%;">
+                <thead>
+                    <tr>
+                        <th style='border: 1px solid black;'>Setting</th>
+                        <th style='border: 1px solid black;'>Value</th>
+                    </tr>
+                </thead>
+                <tbody style='border: 1px solid black;'>{rows}</tbody>
+            </table>
+        """
+        return html_table
+    
     def update_qc_methods(self, items):
         self.qc_methods = items.copy()
         self.dataChanged.emit()
 
     def update_subcontracts(self, items):
         self.subcontracts = items.copy()
+        self.dataChanged.emit()
+
+    def update_sampling_methods(self, items):
+        self.sampling_methods = items.copy()
+        
+        sample_types = self.get_sample_types()
+
+        for s in self.sampling_methods:
+            if "Main" not in sample_types:
+                self.general["open_ended_main_count"] = 0
+            if "Booster" not in sample_types:
+                self.general["open_ended_booster_count"] = 0
+
+        self.update_samples_structure()
+
         self.dataChanged.emit()
 
     def update_settings(self, field, value):
@@ -413,10 +486,140 @@ class ProjectModel(QObject):
         if field == "interviewers_per_supervisor":
             self._recalculate_daily_sup_targets()
     
+    def get_sample_types(self):
+        return [s['sample_type'] for s in self.sampling_methods]
+
+    def get_industries(self):
+        return [name for name in self.industries_data.keys() if name != 'default']
+
+    def get_audiences(self, industry_name):
+        target_audience_names = list()
+
+        for industry_data in self.industries_data.get(industry_name, {}).values():
+            target_audience_names.append(industry_data.get('target_audience'))
+
+        return target_audience_names
+
+    def make_pricing_entry(self, price, price_growth, type):
+        return {
+            "price": price,
+            "price_growth": price_growth,
+            "type": type,
+            "comment": {}
+        }
+
+    def make_audience_entry(self, new_audience_data, audience_id, pricing, target):
+        audience_entry = {
+            "audience_id": audience_id,
+            "sample_type": new_audience_data.get('sample_type'),
+            "industry_name": new_audience_data.get('industry_name'),
+            "target_audience_name": new_audience_data.get('target_audience_name'),
+            "gender": new_audience_data.get("gender"),
+            "age_group": new_audience_data.get("age_group"),
+            "household_income": new_audience_data.get("household_income"),
+            "incident_rate": new_audience_data.get("incident_rate", 100),
+            "complexity": new_audience_data.get("complexity", "Standard"),
+            "description": new_audience_data.get("description", ""),
+            "sample_size": new_audience_data.get("sample_size", 0),
+            "extra_rate": new_audience_data.get("extra_rate", 0),
+            "pricing": pricing,
+            "target" : target,
+            "comment": {},
+        }
+        return audience_entry
+
+    def _make_price_entry(self, price, price_growth, type):
+        return {
+            "price": price,
+            "price_growth": price_growth,
+            "type": type,
+            "comment": {}
+        }
+
+    def _make_pricing_entry(self, sample_type, pricing):
+
+        if sample_type == 'Pilot':
+            return [self._make_price_entry(pricing.get('pilot'), 0, 'pilot')]
+        elif sample_type == 'None':
+            return [self._make_price_entry(pricing.get('non'), 0, 'non')]
+        elif sample_type == 'Main':
+            return [
+                self._make_price_entry(pricing.get('main', {}).get('recruit'), 0, 'recruit'),
+                self._make_price_entry(pricing.get('main', {}).get('location'), 0, 'location')
+            ]
+        elif sample_type == 'Booster':
+            return [
+                self._make_price_entry(pricing.get('main', {}).get('booster'), 0, 'recruit'),
+                self._make_price_entry(pricing.get('main', {}).get('booster'), 0, 'location')
+            ]
+        else:
+            raise ValueError(f"[RateCard Error] Sample type {sample_type} isn't defined in rate card settings.")
+
+    def _make_target_rate_card(self, rate_card):
+        return {
+            "daily_interview_target" : rate_card.get('daily_interview_target'),
+            "target_for_interviewer" : rate_card.get('target_for_interviewer'),
+            "interviewers_per_supervisor" : rate_card.get('interviewers_per_supervisor'),
+        }
+
+    def _get_rate_card(self, sample_type, interview_length):
+        project_type = self.general['project_type']
+
+        if project_type not in self.rate_card_settings.keys():
+            raise ValueError(f"[RateCard Error] Project type {project_type} isn't defined in rate card settings.")
+        
+        levels = list([level for level in self.rate_card_settings[project_type].keys()])
+
+        #Determine the level based on total number of levels
+        interval = 100 / len(levels)
+        level = int(100 // interval) + 1
+
+        rate_cards = self.rate_card_settings[project_type].get(f"L{level}")
+
+        if not rate_cards:
+            raise ValueError(f"[RateCard Error] No rate cards found for level {level} in project type {project_type}.")
+
+        for rate_card in rate_cards:
+            min_len, max_len = rate_card['interview_length_range']
+
+            if min_len <= interview_length <= max_len:
+                try:
+                    rate_card_pricing = self._make_pricing_entry(sample_type, rate_card.get('pricing', {}))
+                    rate_card_target = self._make_target_rate_card(rate_card)
+
+                    return rate_card_pricing, rate_card_target
+                except ValueError as e:
+                    raise str(e)
+            
+        raise ValueError(
+            f"[RateCard Error] No rate card found for interview_length = {interview_length} "
+            f"in project_type '{project_type}', level {level}."
+        )
+    
+    def get_audience(self, new_audience_data):
+        try:
+            rate_card_pricing, rate_card_target  = self._get_rate_card(new_audience_data.get('sample_type'), self.general.get('interview_length', 0))
+            
+            rate_card_audience_data = self.make_audience_entry(new_audience_data, "default", rate_card_pricing, rate_card_target)
+
+            industry_data = self.industries_data.get(new_audience_data.get('industry_name'), {})
+
+            for ta_id, ta_data in industry_data.items():
+                if ta_data["target_audience"] == new_audience_data.get('target_audience_name'):
+                    pricing = self._make_pricing_entry(new_audience_data.get('sample_type'), ta_data.get('pricing', {}))
+                    audience_data = self.make_audience_entry(new_audience_data, ta_id, pricing, rate_card_target)
+                    return audience_data
+            
+            return rate_card_audience_data
+        
+        except ValueError as e:
+            raise str(e)
+                    
     def to_dict(self):
         """Convert model to dictionary for saving."""
         data = {
             "general": self.general,
+            "sampling_methods" : self.sampling_methods,
             "clt_settings" : self.clt_settings,
             "hut_settings" : self.hut_settings,
             "cost_toggles" : self.cost_toggles,
@@ -438,6 +641,7 @@ class ProjectModel(QObject):
         
         # Load basic data
         self.general.update(data.get("general", {}))
+        self.sampling_methods = data.get("sampling_methods", [])
         self.clt_settings.update(data.get("clt_settings", {}))
         self.hut_settings.update(data.get('hut_settings', {}))
         self.cost_toggles.update(data.get("cost_toggles", {}))
@@ -470,13 +674,7 @@ class ProjectModel(QObject):
             if self.general[field] != "Interlocked Quota":
                 self.general["quota_description"] = []
 
-        if field == "sample_types":
-            if "Main" not in self.general[field]:
-                self.general["open_ended_main_count"] = 0
-            if "Booster" not in self.general[field]:
-                self.general["open_ended_booster_count"] = 0
-
-        if field in ["provinces", "sample_types", "target_audiences"]:
+        if field in ["provinces", "target_audiences"]:
             # Update samples structure when any of these fields change
             self.update_samples_structure()
             # Update travel structure when provinces change
@@ -492,46 +690,50 @@ class ProjectModel(QObject):
         """
         provinces = self.general.get("provinces", [])
         target_audiences = self.general.get("target_audiences", [])
-        sample_types = self.general.get("sample_types", [])
+        sample_types = self.get_sample_types()
         interviewers_per_supervisor = self.settings.get("interviewers_per_supervisor", 8)
         
+        new_target_audiences = []
+
+        for audience in target_audiences:
+            if audience.get('sample_type') in sample_types:
+                new_target_audiences.append(audience)
+
+        self.general["target_audiences"] = new_target_audiences
+
         # Initialize new samples structure
         new_samples = {}
         
         for province in provinces:
             new_samples[province] = {}
 
-            for audience in target_audiences:
-                audience_name = audience.get("name")
-                sample_type = audience.get("sample_type", "Main")
+            for audience in new_target_audiences:
+                audience_name = audience.get("target_audience_name")
+                sample_type = audience.get("sample_type")
+                sample_size = audience.get("sample_size", audience.get("sample_size", 0))
+                target_for_interviewer = audience.get('target', {}).get('target_for_interviewer', 0)
+                interviewers_per_supervisor = audience.get('target', {}).get('interviewers_per_supervisor', 0)
 
                 if sample_type in sample_types:
-                    # Get existing data if available
-                    old_audience_data = self.samples.get(province, {}).get(f"{sample_type} - {audience_name}", {})
-                
-                    # Determine values with fallback
-                    sample_size = old_audience_data.get("sample_size", audience.get("sample_size", 0))
-                    target_for_interviewer = old_audience_data.get("target_for_interviewer", audience.get("target_for_interviewer", 2))
+                    
                     daily_sup_target = calculate_daily_sup_target(sample_size, 
                                                                  target_for_interviewer, 
-                                                                 interviewers_per_supervisor)
-                    comment = old_audience_data.get("comment", {})
-
+                        
+                    
+                                                             interviewers_per_supervisor)
+                    
                     # Construct audience entry
                     audience_entry = {
-                        **audience,
-                        "target_for_interviewer": target_for_interviewer,
-                        "daily_sup_target": daily_sup_target,
-                        "comment": comment
+                        **audience
                     }
 
-                    audience_entry["sample_size"] = sample_size
+                    audience_entry["target"]["daily_sup_target"] = daily_sup_target
                     
                     new_samples[province][f"{sample_type} - {audience_name}"] = audience_entry
 
         self.samples = new_samples
         self.dataChanged.emit()
-        
+    
     def update_sample(self, province, audience_data):
         """
         Update the sample data for a specific audience in a given province.
@@ -540,8 +742,8 @@ class ProjectModel(QObject):
             province (str): Province name
             audience_data (dict): A complete audience data dictionary
         """
-        audience_name = audience_data.get("name")
-        sample_type = audience_data.get("sample_type", "Main")
+        audience_name = audience_data.get("target_audience_name")
+        sample_type = audience_data.get("sample_type")
         audience_key = f"{sample_type} - {audience_name}"
 
         if not province or not audience_name:
@@ -551,33 +753,23 @@ class ProjectModel(QObject):
         if province not in self.samples:
             self.samples[province] = {}
 
-        # Build updated audience info (ensure default fallbacks)
-        updated_data = {
-            "name": audience_name,
-            "sample_type": sample_type,
-            "sample_size": audience_data.get("sample_size", 0),
-            "extra_rate": audience_data.get("extra_rate", 0),
-            "pricing": audience_data.get("pricing", {}),
-            "target_for_interviewer": audience_data.get("target_for_interviewer", 2),
-            "daily_sup_target": audience_data.get("daily_sup_target"),
-            "gender": audience_data.get("gender", "Both"),
-            "age_range": audience_data.get("age_range", [0, 0]),
-            "income_range": audience_data.get("income_range", [0, 0]),
-            "incident_rate": audience_data.get("incident_rate", 100),
-            "complexity": audience_data.get("complexity", "Standard"),
-            "description": audience_data.get("description", ""),
-            "comment": audience_data.get("comment", {}),
-        }
-
         # Update the audience in the model
-        self.samples[province][audience_key] = updated_data
+        self.samples[province][audience_key] = audience_data
 
         # Emit signal to notify change
         self.dataChanged.emit()
 
     def update_clt_settings(self, field, value):
         if field == "clt_number_of_samples_to_label":
-            self.set_clt_description_howtolabelthesample(value)
+            if value == 0:
+                self.clt_settings["clt_description_howtolabelthesample"] = ""
+                self.clt_settings["clt_sample_split_method"] = ""
+        if field == "clt_test_products":
+            if value == 0:
+                self.clt_settings["clt_respondent_visits"] = 0
+        if field == "clt_total_concepts":
+            if value == 0:
+                self.clt_settings["clt_concepts_per_respondent"] = 0
 
         self.clt_settings[field] = value
 
@@ -587,8 +779,10 @@ class ProjectModel(QObject):
         for key, value in self.clt_settings.items():
             if key == "clt_assistant_setup_days":
                 self.clt_settings[key] = 1
-            elif key == "clt_description_howtolabelthesample":
+            elif key in ["clt_description_howtolabelthesample", "clt_sample_usage_details", "clt_sample_split_method", "clt_preparation_steps", "clt_supplies_required", "clt_sample_delivery_method", "clt_other_requirements"]:
                 self.clt_settings[key] = ""
+            elif key in ["clt_return_unused_samples", "clt_return_used_samples"]:
+                self.clt_settings[key] = "Yes"
             else:
                 self.clt_settings[key] = 0
 
@@ -599,6 +793,51 @@ class ProjectModel(QObject):
     def hut_settings_clear(self):
         for key, value in self.hut_settings.items():
             self.hut_settings[key] = 0
+
+    def update_travel_structure(self):
+        """
+        Update the structure of the travel dictionary based on chosen provinces.
+        """
+        provinces = self.general["provinces"]
+        
+        # Initialize new travel structure
+        new_travel = {}
+        
+        for province in provinces:
+            if province not in new_travel:
+                # Copy existing data or initialize new data
+                if province in self.travel:
+                    new_travel[province] = self.travel[province]
+                else:
+                    new_travel[province] = {
+                        "fulltime": {
+                            "travel_days": 0,
+                            "travel_nights": 0,
+                            "assigned_people": []
+                        },
+                        "parttime": {
+                            "supervisor": {
+                                "distant": 0, 
+                                "nearby": 0,
+                                "recruit_distant": 0, 
+                                "recruit_nearby": 0,
+                                "ngoi_ban_distant": 0, 
+                                "ngoi_ban_nearby": 0
+                            },
+                            "interviewer": {
+                                "distant": 0, 
+                                "nearby": 0,
+                                "recruit_distant": 0, 
+                                "recruit_nearby": 0,
+                                "ngoi_ban_distant": 0, 
+                                "ngoi_ban_nearby": 0
+                            },
+                            "qc": {"distant": 0, "nearby": 0}
+                        }
+                    }
+        
+        self.travel = new_travel
+        self.dataChanged.emit()
 
     def flatten_cost_hierarchy(self, hierarchy):
         flat_rows = []
@@ -718,6 +957,7 @@ class ProjectModel(QObject):
         traverse(hierarchy[self.general.get('project_type', "")].get("children", {}))
 
         return flat_rows
+    
 
     # def _recalculate_daily_sup_targets(self):
     #     """Recalculate all daily supervisor targets based on the new interviewers_per_supervisor value."""
@@ -985,51 +1225,6 @@ class ProjectModel(QObject):
     #             # Debug message
     #             print(f"Warning: Field '{field}' not found in {role}")
         
-    #     self.dataChanged.emit()
-
-    # def update_travel_structure(self):
-    #     """
-    #     Update the structure of the travel dictionary based on chosen provinces.
-    #     """
-    #     provinces = self.general["provinces"]
-        
-    #     # Initialize new travel structure
-    #     new_travel = {}
-        
-    #     for province in provinces:
-    #         if province not in new_travel:
-    #             # Copy existing data or initialize new data
-    #             if province in self.travel:
-    #                 new_travel[province] = self.travel[province]
-    #             else:
-    #                 new_travel[province] = {
-    #                     "fulltime": {
-    #                         "travel_days": 0,
-    #                         "travel_nights": 0,
-    #                         "assigned_people": []
-    #                     },
-    #                     "parttime": {
-    #                         "supervisor": {
-    #                             "distant": 0, 
-    #                             "nearby": 0,
-    #                             "recruit_distant": 0, 
-    #                             "recruit_nearby": 0,
-    #                             "ngoi_ban_distant": 0, 
-    #                             "ngoi_ban_nearby": 0
-    #                         },
-    #                         "interviewer": {
-    #                             "distant": 0, 
-    #                             "nearby": 0,
-    #                             "recruit_distant": 0, 
-    #                             "recruit_nearby": 0,
-    #                             "ngoi_ban_distant": 0, 
-    #                             "ngoi_ban_nearby": 0
-    #                         },
-    #                         "qc": {"distant": 0, "nearby": 0}
-    #                     }
-    #                 }
-        
-    #     self.travel = new_travel
     #     self.dataChanged.emit()
 
     # def add_additional_cost(self, category, name, unit_price, quantity, description="", is_dp_coding=False, provinces=None):

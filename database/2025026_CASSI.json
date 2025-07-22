@@ -12,73 +12,37 @@
     "interview_methods": [
       "CATI"
     ],
-    "sampling_method": "Purposive sampling",
-    "recruit_method": [
+    "recruit_methods": [
       "FW free find/ FW connection"
     ],
     "type_of_quota_control": "No Quota",
     "quota_description": [],
     "service_line": "INNO",
     "provinces": [
-      "Hà Nội",
-      "Hồ Chí Minh"
-    ],
-    "sample_types": [
-      "Pilot",
-      "Main"
+      "Hồ Chí Minh",
+      "Hà Nội"
     ],
     "industries": [
       "Thực phẩm - Đồ ăn nhẹ"
     ],
     "target_audiences": [
       {
-        "age_range": [
-          15,
-          25
-        ],
-        "comment": {},
-        "complexity": "Standard",
-        "daily_sup_target": 0,
-        "description": "",
-        "extra_rate": 10,
-        "gender": "Both",
-        "id": null,
-        "incident_rate": 100,
-        "income_range": [
+        "age_group": [
           0,
           0
         ],
-        "name": "Người dùng Sản phẩm bánh Snack",
-        "pricing": [
-          {
-            "comment": {},
-            "price": 120000,
-            "price_growth": 0,
-            "type": "pilot"
-          }
-        ],
-        "sample_size": 100,
-        "sample_type": "Pilot",
-        "target_for_interviewer": 2
-      },
-      {
-        "age_range": [
-          15,
-          25
-        ],
+        "audience_id": "ID0000002",
         "comment": {},
-        "complexity": "Standard",
-        "daily_sup_target": 0,
+        "complexity": "Basic",
         "description": "",
-        "extra_rate": 5,
+        "extra_rate": 0,
         "gender": "Both",
-        "id": null,
-        "incident_rate": 100,
-        "income_range": [
+        "household_income": [
           0,
           0
         ],
-        "name": "Người dùng Sản phẩm bánh Snack",
+        "incident_rate": 100,
+        "industry_name": "Thực phẩm - Đồ ăn nhẹ",
         "pricing": [
           {
             "comment": {},
@@ -95,10 +59,16 @@
         ],
         "sample_size": 100,
         "sample_type": "Main",
-        "target_for_interviewer": 2
+        "target": {
+          "daily_interview_target": 55,
+          "daily_sup_target": 3.33,
+          "interviewers_per_supervisor": 10,
+          "target_for_interviewer": 3
+        },
+        "target_audience_name": "Người dùng Sản phẩm bánh Snack"
       }
     ],
-    "interview_length": 60,
+    "interview_length": 54,
     "questionnaire_length": 0,
     "device_type": "Tablet < 9 inch",
     "tablet_usage_duration": "<= 15 phút",
@@ -117,20 +87,45 @@
     "data_entry": false,
     "open_ended_main_count": 0,
     "open_ended_booster_count": 0,
-    "data_processing_method": []
+    "data_processing_method": [],
+    "sampling_method": "Purposive sampling",
+    "recruit_method": [
+      "FW free find/ FW connection"
+    ]
   },
+  "sampling_methods": [
+    {
+      "sample_type": "Main",
+      "sampling_method": "Purposive sampling"
+    },
+    {
+      "description": "Uống Heneiken Silver thường xuyên nhất.",
+      "sample_type": "Booster",
+      "sampling_method": "Purposive sampling"
+    }
+  ],
   "clt_settings": {
     "clt_test_products": 3,
-    "clt_respondent_visits": 0,
-    "clt_failure_rate": 10,
-    "clt_sample_recruit_idi": 5,
-    "clt_assistant_setup_days": 1,
-    "clt_number_of_samples_to_label": 100,
-    "clt_description_howtolabelthesample": " Hướng dẫn dán mẫu",
+    "clt_respondent_visits": 1,
+    "clt_sample_usage_details": "Rót 300ml,uống tí nhất 100ml...",
+    "clt_number_of_samples_to_label": 2,
+    "clt_description_howtolabelthesample": "Yêu cầu về dán mẫu",
+    "clt_sample_split_method": "Yêu cầu về chiết mẫu",
+    "clt_preparation_steps": "Ướp mẫu, giặt đồ.",
+    "clt_supplies_required": "Mua cân",
+    "clt_sample_delivery_method": "",
+    "clt_other_requirements": "Nhận xét 8",
+    "clt_return_unused_samples": "Yes",
+    "clt_return_used_samples": "Yes",
+    "clt_total_concepts": 2,
+    "clt_concepts_per_respondent": 0,
     "clt_dan_mau_days": 0,
     "clt_sample_size_per_day": 50,
     "clt_desk_interviewers_count": 0,
-    "clt_provincial_desk_interviewers_count": 0
+    "clt_provincial_desk_interviewers_count": 0,
+    "clt_assistant_setup_days": 1,
+    "clt_failure_rate": 10,
+    "clt_sample_recruit_idi": 5
   },
   "hut_settings": {
     "hut_test_products": 0,
@@ -167,8 +162,8 @@
       "Chi phí Quản lý - On-field": false
     },
     "incentive_costs": {
-      "Quà Phiếu PV - Pilot": true,
-      "Quà Phiếu PV - Main": true,
+      "Quà Phiếu PV - Pilot": false,
+      "Quà Phiếu PV - Main": false,
       "Quà Phiếu PV - Booster": false,
       "Quà Phiếu PV - Non": false
     },
@@ -261,55 +256,24 @@
     "travel_director_food": 1200000
   },
   "samples": {
-    "Hà Nội": {
-      "Pilot - Người dùng Sản phẩm bánh Snack": {
-        "age_range": [
-          15,
-          25
-        ],
-        "comment": {},
-        "complexity": "Standard",
-        "daily_sup_target": 5.0,
-        "description": "",
-        "extra_rate": 10,
-        "gender": "Both",
-        "id": null,
-        "incident_rate": 100,
-        "income_range": [
-          0,
-          0
-        ],
-        "name": "Người dùng Sản phẩm bánh Snack",
-        "pricing": [
-          {
-            "comment": {},
-            "price": 120000,
-            "price_growth": 0,
-            "type": "pilot"
-          }
-        ],
-        "sample_size": 100,
-        "sample_type": "Pilot",
-        "target_for_interviewer": 2
-      },
+    "Hồ Chí Minh": {
       "Main - Người dùng Sản phẩm bánh Snack": {
-        "age_range": [
-          15,
-          25
-        ],
-        "comment": {},
-        "complexity": "Standard",
-        "daily_sup_target": 5.0,
-        "description": "",
-        "extra_rate": 5,
-        "gender": "Both",
-        "id": null,
-        "incident_rate": 100,
-        "income_range": [
+        "age_group": [
           0,
           0
         ],
-        "name": "Người dùng Sản phẩm bánh Snack",
+        "audience_id": "ID0000002",
+        "comment": {},
+        "complexity": "Basic",
+        "description": "",
+        "extra_rate": 0,
+        "gender": "Both",
+        "household_income": [
+          0,
+          0
+        ],
+        "incident_rate": 100,
+        "industry_name": "Thực phẩm - Đồ ăn nhẹ",
         "pricing": [
           {
             "comment": {},
@@ -326,58 +290,33 @@
         ],
         "sample_size": 100,
         "sample_type": "Main",
-        "target_for_interviewer": 2
+        "target": {
+          "daily_interview_target": 55,
+          "daily_sup_target": 3.33,
+          "interviewers_per_supervisor": 10,
+          "target_for_interviewer": 3
+        },
+        "target_audience_name": "Người dùng Sản phẩm bánh Snack"
       }
     },
-    "Hồ Chí Minh": {
-      "Pilot - Người dùng Sản phẩm bánh Snack": {
-        "age_range": [
-          15,
-          25
-        ],
-        "comment": {},
-        "complexity": "Standard",
-        "daily_sup_target": 5.0,
-        "description": "",
-        "extra_rate": 10,
-        "gender": "Both",
-        "id": null,
-        "incident_rate": 100,
-        "income_range": [
-          0,
-          0
-        ],
-        "name": "Người dùng Sản phẩm bánh Snack",
-        "pricing": [
-          {
-            "comment": {},
-            "price": 120000,
-            "price_growth": 0,
-            "type": "pilot"
-          }
-        ],
-        "sample_size": 100,
-        "sample_type": "Pilot",
-        "target_for_interviewer": 2
-      },
+    "Hà Nội": {
       "Main - Người dùng Sản phẩm bánh Snack": {
-        "age_range": [
-          15,
-          25
-        ],
-        "comment": {},
-        "complexity": "Standard",
-        "daily_sup_target": 5.0,
-        "description": "",
-        "extra_rate": 5,
-        "gender": "Both",
-        "id": null,
-        "incident_rate": 100,
-        "income_range": [
+        "age_group": [
           0,
           0
         ],
-        "name": "Người dùng Sản phẩm bánh Snack",
+        "audience_id": "ID0000002",
+        "comment": {},
+        "complexity": "Basic",
+        "description": "",
+        "extra_rate": 0,
+        "gender": "Both",
+        "household_income": [
+          0,
+          0
+        ],
+        "incident_rate": 100,
+        "industry_name": "Thực phẩm - Đồ ăn nhẹ",
         "pricing": [
           {
             "comment": {},
@@ -394,12 +333,77 @@
         ],
         "sample_size": 100,
         "sample_type": "Main",
-        "target_for_interviewer": 2
+        "target": {
+          "daily_interview_target": 55,
+          "daily_sup_target": 3.33,
+          "interviewers_per_supervisor": 10,
+          "target_for_interviewer": 3
+        },
+        "target_audience_name": "Người dùng Sản phẩm bánh Snack"
       }
     }
   },
   "qc_methods": [],
-  "travel": {},
+  "travel": {
+    "Hồ Chí Minh": {
+      "fulltime": {
+        "travel_days": 0,
+        "travel_nights": 0,
+        "assigned_people": []
+      },
+      "parttime": {
+        "supervisor": {
+          "distant": 0,
+          "nearby": 0,
+          "recruit_distant": 0,
+          "recruit_nearby": 0,
+          "ngoi_ban_distant": 0,
+          "ngoi_ban_nearby": 0
+        },
+        "interviewer": {
+          "distant": 0,
+          "nearby": 0,
+          "recruit_distant": 0,
+          "recruit_nearby": 0,
+          "ngoi_ban_distant": 0,
+          "ngoi_ban_nearby": 0
+        },
+        "qc": {
+          "distant": 0,
+          "nearby": 0
+        }
+      }
+    },
+    "Hà Nội": {
+      "fulltime": {
+        "travel_days": 0,
+        "travel_nights": 0,
+        "assigned_people": []
+      },
+      "parttime": {
+        "supervisor": {
+          "distant": 0,
+          "nearby": 0,
+          "recruit_distant": 0,
+          "recruit_nearby": 0,
+          "ngoi_ban_distant": 0,
+          "ngoi_ban_nearby": 0
+        },
+        "interviewer": {
+          "distant": 0,
+          "nearby": 0,
+          "recruit_distant": 0,
+          "recruit_nearby": 0,
+          "ngoi_ban_distant": 0,
+          "ngoi_ban_nearby": 0
+        },
+        "qc": {
+          "distant": 0,
+          "nearby": 0
+        }
+      }
+    }
+  },
   "assignments": [],
   "additional_costs": [],
   "subcontracts": [

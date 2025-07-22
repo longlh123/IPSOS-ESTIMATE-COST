@@ -5,7 +5,7 @@ import numpy as np
 def build_cost_hierarchy_from_csv(csv_path):
     df = pd.read_csv(
         csv_path,
-        header=[0, 1],
+        header=[0],
         index_col=[0, 1, 2, 3, 4, 5, 6, 7, 8],
         encoding="utf-8"
     )
@@ -36,16 +36,12 @@ def build_cost_hierarchy_from_csv(csv_path):
             "code": code,
             "unit": "" if pd.isnull(unit) else unit,
             "description": s6,
-            "costs": {}
+            "cost": 0
         }
         
         # Add base cost to the element
         for col in df.columns:
-            if "Unnamed:" not in col[0]:
-                level = col[0]
-                element["costs"][level] = {}
-            
-            element["costs"][level][col[1]] = row[col]
+            element["cost"] = row[col]
         
         node["elements"].append(element)
 

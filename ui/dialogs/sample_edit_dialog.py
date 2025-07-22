@@ -7,7 +7,7 @@ Updated dialog for editing a sample row with improved comment handling.
 from PySide6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QLabel, QSpinBox, QDoubleSpinBox,
     QPushButton, QDialogButtonBox, QFormLayout, QGroupBox, QLineEdit,
-    QTextEdit, QTabWidget
+    QTextEdit, QTabWidget, QGridLayout
 )
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QColor
@@ -15,21 +15,24 @@ from formulars.pricing_formulas import (
     calculate_daily_sup_target,
     has_custom_daily_sup_target
 )
+from ui.helpers.form_helpers import (create_header_label, create_input_field, create_combobox, create_multiselected_field, create_textedit_field, 
+                                     create_radiobuttons_group, create_spinbox_field, create_generic_editor_field
+                                     )
+from ui.helpers.form_events import (bind_input_handler, bind_combobox_handler, bind_multiselection_handler, bind_textedit_handler, bind_radiogroup_handler, bind_spinbox_handler,
+                                    bind_generic_editor_handler
+                                    )
 
 class SampleEditDialog(QDialog):
 
     """
     Dialog for editing a row in the samples table.
     """
-    def __init__(self, province, audience_data, sample_type_data, interviewers_per_supervisor, parent=None):
+    def __init__(self, province, audience_data, price_type, parent=None):
         super().__init__(parent)
         self.province = province
         self.audience_data = audience_data.copy()
-        self.sample_type_data = sample_type_data
-        self.interviewers_per_supervisor = interviewers_per_supervisor
+        self.price_type = price_type
         
-        self._updating_daily_sup_target = True
-
         self.setWindowTitle(f"Edit Sample: {self.audience_data.get('sample_type')} - {self.audience_data.get('name')}")
         self.setMinimumWidth(500)
         self.setMinimumHeight(400)
@@ -42,7 +45,7 @@ class SampleEditDialog(QDialog):
         header_layout = QVBoxLayout()
         header_label = QLabel(f"<b>Province:</b> {province}")
         header_layout.addWidget(header_label)
-        header_label = QLabel(f"<b>Target Audience:</b> {self.audience_data.get('name')}")
+        header_label = QLabel(f"<b>Target Audience:</b> {self.audience_data.get('target_audience_name')}")
         header_layout.addWidget(header_label)
         header_label = QLabel(f"<b>Sample Type:</b> {self.audience_data.get('sample_type')}")
         header_layout.addWidget(header_label)
@@ -65,8 +68,8 @@ class SampleEditDialog(QDialog):
         layout.addWidget(button_box)
         
         # Set common properties for all spin boxes for better readability and usability
-        for spin_box in [self.price_growth, self.sample_size, 
-                         self.target_for_interviewer, self.daily_sup_target]:
+        for spin_box in [self.price_growth_spinbox, self.sample_size_spinbox, 
+                         self.target_for_interviewer_spinbox, self.interviewers_per_supervisor_spinbox]:
             # Adjust size properties
             spin_box.setMinimumHeight(28)
             spin_box.setMinimumWidth(100)  # Ensure width is sufficient
@@ -83,19 +86,19 @@ class SampleEditDialog(QDialog):
         growth_form = QFormLayout()
         
         # Price Growth Rate
-        self.price_growth = QDoubleSpinBox()
-        self.price_growth.setRange(-1000.0, 1000.0)
-        self.price_growth.setValue(self.get_price_growth_rate())
-        self.price_growth.setSuffix("%")
-        self.price_growth.setDecimals(1)
-        self.price_growth.setSingleStep(0.5)
+        self.price_growth_spinbox = QDoubleSpinBox()
+        self.price_growth_spinbox.setRange(-1000.0, 1000.0)
+        self.price_growth_spinbox.setValue(self.get_price_growth_rate())
+        self.price_growth_spinbox.setSuffix("%")
+        self.price_growth_spinbox.setDecimals(1)
+        self.price_growth_spinbox.setSingleStep(0.5)
         
-        self.price_growth.valueChanged.connect(
+        self.price_growth_spinbox.valueChanged.connect(
             lambda value: self.update_price_growth_comment_highlight(
                 "price_growth", self.price_growth_comment, value != 0.0
             ))
         
-        growth_form.addRow("Price Growth Rate:", self.price_growth)
+        growth_form.addRow("Price Growth Rate:", self.price_growth_spinbox)
 
         # Add warning note for price growth rate changes
         self.price_growth_note = QLabel("<i>Note: Changes will apply to all provinces with this target audience</i>")
@@ -132,7 +135,7 @@ class SampleEditDialog(QDialog):
     # === Comment utilities===
     def get_current_price_item(self):
         for price_item in self.audience_data.get('pricing', []):
-            if price_item.get('type').lower() == self.sample_type_data.lower():
+            if price_item.get('type').lower() == self.price_type.lower():
                 return price_item
         return {}
     
@@ -171,8 +174,8 @@ class SampleEditDialog(QDialog):
         if "target_for_interviewer" in self.audience_data.get('comment', {}) and not self.target_for_interviewer_comment.toPlainText().strip():
             return False, "Target for Interviewer"
         
-        if "daily_sup_target" in self.audience_data.get('comment', {}) and not self.daily_sup_target_comment.toPlainText().strip():
-            return False, "Daily Supervisor Target"
+        if "interviewers_per_supervisor" in self.audience_data.get('comment', {}) and not self.interviewers_per_supervisor_comment.toPlainText().strip():
+            return False, "Interviewers per Supervisor"
 
         return True, ""
     
@@ -181,69 +184,60 @@ class SampleEditDialog(QDialog):
         sample_layout = QVBoxLayout(sample_group)
         
         # Sample info form
-        form_layout = QFormLayout()
+        form_layout = QGridLayout()
+        form_layout.setColumnStretch(1, 1)
         
+        sample_size = self.audience_data['sample_size']
+        target_for_interviewer = self.audience_data['target']['target_for_interviewer']
+        interviewers_per_supervisor = self.audience_data['target']['interviewers_per_supervisor']
+        daily_sup_target = calculate_daily_sup_target(sample_size, target_for_interviewer, interviewers_per_supervisor)
+
+
         # Sample Size
-        self.sample_size = QSpinBox()
-        self.sample_size.setRange(0, 9999)
-        self.sample_size.setValue(self.audience_data.get("sample_size", 0))
+        create_spinbox_field(form_layout, self, "sample_size", "Sample Size:", range=(0, 9999), value=sample_size, row=0, col=0)
         
-        self.sample_size.valueChanged.connect(
+        self.sample_size_spinbox.valueChanged.connect(
             lambda: self.handle_daily_sup_target_changed("sample_size")
         )
         
-        form_layout.addRow("Sample Size:", self.sample_size)
-
         #Extra Rate
-        self.extra_rate = QSpinBox()
-        self.extra_rate.setRange(0, 100)
-        self.extra_rate.setValue(self.audience_data.get("extra_rate", 0))
+        create_spinbox_field(form_layout, self, "extra_rate", "Extra Rate:", range=(0, 100), value=self.audience_data['extra_rate'], suffix="%", row=1, col=0)
 
-        self.extra_rate.valueChanged.connect(
+        self.extra_rate_spinbox.valueChanged.connect(
             lambda: self.handle_daily_sup_target_changed("extra_rate")
         )
 
-        form_layout.addRow("Extra Rate:", self.extra_rate)
-        
         # Target for Interviewer
-        self.target_for_interviewer = QSpinBox()
-        self.target_for_interviewer.setRange(1, 99)
-        self.target_for_interviewer.setValue(self.audience_data.get("target_for_interviewer", 2))
-        
-        self.target_for_interviewer.valueChanged.connect(
+        create_spinbox_field(form_layout, self, "target_for_interviewer", "Target For Interviewer:", range=(0, 100), value=target_for_interviewer, row=2, col=0)
+
+        self.target_for_interviewer_spinbox.valueChanged.connect(
             lambda value: (
                 self.handle_daily_sup_target_changed("target_for_interviewer"),
                 self.update_comment_highlight("target_for_interviewer", self.target_for_interviewer_comment, required=value != 0)
             ) 
         )
 
-        form_layout.addRow("Target for Interviewer:", self.target_for_interviewer)
-
         # Daily Supervisor Target
-        self.daily_sup_target = QDoubleSpinBox()
-        self.daily_sup_target.setValue(self.audience_data.get("daily_sup_target", 0.0))
-        self.daily_sup_target.setDecimals(2)
-        self.daily_sup_target.setSingleStep(0.1)
+        create_spinbox_field(form_layout, self, "interviewers_per_supervisor", "Interviewers per Supervisor:", range=(0, 100), value=interviewers_per_supervisor, row=3, col=0)
         
-        self.daily_sup_target.valueChanged.connect(
-            lambda: self.handle_daily_sup_target_changed("daily_sup_target")
+        self.interviewers_per_supervisor_spinbox.valueChanged.connect(
+            lambda value: (
+                    self.handle_daily_sup_target_changed("interviewers_per_supervisor"),
+                    self.update_comment_highlight("interviewers_per_supervisor", self.interviewers_per_supervisor_comment, required=value != 0)
+                )
         )
-
-        form_layout.addRow("Daily Target for SUP:", self.daily_sup_target)
-        
-        # Custom Value indicator
-        self.custom_value_label = QLabel()
-        self.custom_value_label.setStyleSheet("color: #FF5722; font-style: italic;")
-        form_layout.addRow("", self.custom_value_label)
-        
-        # Daily Supervisor Target Formula
-        
-        self.formula_label = QLabel()
-        form_layout.addRow("Daily Supervisor Target Formula:", self.formula_label)
         
         # Add form layout to sample group
         sample_layout.addLayout(form_layout)
         
+        daily_sup_target_layout = QHBoxLayout()
+        
+        self.daily_sup_target_note = QLabel(f"Daily Sup Target ({sample_size} / {target_for_interviewer} / {interviewers_per_supervisor}): {daily_sup_target}" )
+        
+        daily_sup_target_layout.addWidget(self.daily_sup_target_note)
+
+        sample_layout.addLayout(daily_sup_target_layout)
+
         # Comment section for interviewer target and daily SUP target
         comments_layout = QVBoxLayout()
         comments_label = QLabel("Comments:")
@@ -261,11 +255,11 @@ class SampleEditDialog(QDialog):
         comment_tabs.addTab(self.target_for_interviewer_comment, "Target for Interviewer")
         
         # Daily SUP Target Comment
-        self.daily_sup_target_comment = QTextEdit()
-        self.daily_sup_target_comment.setPlaceholderText("Enter comment for custom daily SUP target values...")
-        self.daily_sup_target_comment.setText(self.get_audience_comment("daily_sup_target"))
+        self.interviewers_per_supervisor_comment = QTextEdit()
+        self.interviewers_per_supervisor_comment.setPlaceholderText("Enter comment for Interviewers per Supervisor values...")
+        self.interviewers_per_supervisor_comment.setText(self.get_audience_comment("interviewers_per_supervisor"))
         
-        comment_tabs.addTab(self.daily_sup_target_comment, "Daily SUP Target")
+        comment_tabs.addTab(self.interviewers_per_supervisor_comment, "Interviewers per Supervisor")
         
         comments_layout.addWidget(comment_tabs)
         sample_layout.addLayout(comments_layout)
@@ -291,28 +285,17 @@ class SampleEditDialog(QDialog):
     
     def handle_daily_sup_target_changed(self, key: str):
         """Update the daily supervisor target value and formula display."""
-        sample_size = self.sample_size.value()
-        target_for_interviewer = self.target_for_interviewer.value()
-        interviewers_per_supervisor = self.interviewers_per_supervisor
+        sample_size = self.sample_size_spinbox.value()
+        target_for_interviewer = self.target_for_interviewer_spinbox.value()
+        interviewers_per_supervisor = self.interviewers_per_supervisor_spinbox.value()
+
+        daily_sup_target = calculate_daily_sup_target(sample_size, target_for_interviewer, interviewers_per_supervisor)
+
+        self.daily_sup_target_note.setText(f"Daily Sup Target ({sample_size} / {target_for_interviewer} / {interviewers_per_supervisor}): {daily_sup_target}" )
         
-        if key == "daily_sup_target":
-            is_custom = has_custom_daily_sup_target(
-                self.daily_sup_target.value(), sample_size, target_for_interviewer, self.interviewers_per_supervisor
-            )
+        old_daily_syp_target = self.audience_data.get('target', {}).get('daily_sup_target')
 
-            if is_custom:
-                self.formula_label.setText("Cannot calculate (division by zero)")
-
-            # Highlight hoặc reset comment
-            self.update_comment_highlight("daily_sup_target", self.daily_sup_target_comment, is_custom)
-        else:
-            # Tính lại giá trị theo công thức
-            calculated_daily_sup_target = calculate_daily_sup_target(sample_size, target_for_interviewer, interviewers_per_supervisor)
-
-            formula_str = f"{sample_size} / {target_for_interviewer} / {interviewers_per_supervisor}"
-            self.formula_label.setText(f"{formula_str} = {calculated_daily_sup_target:.2f}")
-
-            self.daily_sup_target.setValue(calculated_daily_sup_target)
+        self.update_comment_highlight("interviewers_per_supervisor", self.interviewers_per_supervisor_comment, daily_sup_target != old_daily_syp_target)
 
     def check_daily_sup_target_change(self):
         """Highlight comment field if daily supervisor target is custom."""
@@ -346,18 +329,22 @@ class SampleEditDialog(QDialog):
             return
         
         # Update data dictionary with new values
-        self.set_price_growth_rate(self.price_growth.value()) 
+        self.set_price_growth_rate(self.price_growth_spinbox.value()) 
 
-        self.audience_data['sample_size'] = self.sample_size.value()
-        self.audience_data['extra_rate'] = self.extra_rate.value()
-        self.audience_data["target_for_interviewer"] = self.target_for_interviewer.value()
-        self.audience_data["daily_sup_target"] = self.daily_sup_target.value()
+        self.audience_data['sample_size'] = self.sample_size_spinbox.value()
+        self.audience_data['extra_rate'] = self.extra_rate_spinbox.value()
+        self.audience_data['target']['target_for_interviewer'] = self.target_for_interviewer_spinbox.value()
+        self.audience_data['target']['interviewers_per_supervisor'] = self.interviewers_per_supervisor_spinbox.value()
+
+        daily_sup_target = calculate_daily_sup_target(self.sample_size_spinbox.value(), self.target_for_interviewer_spinbox.value(), self.interviewers_per_supervisor_spinbox.value())
         
+        self.audience_data['target']['daily_sup_target'] = daily_sup_target
+
         # Only save comments if they exist
         self.set_price_growth_comment(self.price_growth_comment.toPlainText().strip())
 
         self.set_audience_comment('target_for_interviewer', self.target_for_interviewer_comment.toPlainText().strip())
-        self.set_audience_comment('daily_sup_target', self.daily_sup_target_comment.toPlainText().strip())
+        self.set_audience_comment('interviewers_per_supervisor', self.interviewers_per_supervisor_comment.toPlainText().strip())
         
         super().accept()
     

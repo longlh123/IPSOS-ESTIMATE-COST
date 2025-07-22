@@ -22,9 +22,11 @@ from ui.widgets.generic_editor_widget import GenericEditorWidget
 from components.validation_field import FieldValidator
 from ui.events.wheelBlocker import WheelBlocker
 from ui.helpers.form_helpers import (create_header_label, create_input_field, create_combobox, create_multiselected_field, create_textedit_field, 
-                                     create_radiobuttons_group, create_spinbox_field
+                                     create_radiobuttons_group, create_spinbox_field, create_generic_editor_field
                                      )
-from ui.helpers.form_events import bind_input_handler, bind_combobox_handler, bind_multiselection_handler, bind_textedit_handler, bind_radiogroup_handler, bind_spinbox_handler
+from ui.helpers.form_events import (bind_input_handler, bind_combobox_handler, bind_multiselection_handler, bind_textedit_handler, bind_radiogroup_handler, bind_spinbox_handler,
+                                    bind_generic_editor_handler
+                                    )
 
 class GeneralTab(QWidget):
     """
@@ -98,11 +100,11 @@ class GeneralTab(QWidget):
         
         # After setting up all UI elements, explicitly trigger updates for comboboxes
         # This ensures initial values are saved to the model
-        if self.project_type_combobox.currentText():
-            self.project_model.update_general("project_type", self.project_type_combobox.currentText())
+        # if self.project_type_combobox.currentText():
+        #     self.project_model.update_general("project_type", self.project_type_combobox.currentText())
         
-        if self.sampling_method_combobox.currentText():
-            self.project_model.update_general("sampling_method", self.sampling_method_combobox.currentText())
+        # if self.sampling_method_combobox.currentText():
+        #     self.project_model.update_general("sampling_method", self.sampling_method_combobox.currentText())
         
         # Connect to model's data changed signal
         self.project_model.dataChanged.connect(self.update_from_model)
@@ -138,34 +140,34 @@ class GeneralTab(QWidget):
         ### Internal Job
         create_input_field(layout, self, "internal_job", "Internal Job:", row=1, col=0)
 
-        bind_input_handler(self, "internal_job", validator=self.validator, update_func=self.project_model.update_general)
+        bind_input_handler(self, "internal_job", validator_func=self.validator.validate, update_func=self.project_model.update_general)
         
         ### Symphony 
         create_input_field(layout, self, "symphony", "Symphony:", row=1, col=2)
 
-        bind_input_handler(self, "symphony", validator=self.validator, update_func=self.project_model.update_general)
+        bind_input_handler(self, "symphony", validator_func=self.validator.validate, update_func=self.project_model.update_general)
 
         ### Project Name
         create_input_field(layout, self, "project_name", "Project Name:", row=2, col=0)
 
-        bind_input_handler(self, "project_name", validator=self.validator, update_func=self.project_model.update_general)
+        bind_input_handler(self, "project_name", validator_func=self.validator.validate, update_func=self.project_model.update_general)
         
         ### Project Type
         create_combobox(layout, self, "project_type", "Project Type:", PROJECT_TYPES, row=2, col=2)
 
-        bind_combobox_handler(self, "project_type", validator=self.validator, update_func=self.project_model.update_general)
+        bind_combobox_handler(self, "project_type", validator_func=self.validator.validate, update_func=self.project_model.update_general)
 
         self.project_type_combobox.currentTextChanged.connect(self.on_project_type_changed)
         
         ### Clients
         create_multiselected_field(layout, self, "clients", "Clients:", CLIENTS, allow_adding=True, row=3, col=0, rowspan=1, colspan=3)
 
-        bind_multiselection_handler(self, "clients", validator=self.validator, update_func=self.project_model.update_general)
+        bind_multiselection_handler(self, "clients", validator_func=self.validator.validate, update_func=self.project_model.update_general)
         
         ### Project Objectives
         create_textedit_field(layout, self, "project_objectives", "Project Objectives:", placeholder="Enter your text here...", row=4, col=0, rowspan=1, colspan=4)
         
-        bind_textedit_handler(self, "project_objectives", validator=None, update_func=self.project_model.update_general)
+        bind_textedit_handler(self, "project_objectives", update_func=self.project_model.update_general)
 
         ### Platform Details Group
         create_header_label(layout, "Platform Details", row=6, col=0, rowspan=1, colspan=4)
@@ -182,53 +184,54 @@ class GeneralTab(QWidget):
         ### Quota & Sampling Group
         create_header_label(layout, "Quota & Sampling", row=8, col=0, rowspan=1, colspan=4)
 
+        ### Provinces
+        create_multiselected_field(layout, self, "provinces", "Provinces:", VIETNAM_PROVINCES, allow_adding=False, row=9, col=0, rowspan=1, colspan=3)
+
+        bind_multiselection_handler(self, "provinces", validator_func=self.validator.validate, update_func=self.project_model.update_general)
+
         ### Interview Methods
-        create_multiselected_field(layout, self, "interview_methods", "Interview Methods:", INTERVIEW_METHODS, allow_adding=False, row=9, col=0, rowspan=1, colspan=3)
+        create_multiselected_field(layout, self, "interview_methods", "Interview Methods:", INTERVIEW_METHODS, allow_adding=False, row=10, col=0, rowspan=1, colspan=3)
 
-        bind_multiselection_handler(self, "interview_methods", validator=self.validator, update_func=self.project_model.update_general)
+        bind_multiselection_handler(self, "interview_methods", validator_func=self.validator.validate, update_func=self.project_model.update_general)
 
-        ### Sampling Method
-        create_combobox(layout, self, "sampling_method", "Sampling Method:", SAMPLING_METHODS, row=10, col=0)
+        ### Sampling Methods
+        field_config = [
+                { "name": "sample_type", "label": "Sample Type", "widget": QComboBox, "options" : SAMPLE_TYPES, "required": True, 'duplicated': True },
+                { "name": "sampling_method", "label": "Sampling Method", "widget": QComboBox, "options": SAMPLING_METHODS, "required": True, 'duplicated': True },
+                { "name": "description", "label": "Description:", "widget": QTextEdit, "required": True } 
+            ]
+        
+        create_generic_editor_field(layout, self, "sampling_methods", "Sampling Methods:", "Samping Methods", field_config, row=11, col=0, rowspan=1, colspan=3)
 
-        bind_combobox_handler(self, "sampling_method", validator=self.validator, update_func=self.project_model.update_general)
+        bind_generic_editor_handler(self, "sampling_methods", update_func=self.project_model.update_sampling_methods)
 
         ### Recruit Method
-        create_multiselected_field(layout, self, "recruit_method", "Recruit Method:", RECRUIT_METHOD, allow_adding=False, row=10, col=2)
+        create_multiselected_field(layout, self, "recruit_methods", "Recruit Method:", RECRUIT_METHOD, allow_adding=False, row=12, col=0, rowspan=1, colspan=3)
 
-        bind_multiselection_handler(self, "recruit_method", validator=self.validator, update_func=self.project_model.update_general)
+        bind_multiselection_handler(self, "recruit_methods", validator_func=self.validator.validate, update_func=self.project_model.update_general)
         
         ### Type of Quota Controls
-        create_combobox(layout, self, "type_of_quota_control", "Type of Quota Control:", TYPE_OF_QUOTA_CONTROLS, row=11, col=0)
+        create_combobox(layout, self, "type_of_quota_control", "Type of Quota Control:", TYPE_OF_QUOTA_CONTROLS, row=13, col=0)
 
-        bind_combobox_handler(self, "type_of_quota_control", validator=self.validator, update_func=self.project_model.update_general)
+        bind_combobox_handler(self, "type_of_quota_control", validator_func=self.validator.validate, update_func=self.project_model.update_general)
 
         ### Quota Description
-        create_multiselected_field(layout, self, "quota_description", "Quota Description:", QUOTA_DESCRIPTION, allow_adding=False, row=11, col=2)
+        create_multiselected_field(layout, self, "quota_description", "Quota Description:", QUOTA_DESCRIPTION, allow_adding=False, row=13, col=2)
 
-        bind_multiselection_handler(self, "quota_description", validator=self.validator, update_func=self.project_model.update_general)
+        bind_multiselection_handler(self, "quota_description", validator_func=self.validator.validate, update_func=self.project_model.update_general)
         
         ### "Target Audience Group" 
-        create_header_label(layout, "Target Audience", row=12, col=0, rowspan=1, colspan=4)
+        create_header_label(layout, "Target Audience", row=14, col=0, rowspan=1, colspan=4)
 
         ### Service Lines
-        create_combobox(layout, self, "service_line", "Service Line:", SERVICE_LINES, row=13, col=0)
+        create_combobox(layout, self, "service_line", "Service Line:", SERVICE_LINES, row=15, col=0)
 
-        bind_combobox_handler(self, "service_line", validator=self.validator, update_func=self.project_model.update_general)
+        bind_combobox_handler(self, "service_line", validator_func=self.validator.validate, update_func=self.project_model.update_general)
 
-        ### Provinces
-        create_multiselected_field(layout, self, "provinces", "Provinces:", VIETNAM_PROVINCES, allow_adding=False, row=14, col=0, rowspan=1, colspan=3)
-
-        bind_multiselection_handler(self, "provinces", validator=self.validator, update_func=self.project_model.update_general)
-
-        ### Sample Types
-        create_multiselected_field(layout, self, "sample_types", "Sample Types:", SAMPLE_TYPES, allow_adding=False, row=15, col=0, rowspan=1, colspan=3)
-
-        bind_multiselection_handler(self, "sample_types", validator=self.validator, update_func=self.project_model.update_general)
-        
         ### Industries
-        create_multiselected_field(layout, self, "industries", "Industries:", list(self.project_model.industries_data), allow_adding=False, row=16, col=0, rowspan=1, colspan=3)
+        create_multiselected_field(layout, self, "industries", "Industries:", self.project_model.get_industries(), allow_adding=False, row=16, col=0, rowspan=1, colspan=3)
 
-        bind_multiselection_handler(self, "industries", validator=self.validator, update_func=self.project_model.update_general)
+        bind_multiselection_handler(self, "industries", validator_func=self.validator.validate, update_func=self.project_model.update_general)
 
         ### Target Audience
         target_audience_label = QLabel("Target Audiences:")
@@ -236,7 +239,7 @@ class GeneralTab(QWidget):
 
         layout.addWidget(target_audience_label, 17, 0)
 
-        self.target_audiences = TargetAudienceWidget(self.project_model.industries_data)
+        self.target_audiences = TargetAudienceWidget(self.project_model)
 
         self.target_audiences.selectionChanged.connect(
             lambda items: (
@@ -253,12 +256,12 @@ class GeneralTab(QWidget):
         ### Length of Interview
         create_spinbox_field(layout, self, "interview_length", "Length of Interview", range=(0, 999), suffix=" (minutes)", row=19, col=0)
         
-        bind_spinbox_handler(self, "interview_length", validator=self.validator, update_func=self.project_model.update_general)
+        bind_spinbox_handler(self, "interview_length", validator_func=self.validator.validate, update_func=self.project_model.update_general)
 
         ### Length of Questionnaire
         create_spinbox_field(layout, self, "questionnaire_length", "Length of Questionnaire", range=(0, 999), suffix=" (pages)", row=19, col=2)
 
-        bind_spinbox_handler(self, "questionnaire_length", validator=self.validator, update_func=self.project_model.update_general)
+        bind_spinbox_handler(self, "questionnaire_length", validator_func=self.validator.validate, update_func=self.project_model.update_general)
 
         return group_box
     
@@ -331,17 +334,17 @@ class GeneralTab(QWidget):
         ### Open-ended Questions (Main)
         create_spinbox_field(layout, self, "open_ended_main_count", "Open-ended Questions (Main):", range=(0, 999), suffix=" (questions)", row=3, col=0)
         
-        bind_spinbox_handler(self, "open_ended_main_count", validator=self.validator, update_func=self.project_model.update_general)
+        bind_spinbox_handler(self, "open_ended_main_count", validator_func=self.validator.validate, update_func=self.project_model.update_general)
 
         ### Open-ended Questions (Booster)
         create_spinbox_field(layout, self, "open_ended_booster_count", "Open-ended Questions (Booster):", range=(0, 999), suffix=" (questions)", row=3, col=2)
         
-        bind_spinbox_handler(self, "open_ended_booster_count", validator=self.validator, update_func=self.project_model.update_general)
+        bind_spinbox_handler(self, "open_ended_booster_count", validator_func=self.validator.validate, update_func=self.project_model.update_general)
 
         ### Data Processing
         create_multiselected_field(layout, self, "data_processing_method", "Data Processing Method:", DATA_PROCESSING_METHOD, allow_adding=True, row=4, col=0, rowspan=1, colspan=3)
 
-        bind_multiselection_handler(self, "data_processing_method", validator=self.validator, update_func=self.project_model.update_general)
+        bind_multiselection_handler(self, "data_processing_method", validator_func=self.validator.validate, update_func=self.project_model.update_general)
 
         return group_box
 
@@ -352,28 +355,18 @@ class GeneralTab(QWidget):
         layout.setColumnStretch(1, 1)  # Make the second column stretch
         layout.setColumnStretch(3, 1)  # Make the fourth column stretch
         
-        subcontracts_label = QLabel("Subcontracts:")
-        subcontracts_label.setStyleSheet("margin-left: 10px;")
-
-        layout.addWidget(subcontracts_label, 4, 0)
-
-        self.subcontracts = GenericEditorWidget(
-            title="Subcontracts",
-            field_config = [
-                { "name": "subcontractor", "label": "Subcontractor", "widget": QComboBox, "options" : SUBCONTRACTORS, "retuired": True },
+        field_config = [
+                { "name": "subcontractor", "label": "Subcontractor", "widget": QComboBox, "options" : SUBCONTRACTORS, "required": True },
                 { "name": "cost_type", "label": "Cost Type", "widget": QComboBox, "options": COST_TYPES, "required": True},
                 { "name": "optional_detail", "label": "Optional Detail", "widget": QLineEdit },
                 { "name": "unit", "label" : "Unit", "widget" : QSpinBox, "min": 0, "max": 99999999, "required": True },
                 { "name" : "currency", "label": "Currency", "widget": QComboBox, "options": CURRENCIES, "required": True },
                 { "name": "unit_cost", "label": "Unit Cost", "widget": QSpinBox, "min": 0, "max": 99999999, "required": True } 
             ]
-        )
-
-        self.subcontracts.selectionChanged.connect(
-            lambda items : self.project_model.update_subcontracts(items)
-        )
         
-        layout.addWidget(self.subcontracts, 4, 1, 1, 3)
+        create_generic_editor_field(layout, self, "subcontracts", "Subcontracts:", "Subcontracts", field_config, row=0, col=0, rowspan=1, colspan=3)
+
+        bind_generic_editor_handler(self, "subcontracts", update_func=self.project_model.update_subcontracts)
 
         return group_box
     
@@ -408,47 +401,105 @@ class GeneralTab(QWidget):
         layout.setColumnStretch(1, 1)
         layout.setColumnStretch(3, 1)
 
-        create_header_label(layout, "CLT Settings", row=0, col=0, rowspan=1, colspan=4)
+        create_header_label(layout, "CLT Sample Management", row=0, col=0, rowspan=1, colspan=4)
 
         # Number of test products
         create_spinbox_field(layout, self, "clt_test_products", "Number of Test Products:", range=(0, 999), suffix="", row=1, col=0)
 
-        bind_spinbox_handler(self, "clt_test_products", validator=self.validator, update_func=self.project_model.update_clt_settings)
+        bind_spinbox_handler(self, "clt_test_products", validator_func=self.validator.validate, update_func=self.project_model.update_clt_settings)
 
         # Number of respondent visits
-        create_spinbox_field(layout, self, "clt_respondent_visits", "Number of Respondent Visits:", range=(0, 999), suffix="", row=2, col=0)
+        create_spinbox_field(layout, self, "clt_respondent_visits", "Number of Respondent Visits:", range=(0, 999), suffix="", row=1, col=2)
 
-        bind_spinbox_handler(self, "clt_respondent_visits", validator=self.validator, update_func=self.project_model.update_clt_settings)
+        bind_spinbox_handler(self, "clt_respondent_visits", validator_func=self.validator.validate, update_func=self.project_model.update_clt_settings)
 
-        # Sample Recruit IDI
-        create_spinbox_field(layout, self, "clt_sample_recruit_idi", "Sample Recruit IDI:", range=(0, 999), suffix="", row=4, col=0)
+        # Sample Usage Details
+        create_textedit_field(layout, self, "clt_sample_usage_details", "Sample Usage Details", placeholder="Enter your text here...", row=2, col=0, rowspan=1, colspan=4)
 
-        bind_spinbox_handler(self, "clt_sample_recruit_idi", validator=self.validator, update_func=self.project_model.update_clt_settings)
-        
-        create_header_label(layout, "Dán mẫu settings", row=5, col=0, rowspan=1, colspan=4)
+        bind_textedit_handler(self, "clt_sample_usage_details", update_func=self.project_model.update_clt_settings)
+
+        create_header_label(layout, "Chiết mẫu & Dán mẫu", row=4, col=0, rowspan=1, colspan=4)
 
         # Dán mẫu
-        create_spinbox_field(layout, self, "clt_number_of_samples_to_label", "Number of samples to label:", range=(0, 999), suffix="", row=6, col=0)
+        create_spinbox_field(layout, self, "clt_number_of_samples_to_label", "Number of samples to label:", range=(0, 999), suffix="", row=5, col=0)
 
-        bind_spinbox_handler(self, "clt_number_of_samples_to_label", validator=self.validator, update_func=self.project_model.update_clt_settings)
+        bind_spinbox_handler(self, "clt_number_of_samples_to_label", validator_func=self.validator.validate, update_func=self.project_model.update_clt_settings)
 
         ### Description of label application method
-        create_textedit_field(layout, self, "clt_description_howtolabelthesample", "Description of how to label the sample:", placeholder="Enter your text here...", row=7, col=0, rowspan=1, colspan=4)
+        create_textedit_field(layout, self, "clt_description_howtolabelthesample", "Description of how to label the sample:", placeholder="Enter your text here...", row=6, col=0, rowspan=1, colspan=4)
         
-        bind_textedit_handler(self, "clt_description_howtolabelthesample", validator=None, update_func=self.project_model.update_clt_settings)
+        bind_textedit_handler(self, "clt_description_howtolabelthesample", update_func=self.project_model.update_clt_settings)
+
+        # Yêu cầu về chiết mẫu
+        create_textedit_field(layout, self, "clt_sample_split_method", "Yêu cầu về chiết mẫu (nếu có):", placeholder="Chi tiết nếu có...", row=8, col=0, rowspan=1, colspan=4)
+
+        bind_textedit_handler(self, "clt_sample_split_method", update_func=self.project_model.update_clt_settings)
+
+        # Chuẩn bị mẫu
+        create_header_label(layout, "Chuẩn bị mẫu", row=10, col=0, rowspan=1, colspan=4)
+
+        create_textedit_field(layout, self, "clt_preparation_steps", "Chi tiết về cách chuẩn bị mẫu:", placeholder="Nhập mô tả...", row=11, col=0, rowspan=1, colspan=4)
+
+        bind_textedit_handler(self, "clt_preparation_steps", update_func=self.project_model.update_clt_settings)
+
+        # Mua vật dụng
+        create_textedit_field(layout, self, "clt_supplies_required", "Yêu cầu về mua vật dụng:", placeholder="Nhập mô tả...", row=13, col=0, rowspan=1, colspan=4)
+
+        bind_textedit_handler(self, "clt_supplies_required", update_func=self.project_model.update_clt_settings)
+
+        # Yêu cầu về chuyển mẫu
+        create_textedit_field(layout, self, "clt_sample_delivery_method", "Yêu cầu về chuyển mẫu:", placeholder="Nhập mô tả...", row=15, col=0, rowspan=1, colspan=4)
+
+        bind_textedit_handler(self, "clt_sample_delivery_method", update_func=self.project_model.update_clt_settings)
+
+        # Các yêu cầu khác
+        create_textedit_field(layout, self, "clt_other_requirements", "Các yêu cầu khác:", placeholder="Nhập mô tả...", row=17, col=0, rowspan=1, colspan=4)
+
+        bind_textedit_handler(self, "clt_other_requirements", update_func=self.project_model.update_clt_settings)
+
+        # Thu hồi mẫu
+        create_header_label(layout, "Thu hồi mẫu", row=19, col=0, rowspan=1, colspan=4)
+        
+        yesno_items = [
+            { 'name': 'return_unused_samples_yes', 'label': 'Yes', 'checked': True},
+            { 'name': 'return_unused_samples_no', 'label': 'No', 'checked': False}
+        ]
+
+        create_radiobuttons_group(layout, self, "clt_return_unused_samples", "Có thu hồi mẫu nguyên vẹn còn dư không?", radio_items=yesno_items, row=20, col=0)
+
+        bind_radiogroup_handler(self, "clt_return_unused_samples", update_func=self.project_model.update_clt_settings)
+
+        yesno_items = [
+            { 'name': 'return_used_samples_yes', 'label': 'Yes', 'checked': True},
+            { 'name': 'return_used_samples_no', 'label': 'No', 'checked': False}
+        ]
+
+        create_radiobuttons_group(layout, self, "clt_return_used_samples", "Có thu hồi sản phẩm đã dùng không?", radio_items=yesno_items, row=21, col=0)
+
+        bind_radiogroup_handler(self, "clt_return_used_samples", update_func=self.project_model.update_clt_settings)
+
+        # Concept Settings
+        create_header_label(layout, "Concept Settings", row=22, col=0, rowspan=1, colspan=4)
+
+        # Number of test products
+        create_spinbox_field(layout, self, "clt_total_concepts", "Total number of concepts in project:", range=(0, 999), suffix="", row=23, col=0)
+
+        bind_spinbox_handler(self, "clt_total_concepts", validator_func=self.validator.validate, update_func=self.project_model.update_clt_settings)
+
+        # Number of respondent visits
+        create_spinbox_field(layout, self, "clt_concepts_per_respondent", "Number of concepts per respondent:", range=(0, 999), suffix="", row=23, col=2)
+
+        bind_spinbox_handler(self, "clt_concepts_per_respondent", validator_func=self.validator.validate, update_func=self.project_model.update_clt_settings)
+
+        # Sample Recruit IDI
+        create_header_label(layout, "Recruit IDI", row=24, col=0, rowspan=1, colspan=4)
+
+        create_spinbox_field(layout, self, "clt_sample_recruit_idi", "Sample Recruit IDI:", range=(0, 999), suffix="", row=25, col=0)
+
+        bind_spinbox_handler(self, "clt_sample_recruit_idi", validator_func=self.validator.validate, update_func=self.project_model.update_clt_settings)
+        
 
         return group_box
-        
-    def service_line_changed(self, service_line):
-        """Handle service line change and update available industries."""
-        self.project_model.update_general("service_line", service_line)
-        
-        # Update available industries based on service line
-        if service_line in INDUSTRIES_BY_SERVICE_LINE:
-            industries_list = INDUSTRIES_BY_SERVICE_LINE[service_line]
-            self.industries.set_items(industries_list)
-        else:
-            self.industries.set_items([])
 
     @Slot()
     def update_from_model(self):
@@ -504,20 +555,20 @@ class GeneralTab(QWidget):
             self.dimension_radioitem.setChecked(True)
 
         # Quota & Sampling
+        self.provinces_multiselecttion.set_selected_items(self.project_model.general["provinces"])
+
+        self.interview_methods_multiselecttion.set_enabled(bool(self.project_model.general["provinces"]))
         self.interview_methods_multiselecttion.set_selected_items(self.project_model.general["interview_methods"])
 
-        # Sampling Method
-        value = self.project_model.general["sampling_method"]
-        
-        self.sampling_method_combobox.blockSignals(True)
+        # Sampling Methods
+        sample_types = self.project_model.get_sample_types()
 
-        if value and value in SAMPLING_METHODS:
-            self.sampling_method_combobox.setCurrentText(value)
-        else:
-            self.sampling_method_combobox.setCurrentIndex(0)
-        self.sampling_method_combobox.blockSignals(False)
-        
-        self.recruit_method_multiselecttion.set_selected_items(self.project_model.general["recruit_method"])
+        self.sampling_methods_generic_editor.set_enabled(bool(self.project_model.general["provinces"]))
+        self.sampling_methods_generic_editor.set_selected_items(self.project_model.sampling_methods) 
+
+        # Recruit Methods
+        self.recruit_methods_multiselecttion.set_enabled(bool(self.project_model.general["provinces"]))
+        self.recruit_methods_multiselecttion.set_selected_items(self.project_model.general["recruit_methods"])
 
         # Type of Quota Control
         value = self.project_model.general["type_of_quota_control"]
@@ -531,6 +582,7 @@ class GeneralTab(QWidget):
 
         self.type_of_quota_control_combobox.blockSignals(False)
 
+        # Quota Description
         self.quota_description_multiselecttion.set_enabled(self.project_model.general["type_of_quota_control"] == "Interlocked Quota")
         self.quota_description_multiselecttion.set_selected_items(self.project_model.general["quota_description"])
         
@@ -545,31 +597,20 @@ class GeneralTab(QWidget):
             self.service_line_combobox.setCurrentIndex(0)
         self.service_line_combobox.blockSignals(False)
 
-        self.provinces_multiselecttion.set_enabled(bool(self.project_model.general["service_line"]))
-        self.provinces_multiselecttion.set_selected_items(self.project_model.general["provinces"])
-
-        self.sample_types_multiselecttion.set_enabled(
-            bool(self.project_model.general["service_line"]) and 
-            bool(self.project_model.general["provinces"])
-        )            
-        self.sample_types_multiselecttion.set_selected_items(self.project_model.general["sample_types"])
-
         self.industries_multiselecttion.set_enabled(
             bool(self.project_model.general["service_line"]) and 
             bool(self.project_model.general["provinces"]) and 
-            bool(self.project_model.general["sample_types"])
+            bool(sample_types)
         )
         self.industries_multiselecttion.set_selected_items(self.project_model.general["industries"])
 
         self.target_audiences.set_enabled(
             bool(self.project_model.general["service_line"]) and 
             bool(self.project_model.general["provinces"]) and 
-            bool(self.project_model.general["sample_types"]) and
+            bool(sample_types) and
             bool(self.project_model.general["industries"])
         )
 
-        self.target_audiences.set_selected_sample_types(self.project_model.general["sample_types"])
-        self.target_audiences.set_selected_industries(self.project_model.general["industries"])
         self.target_audiences.set_selected_audiences(self.project_model.general["target_audiences"])
 
         self.interview_length_spinbox.setValue(self.project_model.general["interview_length"])
@@ -612,13 +653,27 @@ class GeneralTab(QWidget):
             self.project_model.clt_settings_clear()
 
         self.clt_test_products_spinbox.setValue(self.project_model.clt_settings.get("clt_test_products", 0))
-        self.clt_respondent_visits_spinbox.setValue(self.project_model.clt_settings.get("clt_respondent_visits", 0))
 
-        self.clt_sample_recruit_idi_spinbox.setValue(self.project_model.clt_settings.get("clt_sample_recruit_idi", 0))
-        self.project_model.set_selected_idi_costs(self.project_model.clt_settings.get("clt_sample_recruit_idi", 0) != 0)
+        self.clt_respondent_visits_spinbox.setValue(self.project_model.clt_settings.get("clt_respondent_visits", 0))
+        self.clt_respondent_visits_spinbox.setEnabled(self.project_model.clt_settings.get("clt_test_products", 0) != 0)
+
+        # Sample Usage Details
+        self.clt_sample_usage_details_textedit.blockSignals(True)
         
+        cursor = self.clt_sample_usage_details_textedit.textCursor()
+        pos = cursor.position()
+
+        self.clt_sample_usage_details_textedit.setPlainText(self.project_model.clt_settings["clt_sample_usage_details"])
+
+        cursor.setPosition(min(pos, len(self.project_model.clt_settings["clt_sample_usage_details"])))
+        self.clt_sample_usage_details_textedit.setTextCursor(cursor)
+
+        self.clt_sample_usage_details_textedit.blockSignals(False)
+
+        # Number of samples to label
         self.clt_number_of_samples_to_label_spinbox.setValue(self.project_model.clt_settings.get("clt_number_of_samples_to_label", 0))
-        
+
+        #Descriptiong how to label the sample: 
         self.clt_description_howtolabelthesample_textedit.blockSignals(True)
         
         cursor = self.clt_description_howtolabelthesample_textedit.textCursor()
@@ -633,11 +688,100 @@ class GeneralTab(QWidget):
 
         self.clt_description_howtolabelthesample_textedit.blockSignals(False)
 
+        # Yêu cầu về chiết mẫu
+        self.clt_sample_split_method_textedit.blockSignals(True)
+        
+        cursor = self.clt_sample_split_method_textedit.textCursor()
+        pos = cursor.position()
+
+        self.clt_sample_split_method_textedit.setPlainText(self.project_model.clt_settings["clt_sample_split_method"])
+
+        cursor.setPosition(min(pos, len(self.project_model.clt_settings["clt_sample_split_method"])))
+        self.clt_sample_split_method_textedit.setTextCursor(cursor)
+
+        self.clt_sample_split_method_textedit.setEnabled(self.project_model.clt_settings.get("clt_number_of_samples_to_label", 0) != 0)
+
+        self.clt_sample_split_method_textedit.blockSignals(False)
+        
+        # Chi tiết về cách chuẩn bị mẫu
+        self.clt_preparation_steps_textedit.blockSignals(True)
+        
+        cursor = self.clt_preparation_steps_textedit.textCursor()
+        pos = cursor.position()
+
+        self.clt_preparation_steps_textedit.setPlainText(self.project_model.clt_settings["clt_preparation_steps"])
+
+        cursor.setPosition(min(pos, len(self.project_model.clt_settings["clt_preparation_steps"])))
+        self.clt_preparation_steps_textedit.setTextCursor(cursor)
+
+        self.clt_preparation_steps_textedit.blockSignals(False)
+
+        # Yêu cầu về mua vật dụng
+        self.clt_supplies_required_textedit.blockSignals(True)
+        
+        cursor = self.clt_supplies_required_textedit.textCursor()
+        pos = cursor.position()
+
+        self.clt_supplies_required_textedit.setPlainText(self.project_model.clt_settings["clt_supplies_required"])
+
+        cursor.setPosition(min(pos, len(self.project_model.clt_settings["clt_supplies_required"])))
+        self.clt_supplies_required_textedit.setTextCursor(cursor)
+
+        self.clt_supplies_required_textedit.blockSignals(False)
+
+        # Yêu cầu về chuyển mẫu
+        self.clt_sample_delivery_method_textedit.blockSignals(True)
+        
+        cursor = self.clt_sample_delivery_method_textedit.textCursor()
+        pos = cursor.position()
+
+        self.clt_sample_delivery_method_textedit.setPlainText(self.project_model.clt_settings["clt_sample_delivery_method"])
+
+        cursor.setPosition(min(pos, len(self.project_model.clt_settings["clt_sample_delivery_method"])))
+        self.clt_sample_delivery_method_textedit.setTextCursor(cursor)
+
+        self.clt_sample_delivery_method_textedit.blockSignals(False)
+
+        # Yêu cầu khác
+        self.clt_other_requirements_textedit.blockSignals(True)
+        
+        cursor = self.clt_other_requirements_textedit.textCursor()
+        pos = cursor.position()
+
+        self.clt_other_requirements_textedit.setPlainText(self.project_model.clt_settings["clt_other_requirements"])
+
+        cursor.setPosition(min(pos, len(self.project_model.clt_settings["clt_other_requirements"])))
+        self.clt_other_requirements_textedit.setTextCursor(cursor)
+
+        self.clt_other_requirements_textedit.blockSignals(False)
+
+        yes_or_no = self.project_model.clt_settings.get("clt_return_unused_samples", "Yes")
+
+        if yes_or_no == "Yes":
+            self.return_unused_samples_yes_radioitem.setChecked(True)
+        else:
+            self.return_unused_samples_no_radioitem.setChecked(True)
+
+        yes_or_no = self.project_model.clt_settings.get("clt_return_used_samples", "Yes")
+
+        if yes_or_no == "Yes":
+            self.return_used_samples_yes_radioitem.setChecked(True)
+        else:
+            self.return_used_samples_no_radioitem.setChecked(True)
+        
+        self.clt_total_concepts_spinbox.setValue(self.project_model.clt_settings.get('clt_total_concepts', 0))
+        
+        self.clt_concepts_per_respondent_spinbox.setValue(self.project_model.clt_settings.get('clt_concepts_per_respondent', 0))
+        self.clt_concepts_per_respondent_spinbox.setEnabled(self.project_model.clt_settings.get('clt_total_concepts', 0) != 0)
+
+        self.clt_sample_recruit_idi_spinbox.setValue(self.project_model.clt_settings.get("clt_sample_recruit_idi", 0))
+        self.project_model.set_selected_idi_costs(self.project_model.clt_settings.get("clt_sample_recruit_idi", 0) != 0)
+        
         # Incentive
         self.project_model.set_selected_incentive_costs()
 
         #Subconstracts
-        self.subcontracts.set_selected_items(self.project_model.subcontracts) 
+        self.subcontracts_generic_editor.set_selected_items(self.project_model.subcontracts) 
 
         self.update_region_visibility()
 

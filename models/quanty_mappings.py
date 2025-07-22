@@ -120,7 +120,7 @@ def get_chiphi_ql_recruit_on_field(project, element, province, title=""):
 
         for key, target_audience in project.samples.get(province, {}).items():
             if target_audience.get('sample_type', '') in ["Main", "Booster"]:
-                daily_sup_target += target_audience.get('daily_sup_target', 0)
+                daily_sup_target += target_audience.get('target', {}).get('daily_sup_target', 0)
 
         return round(daily_sup_target, 2) + 2
     if "QC" in title:

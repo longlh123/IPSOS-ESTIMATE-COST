@@ -1,0 +1,190 @@
+{
+    "CLT" : {
+        "L1" : [
+            { 
+                "interview_length_range" : [0, 30],
+                "daily_interview_target" :  65,
+                "target_for_interviewer" : 6,
+                "interviewers_per_supervisor" : 10,
+                "pricing" : {
+                    "pilot" : 120000,
+                    "non" : 10000,
+                    "main" : {
+                        "main" : 0, 
+                        "recruit" : 84000,
+                        "location" : 25000
+                    },
+                    "booster" : {
+                        "booster" : 0, 
+                        "recruit" : 84000,
+                        "location" : 25000
+                    }
+                }
+            },
+            { 
+                "interview_length_range" : [31, 45],
+                "daily_interview_target" :  65,
+                "target_for_interviewer" : 5,
+                "interviewers_per_supervisor" : 10,
+                "pricing" : {
+                    "pilot" : 120000,
+                    "non" : 10000,
+                    "main" : {
+                        "main" : 0, 
+                        "recruit" : 84000,
+                        "location" : 25000
+                    },
+                    "booster" : {
+                        "booster" : 0, 
+                        "recruit" : 84000,
+                        "location" : 25000
+                    }
+                }    
+            },
+            { 
+                "interview_length_range" : [46, 60],
+                "daily_interview_target" :  65,
+                "target_for_interviewer" : 5,
+                "interviewers_per_supervisor" : 10,
+                "pricing" : {
+                    "pilot" : 120000,
+                    "non" : 10000,
+                    "main" : {
+                        "main" : 0, 
+                        "recruit" : 84000,
+                        "location" : 25000
+                    },
+                    "booster" : {
+                        "booster" : 0, 
+                        "recruit" : 84000,
+                        "location" : 25000
+                    }
+                }    
+            }
+        ],
+        "L2" : [
+            { 
+                "interview_length_range" : [0, 30],
+                "daily_interview_target" :  65,
+                "target_for_interviewer" : 5,
+                "interviewers_per_supervisor" : 10,
+                "pricing" : {
+                    "pilot" : 120000,
+                    "non" : 10000,
+                    "main" : {
+                        "main" : 0, 
+                        "recruit" : 84000,
+                        "location" : 25000
+                    },
+                    "booster" : {
+                        "booster" : 0, 
+                        "recruit" : 84000,
+                        "location" : 25000
+                    }
+                }    
+            },
+            { 
+                "interview_length_range" : [31, 45],
+                "daily_interview_target" :  65,
+                "target_for_interviewer" : 4,
+                "interviewers_per_supervisor" : 10,
+                "pricing" : {
+                    "pilot" : 120000,
+                    "non" : 10000,
+                    "main" : {
+                        "main" : 0, 
+                        "recruit" : 84000,
+                        "location" : 25000
+                    },
+                    "booster" : {
+                        "booster" : 0, 
+                        "recruit" : 84000,
+                        "location" : 25000
+                    }
+                }    
+            },
+            { 
+                "interview_length_range" : [46, 60],
+                "daily_interview_target" :  65,
+                "target_for_interviewer" : 4,
+                "interviewers_per_supervisor" : 10,
+                "pricing" : {
+                    "pilot" : 120000,
+                    "non" : 10000,
+                    "main" : {
+                        "main" : 0, 
+                        "recruit" : 84000,
+                        "location" : 25000
+                    },
+                    "booster" : {
+                        "booster" : 0, 
+                        "recruit" : 84000,
+                        "location" : 25000
+                    }
+                }    
+            }
+        ],
+        "L3" : [
+            { 
+                "interview_length_range" : [0, 30],
+                "daily_interview_target" :  55,
+                "target_for_interviewer" : 4,
+                "interviewers_per_supervisor" : 10,
+                "pricing" : {
+                    "pilot" : 120000,
+                    "non" : 10000,
+                    "main" : {
+                        "main" : 0, 
+                        "recruit" : 84000,
+                        "location" : 25000
+                    },
+                    "booster" : {
+                        "booster" : 0, 
+                        "recruit" : 84000,
+                        "location" : 25000
+                    }
+                }    
+            },
+            { 
+                "interview_length_range" : [31, 45],
+                "daily_interview_target" :  55,
+                "target_for_interviewer" : 3,
+                "interviewers_per_supervisor" : 10,
+                "pricing" : {
+                    "pilot" : 120000,
+                    "non" : 10000,
+                    "main" : {
+                        "main" : 0, 
+                        "recruit" : 84000,
+                        "location" : 25000
+                    },
+                    "booster" : {
+                        "booster" : 0, 
+                        "recruit" : 84000,
+                        "location" : 25000
+                    }
+                }    
+            },
+            { 
+                "interview_length_range" : [46, 60],
+                "daily_interview_target" :  55,
+                "target_for_interviewer" : 3,
+                "interviewers_per_supervisor" : 10,
+                "pricing" : {
+                    "pilot" : 120000,
+                    "non" : 10000,
+                    "main" : {
+                        "main" : 0, 
+                        "recruit" : 84000,
+                        "location" : 25000
+                    },
+                    "booster" : {
+                        "booster" : 0, 
+                        "recruit" : 84000,
+                        "location" : 25000
+                    }
+                }    
+            }
+        ]
+    }
+}
