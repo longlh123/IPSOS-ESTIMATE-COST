@@ -5,64 +5,40 @@
         "children": {},
         "elements": [
           {
+            "code": 108,
+            "unit": "Phiếu",
+            "description": "Chi phí Tuyển đáp viên IDI",
+            "cost": 200000.0
+          },
+          {
             "code": 902,
             "unit": "0",
             "description": "Chi phí thuê tablet < 9 inch",
-            "costs": {
-              "L1": {
-                "< 30 phút": 8000.0,
-                "30-60 phút": 8000.0,
-                "> 60 phút": 8000.0
-              }
-            }
+            "cost": 8000.0
           },
           {
             "code": 903,
             "unit": "0",
             "description": "Chi phí thuê tablet >= 9 inch",
-            "costs": {
-              "L1": {
-                "< 30 phút": 15000.0,
-                "30-60 phút": 15000.0,
-                "> 60 phút": 15000.0
-              }
-            }
+            "cost": 15000.0
           },
           {
             "code": 904,
             "unit": "0",
             "description": "Chi phí thuê laptop",
-            "costs": {
-              "L1": {
-                "< 30 phút": 15000.0,
-                "30-60 phút": 15000.0,
-                "> 60 phút": 15000.0
-              }
-            }
+            "cost": 15000.0
           },
           {
             "code": 107,
             "unit": "Phiếu",
             "description": "Chi phí Phiếu PV - Bài rớt giữa chừng",
-            "costs": {
-              "L1": {
-                "< 30 phút": 84000.0,
-                "30-60 phút": 90000.0,
-                "> 60 phút": 96000.0
-              }
-            }
+            "cost": 84000.0
           },
           {
             "code": 905,
             "unit": "0",
             "description": "Chi phí gửi xe",
-            "costs": {
-              "L1": {
-                "< 30 phút": 5000.0,
-                "30-60 phút": 5000.0,
-                "> 60 phút": 5000.0
-              }
-            }
+            "cost": 5000.0
           }
         ]
       },
@@ -73,61 +49,31 @@
             "code": 402,
             "unit": "0",
             "description": "Chi phí Quản lý recruit - On-field",
-            "costs": {
-              "L1": {
-                "< 30 phút": 300000.0,
-                "30-60 phút": 300000.0,
-                "> 60 phút": 300000.0
-              }
-            }
+            "cost": 300000.0
           },
           {
             "code": 403,
             "unit": "0",
             "description": "Chi phí Quản lý ngồi bàn - On-field",
-            "costs": {
-              "L1": {
-                "< 30 phút": 300000.0,
-                "30-60 phút": 300000.0,
-                "> 60 phút": 300000.0
-              }
-            }
+            "cost": 300000.0
           },
           {
             "code": 405,
             "unit": "0",
             "description": "Chi phí Assistant - Set up",
-            "costs": {
-              "L1": {
-                "< 30 phút": 220000.0,
-                "30-60 phút": 220000.0,
-                "> 60 phút": 220000.0
-              }
-            }
+            "cost": 220000.0
           },
           {
             "code": 406,
             "unit": "0",
             "description": "Chi phí Assistant - On-field",
-            "costs": {
-              "L1": {
-                "< 30 phút": 220000.0,
-                "30-60 phút": 220000.0,
-                "> 60 phút": 220000.0
-              }
-            }
+            "cost": 220000.0
           },
           {
             "code": 404,
             "unit": "0",
             "description": "Chi phí Quản lý IDI",
-            "costs": {
-              "L1": {
-                "< 30 phút": 300000.0,
-                "30-60 phút": 300000.0,
-                "> 60 phút": 300000.0
-              }
-            }
+            "cost": 300000.0
           }
         ]
       },
@@ -138,73 +84,37 @@
             "code": 501,
             "unit": "0",
             "description": "Chi phí QC - IDI",
-            "costs": {
-              "L1": {
-                "< 30 phút": 150000.0,
-                "30-60 phút": 150000.0,
-                "> 60 phút": 150000.0
-              }
-            }
+            "cost": 150000.0
           },
           {
             "code": 502,
             "unit": "0",
             "description": "Chi phí QC - In home",
-            "costs": {
-              "L1": {
-                "< 30 phút": 27500.0,
-                "30-60 phút": 27500.0,
-                "> 60 phút": 27500.0
-              }
-            }
+            "cost": 27500.0
           },
           {
             "code": 503,
             "unit": "0",
             "description": "Chi phí QC - In Location",
-            "costs": {
-              "L1": {
-                "< 30 phút": 220000.0,
-                "30-60 phút": 220000.0,
-                "> 60 phút": 220000.0
-              }
-            }
+            "cost": 220000.0
           },
           {
             "code": 504,
             "unit": "0",
             "description": "Chi phí QC - DP",
-            "costs": {
-              "L1": {
-                "< 30 phút": 30000.0,
-                "30-60 phút": 30000.0,
-                "> 60 phút": 30000.0
-              }
-            }
+            "cost": 30000.0
           },
           {
             "code": 904,
             "unit": "0",
             "description": "Chi phí thuê laptop",
-            "costs": {
-              "L1": {
-                "< 30 phút": 60000.0,
-                "30-60 phút": 60000.0,
-                "> 60 phút": 60000.0
-              }
-            }
+            "cost": 60000.0
           },
           {
             "code": 401,
             "unit": "0",
             "description": "Chi phí Quản lý - On-field",
-            "costs": {
-              "L1": {
-                "< 30 phút": 220000.0,
-                "30-60 phút": 220000.0,
-                "> 60 phút": 220000.0
-              }
-            }
+            "cost": 220000.0
           }
         ]
       },
@@ -215,37 +125,19 @@
             "code": 601,
             "unit": "Câu",
             "description": "Chi phí Coding",
-            "costs": {
-              "L1": {
-                "< 30 phút": 550.0,
-                "30-60 phút": 550.0,
-                "> 60 phút": 550.0
-              }
-            }
+            "cost": 550.0
           },
           {
             "code": 602,
             "unit": "Phiếu",
             "description": "Chi phí Input",
-            "costs": {
-              "L1": {
-                "< 30 phút": 550.0,
-                "30-60 phút": 550.0,
-                "> 60 phút": 550.0
-              }
-            }
+            "cost": 550.0
           },
           {
             "code": 407,
             "unit": "0",
-            "description": "Chi phí Quản lý - On-field",
-            "costs": {
-              "L1": {
-                "< 30 phút": 220000.0,
-                "30-60 phút": 220000.0,
-                "> 60 phút": 220000.0
-              }
-            }
+            "description": "Chi phí Quản lý - Hỗ trợ clean data",
+            "cost": 220000.0
           }
         ]
       },
@@ -256,61 +148,31 @@
             "code": 701,
             "unit": "Phiếu",
             "description": "Quà Phiếu PV - Pilot",
-            "costs": {
-              "L1": {
-                "< 30 phút": 100000.0,
-                "30-60 phút": 100000.0,
-                "> 60 phút": 100000.0
-              }
-            }
+            "cost": 100000.0
           },
           {
             "code": 702,
             "unit": "Phiếu",
             "description": "Quà Phiếu PV - Main",
-            "costs": {
-              "L1": {
-                "< 30 phút": 40000.0,
-                "30-60 phút": 50000.0,
-                "> 60 phút": 50000.0
-              }
-            }
+            "cost": 40000.0
           },
           {
             "code": 703,
             "unit": "Phiếu",
             "description": "Quà Phiếu PV - Booster",
-            "costs": {
-              "L1": {
-                "< 30 phút": 40000.0,
-                "30-60 phút": 50000.0,
-                "> 60 phút": 50000.0
-              }
-            }
+            "cost": 40000.0
           },
           {
             "code": 704,
             "unit": "Phiếu",
             "description": "Quà Phiếu PV - Non",
-            "costs": {
-              "L1": {
-                "< 30 phút": 40000.0,
-                "30-60 phút": 50000.0,
-                "> 60 phút": 50000.0
-              }
-            }
+            "cost": 40000.0
           },
           {
             "code": 705,
             "unit": "Phiếu",
             "description": "Quà Phiếu PV - IDI",
-            "costs": {
-              "L1": {
-                "< 30 phút": 300000.0,
-                "30-60 phút": 300000.0,
-                "> 60 phút": 300000.0
-              }
-            }
+            "cost": 300000.0
           }
         ]
       },
@@ -323,25 +185,13 @@
                 "code": 801,
                 "unit": "0",
                 "description": "Chi phí Cước điện thoại cố định",
-                "costs": {
-                  "L1": {
-                    "< 30 phút": 1000.0,
-                    "30-60 phút": 1000.0,
-                    "> 60 phút": 1000.0
-                  }
-                }
+                "cost": 1000.0
               },
               {
                 "code": 802,
                 "unit": "0",
                 "description": "Chi phí Card điện thoại",
-                "costs": {
-                  "L1": {
-                    "< 30 phút": 50000.0,
-                    "30-60 phút": 50000.0,
-                    "> 60 phút": 50000.0
-                  }
-                }
+                "cost": 50000.0
               }
             ]
           },
@@ -352,13 +202,7 @@
                 "code": 802,
                 "unit": "0",
                 "description": "Chi phí Card điện thoại",
-                "costs": {
-                  "L1": {
-                    "< 30 phút": 50000.0,
-                    "30-60 phút": 50000.0,
-                    "> 60 phút": 50000.0
-                  }
-                }
+                "cost": 50000.0
               }
             ]
           }
@@ -372,109 +216,55 @@
             "code": 1001,
             "unit": "Tờ",
             "description": "Photo trắng đen",
-            "costs": {
-              "L1": {
-                "< 30 phút": 350.0,
-                "30-60 phút": 350.0,
-                "> 60 phút": 350.0
-              }
-            }
+            "cost": 350.0
           },
           {
             "code": 1003,
             "unit": "Tờ",
             "description": "Showphoto",
-            "costs": {
-              "L1": {
-                "< 30 phút": 2500.0,
-                "30-60 phút": 2500.0,
-                "> 60 phút": 2500.0
-              }
-            }
+            "cost": 2500.0
           },
           {
             "code": 1002,
             "unit": "Tờ",
             "description": "Showcard",
-            "costs": {
-              "L1": {
-                "< 30 phút": 2500.0,
-                "30-60 phút": 2500.0,
-                "> 60 phút": 2500.0
-              }
-            }
+            "cost": 2500.0
           },
           {
             "code": 1006,
             "unit": "Tờ",
             "description": "Dropcard",
-            "costs": {
-              "L1": {
-                "< 30 phút": 9000.0,
-                "30-60 phút": 9000.0,
-                "> 60 phút": 9000.0
-              }
-            }
+            "cost": 9000.0
           },
           {
             "code": 1004,
             "unit": "Tờ",
             "description": "In màu \\ In concept",
-            "costs": {
-              "L1": {
-                "< 30 phút": 2500.0,
-                "30-60 phút": 2500.0,
-                "> 60 phút": 2500.0
-              }
-            }
+            "cost": 2500.0
           },
           {
             "code": 1007,
             "unit": "Tờ",
             "description": "Decal",
-            "costs": {
-              "L1": {
-                "< 30 phút": 3500.0,
-                "30-60 phút": 3500.0,
-                "> 60 phút": 3500.0
-              }
-            }
+            "cost": 3500.0
           },
           {
             "code": 1005,
             "unit": "Tờ",
             "description": "Ép Plastic",
-            "costs": {
-              "L1": {
-                "< 30 phút": 6000.0,
-                "30-60 phút": 6000.0,
-                "> 60 phút": 6000.0
-              }
-            }
+            "cost": 6000.0
           },
           {
             "code": 1008,
             "unit": "Tờ",
             "description": "Hồ sơ biểu mẫu",
-            "costs": {
-              "L1": {
-                "< 30 phút": 350.0,
-                "30-60 phút": 350.0,
-                "> 60 phút": 350.0
-              }
-            }
+            "cost": 350.0
           },
           {
             "code": 1011,
             "unit": "Cuốn",
             "description": "Chi phí đóng cuốn",
-            "costs": {
-              "L1": {
-                "< 30 phút": 4000.0,
-                "30-60 phút": 4000.0,
-                "> 60 phút": 4000.0
-              }
-            }
+            "cost": 4000.0
           }
         ]
       },
@@ -485,121 +275,61 @@
             "code": 906,
             "unit": "0",
             "description": "Tiền vận chuyển",
-            "costs": {
-              "L1": {
-                "< 30 phút": 500000.0,
-                "30-60 phút": 500000.0,
-                "> 60 phút": 500000.0
-              }
-            }
+            "cost": 500000.0
           },
           {
             "code": 907,
             "unit": "0",
             "description": "Tiền thuê location",
-            "costs": {
-              "L1": {
-                "< 30 phút": 2500000.0,
-                "30-60 phút": 2500000.0,
-                "> 60 phút": 2500000.0
-              }
-            }
+            "cost": 2500000.0
           },
           {
             "code": 908,
             "unit": "0",
             "description": "Tiền set-up location",
-            "costs": {
-              "L1": {
-                "< 30 phút": 200000.0,
-                "30-60 phút": 200000.0,
-                "> 60 phút": 200000.0
-              }
-            }
+            "cost": 200000.0
           },
           {
             "code": 909,
             "unit": "0",
             "description": "Tiền nước uống, khăn giấy, bánh lạt,…",
-            "costs": {
-              "L1": {
-                "< 30 phút": 5000.0,
-                "30-60 phút": 5000.0,
-                "> 60 phút": 5000.0
-              }
-            }
+            "cost": 5000.0
           },
           {
             "code": 910,
             "unit": "0",
             "description": "Tiền thuê tủ lạnh, …",
-            "costs": {
-              "L1": {
-                "< 30 phút": 500000.0,
-                "30-60 phút": 500000.0,
-                "> 60 phút": 500000.0
-              }
-            }
+            "cost": 500000.0
           },
           {
             "code": 911,
             "unit": "0",
             "description": "Tiền thuê TV",
-            "costs": {
-              "L1": {
-                "< 30 phút": 500000.0,
-                "30-60 phút": 500000.0,
-                "> 60 phút": 500000.0
-              }
-            }
+            "cost": 500000.0
           },
           {
             "code": 912,
             "unit": "0",
             "description": "Tiền thuê partition",
-            "costs": {
-              "L1": {
-                "< 30 phút": 1000000.0,
-                "30-60 phút": 1000000.0,
-                "> 60 phút": 1000000.0
-              }
-            }
+            "cost": 1000000.0
           },
           {
             "code": 901,
             "unit": "0",
             "description": "Chi phí thuê phần mềm hỗ trợ PV (iField,...)",
-            "costs": {
-              "L1": {
-                "< 30 phút": 4800.0,
-                "30-60 phút": 4800.0,
-                "> 60 phút": 4800.0
-              }
-            }
+            "cost": 4800.0
           },
           {
             "code": 913,
             "unit": "0",
             "description": "Tiền giặt khăn trải bàn",
-            "costs": {
-              "L1": {
-                "< 30 phút": 100000.0,
-                "30-60 phút": 100000.0,
-                "> 60 phút": 100000.0
-              }
-            }
+            "cost": 100000.0
           },
           {
             "code": 914,
             "unit": "0",
             "description": "Tiền mua các vật dụng khác",
-            "costs": {
-              "L1": {
-                "< 30 phút": 500000.0,
-                "30-60 phút": 500000.0,
-                "> 60 phút": 500000.0
-              }
-            }
+            "cost": 500000.0
           }
         ]
       },
@@ -612,121 +342,61 @@
                 "code": 1101,
                 "unit": "0",
                 "description": "Vé máy bay",
-                "costs": {
-                  "L1": {
-                    "< 30 phút": 2500000.0,
-                    "30-60 phút": 2500000.0,
-                    "> 60 phút": 2500000.0
-                  }
-                }
+                "cost": 2500000.0
               },
               {
                 "code": 1102,
                 "unit": "0",
                 "description": "Vé xe/ tàu",
-                "costs": {
-                  "L1": {
-                    "< 30 phút": 400000.0,
-                    "30-60 phút": 400000.0,
-                    "> 60 phút": 400000.0
-                  }
-                }
+                "cost": 400000.0
               },
               {
                 "code": 1103,
                 "unit": "0",
                 "description": "Taxi từ nhà ra sân bay, về nhà",
-                "costs": {
-                  "L1": {
-                    "< 30 phút": 100000.0,
-                    "30-60 phút": 100000.0,
-                    "> 60 phút": 100000.0
-                  }
-                }
+                "cost": 100000.0
               },
               {
                 "code": 1104,
                 "unit": "0",
                 "description": "Taxi từ sân bay về Hà Nội",
-                "costs": {
-                  "L1": {
-                    "< 30 phút": 600000.0,
-                    "30-60 phút": 600000.0,
-                    "> 60 phút": 600000.0
-                  }
-                }
+                "cost": 600000.0
               },
               {
                 "code": 1105,
                 "unit": "0",
                 "description": "Chi phí đi lại tại nơi công tác",
-                "costs": {
-                  "L1": {
-                    "< 30 phút": 100000.0,
-                    "30-60 phút": 100000.0,
-                    "> 60 phút": 100000.0
-                  }
-                }
+                "cost": 100000.0
               },
               {
                 "code": 1106,
                 "unit": "0",
                 "description": "Chi phí ăn uống",
-                "costs": {
-                  "L1": {
-                    "< 30 phút": 300000.0,
-                    "30-60 phút": 300000.0,
-                    "> 60 phút": 300000.0
-                  }
-                }
+                "cost": 300000.0
               },
               {
                 "code": 1107,
                 "unit": "0",
                 "description": "Chi phí Khách sạn",
-                "costs": {
-                  "L1": {
-                    "< 30 phút": 500000.0,
-                    "30-60 phút": 500000.0,
-                    "> 60 phút": 500000.0
-                  }
-                }
+                "cost": 500000.0
               },
               {
                 "code": 1108,
                 "unit": "0",
                 "description": "Chi phí điện thoại",
-                "costs": {
-                  "L1": {
-                    "< 30 phút": 100000.0,
-                    "30-60 phút": 100000.0,
-                    "> 60 phút": 100000.0
-                  }
-                }
+                "cost": 100000.0
               },
               {
                 "code": 1109,
                 "unit": "0",
                 "description": "Chi phí tiếp khách",
-                "costs": {
-                  "L1": {
-                    "< 30 phút": "",
-                    "30-60 phút": "",
-                    "> 60 phút": ""
-                  }
-                }
+                "cost": ""
               },
               {
                 "code": 1110,
                 "unit": "0",
                 "description": "Chi phí thuê chổ Brief, Pilot (áp dụng cho Fieldwork team)",
-                "costs": {
-                  "L1": {
-                    "< 30 phút": 500000.0,
-                    "30-60 phút": 500000.0,
-                    "> 60 phút": 500000.0
-                  }
-                }
+                "cost": 500000.0
               }
             ]
           },
@@ -743,25 +413,13 @@
                             "code": 1102,
                             "unit": "0",
                             "description": "Vé xe/ tàu",
-                            "costs": {
-                              "L1": {
-                                "< 30 phút": 150000.0,
-                                "30-60 phút": 150000.0,
-                                "> 60 phút": 150000.0
-                              }
-                            }
+                            "cost": 150000.0
                           },
                           {
                             "code": 1112,
                             "unit": "0",
                             "description": "Chi phí trợ cấp đi công tác (khoán trọn gói)",
-                            "costs": {
-                              "L1": {
-                                "< 30 phút": 300000.0,
-                                "30-60 phút": 300000.0,
-                                "> 60 phút": 300000.0
-                              }
-                            }
+                            "cost": 300000.0
                           }
                         ]
                       },
@@ -772,25 +430,13 @@
                             "code": 1102,
                             "unit": "0",
                             "description": "Vé xe/ tàu",
-                            "costs": {
-                              "L1": {
-                                "< 30 phút": "",
-                                "30-60 phút": "",
-                                "> 60 phút": ""
-                              }
-                            }
+                            "cost": ""
                           },
                           {
                             "code": 1112,
                             "unit": "0",
                             "description": "Chi phí trợ cấp đi công tác (khoán trọn gói)",
-                            "costs": {
-                              "L1": {
-                                "< 30 phút": 100000.0,
-                                "30-60 phút": 100000.0,
-                                "> 60 phút": 100000.0
-                              }
-                            }
+                            "cost": 100000.0
                           }
                         ]
                       }
@@ -811,25 +457,13 @@
                             "code": 1102,
                             "unit": "0",
                             "description": "Vé xe/ tàu",
-                            "costs": {
-                              "L1": {
-                                "< 30 phút": 150000.0,
-                                "30-60 phút": 150000.0,
-                                "> 60 phút": 150000.0
-                              }
-                            }
+                            "cost": 150000.0
                           },
                           {
                             "code": 1112,
                             "unit": "0",
                             "description": "Chi phí trợ cấp đi công tác (khoán trọn gói)",
-                            "costs": {
-                              "L1": {
-                                "< 30 phút": 250000.0,
-                                "30-60 phút": 250000.0,
-                                "> 60 phút": 250000.0
-                              }
-                            }
+                            "cost": 250000.0
                           }
                         ]
                       },
@@ -840,25 +474,13 @@
                             "code": 1102,
                             "unit": "0",
                             "description": "Vé xe/ tàu",
-                            "costs": {
-                              "L1": {
-                                "< 30 phút": "",
-                                "30-60 phút": "",
-                                "> 60 phút": ""
-                              }
-                            }
+                            "cost": ""
                           },
                           {
                             "code": 1112,
                             "unit": "0",
                             "description": "Chi phí trợ cấp đi công tác (khoán trọn gói)",
-                            "costs": {
-                              "L1": {
-                                "< 30 phút": 70000.0,
-                                "30-60 phút": 70000.0,
-                                "> 60 phút": 70000.0
-                              }
-                            }
+                            "cost": 70000.0
                           }
                         ]
                       }
@@ -874,25 +496,13 @@
                             "code": 1102,
                             "unit": "0",
                             "description": "Vé xe/ tàu",
-                            "costs": {
-                              "L1": {
-                                "< 30 phút": 150000.0,
-                                "30-60 phút": 150000.0,
-                                "> 60 phút": 150000.0
-                              }
-                            }
+                            "cost": 150000.0
                           },
                           {
                             "code": 1112,
                             "unit": "0",
                             "description": "Chi phí trợ cấp đi công tác (khoán trọn gói)",
-                            "costs": {
-                              "L1": {
-                                "< 30 phút": 250000.0,
-                                "30-60 phút": 250000.0,
-                                "> 60 phút": 250000.0
-                              }
-                            }
+                            "cost": 250000.0
                           }
                         ]
                       },
@@ -903,25 +513,13 @@
                             "code": 1102,
                             "unit": "0",
                             "description": "Vé xe/ tàu",
-                            "costs": {
-                              "L1": {
-                                "< 30 phút": "",
-                                "30-60 phút": "",
-                                "> 60 phút": ""
-                              }
-                            }
+                            "cost": ""
                           },
                           {
                             "code": 1112,
                             "unit": "0",
                             "description": "Chi phí trợ cấp đi công tác (khoán trọn gói)",
-                            "costs": {
-                              "L1": {
-                                "< 30 phút": 70000.0,
-                                "30-60 phút": 70000.0,
-                                "> 60 phút": 70000.0
-                              }
-                            }
+                            "cost": 70000.0
                           }
                         ]
                       }
@@ -938,49 +536,25 @@
                     "code": 1102,
                     "unit": "0",
                     "description": "Vé xe/ tàu",
-                    "costs": {
-                      "L1": {
-                        "< 30 phút": 150000.0,
-                        "30-60 phút": 150000.0,
-                        "> 60 phút": 150000.0
-                      }
-                    }
+                    "cost": 150000.0
                   },
                   {
                     "code": 1112,
                     "unit": "0",
                     "description": "Chi phí trợ cấp đi công tác (khoán trọn gói)",
-                    "costs": {
-                      "L1": {
-                        "< 30 phút": 250000.0,
-                        "30-60 phút": 250000.0,
-                        "> 60 phút": 250000.0
-                      }
-                    }
+                    "cost": 250000.0
                   },
                   {
                     "code": 1102,
                     "unit": "0",
                     "description": "Vé xe/ tàu",
-                    "costs": {
-                      "L1": {
-                        "< 30 phút": "",
-                        "30-60 phút": "",
-                        "> 60 phút": ""
-                      }
-                    }
+                    "cost": ""
                   },
                   {
                     "code": 1112,
                     "unit": "0",
                     "description": "Chi phí trợ cấp đi công tác (khoán trọn gói)",
-                    "costs": {
-                      "L1": {
-                        "< 30 phút": 70000.0,
-                        "30-60 phút": 70000.0,
-                        "> 60 phút": 70000.0
-                      }
-                    }
+                    "cost": 70000.0
                   }
                 ]
               }
@@ -997,13 +571,7 @@
             "code": 1010,
             "unit": "Tờ",
             "description": "Chi phí dán mã, in mã",
-            "costs": {
-              "L1": {
-                "< 30 phút": "",
-                "30-60 phút": "",
-                "> 60 phút": ""
-              }
-            }
+            "cost": ""
           }
         ]
       }

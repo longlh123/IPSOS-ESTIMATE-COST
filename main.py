@@ -167,7 +167,6 @@ def load_stylesheet():
     
     return stylesheet
 
-
 def main():
     # Set up logging
     setup_logging()
@@ -186,7 +185,7 @@ def main():
     app.setOrganizationName("IPSOS")
     
     # Apply stylesheet
-    app.setStyleSheet(load_stylesheet())
+    app.setStyleSheet(load_stylesheet())                                                                    
     
     # Create and show the main window
     window = MainWindow()

@@ -1,3 +1,5 @@
+import logging
+
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QListWidget, QPushButton,
     QListWidgetItem, QLineEdit, QLabel, QDialog, QDialogButtonBox,
@@ -5,22 +7,29 @@ from PySide6.QtWidgets import (
     QGridLayout, QButtonGroup, QRadioButton, QTextEdit, QTableWidget, QTableWidgetItem,
     QCompleter, QSizePolicy
 )
-from PySide6.QtCore import Qt, Signal, QSize
+from PySide6.QtCore import Qt, Signal, QStringListModel
 from PySide6.QtGui import QFont
 
 from ui.events.wheelBlocker import WheelBlocker
 from config.predefined_values import COMPLEXITY, SAMPLE_TYPES
+from components.validation_field import FieldValidator
+from ui.helpers.form_helpers import (create_header_label, create_input_field, create_combobox, create_multiselected_field, create_textedit_field, 
+                                     create_radiobuttons_group, create_spinbox_field
+                                     )
+from ui.helpers.form_events import (bind_input_handler, bind_combobox_handler, bind_multiselection_handler, bind_textedit_handler, bind_radiogroup_handler, bind_spinbox_handler,
+                                    bind_generic_editor_handler
+                                    )
 
 class TargetAudienceWidget(QWidget):
     
     selectionChanged = Signal(list)
     
-    def __init__(self, industries_data, parent=None):
+    def __init__(self, project_model, parent=None):
         super().__init__(parent)
 
-        self.industries_data = industries_data
-        self.selected_sample_types = []
-        self.selected_industries = []
+        self.logger = logging.getLogger(__name__)
+
+        self.project_model = project_model
         self.selected_audiences = []
 
         font = QFont("Arial", 10)
@@ -48,10 +57,8 @@ class TargetAudienceWidget(QWidget):
         """Show the dialog for selecting items."""
         # Create dialog with current selections
         dialog = TargetAudienceDialog(
+            self.project_model,
             self.selected_audiences,
-            self.selected_industries,
-            self.selected_sample_types,
-            self.industries_data,
             self
         )
 
@@ -67,22 +74,14 @@ class TargetAudienceWidget(QWidget):
         # Emit the selection changed signal
         self.selectionChanged.emit(self.selected_audiences)
 
-    def set_selected_sample_types(self, sample_types):
-        """Set the selected sample types and update the display."""
-        self.selected_sample_types = sample_types
-
-    def set_selected_industries(self, industries):
-        """Set the selected industries and update the display."""
-        self.selected_industries = industries
-
     def set_selected_audiences(self, audiences):
         """Set the selected audiences and update the display."""
         self.selected_audiences = audiences
         self.update_display()
 
     def update_display(self):
-        names = list(set([aud["name"] for aud in self.selected_audiences]))
-        display = ", ".join(names[:2]) + (f" +{len(names)-2} more" if len(names) > 2 else "")
+        names = list(set([aud["target_audience_name"] for aud in self.selected_audiences]))
+        display = ", ".join(names[:4]) + (f" +{len(names)-4} more" if len(names) > 4 else "")
         self.selection_display.setText(display)
 
     def set_enabled(self, enable:bool):
@@ -91,14 +90,15 @@ class TargetAudienceWidget(QWidget):
     
 class TargetAudienceDialog(QDialog):
     
-    def __init__(self, selected_audiences, selected_industries, selected_sample_types, industries_data, parent=None):
+    def __init__(self, project_model, selected_audiences, parent=None):
         super().__init__(parent)
         
-        self.selected_industries = selected_industries.copy()
-        self.selected_sample_types = selected_sample_types.copy()
-        self.industries_data = industries_data.copy()
+        self.validator = FieldValidator()
+        self.validate_widgets = dict()
+
+        self.project_model = project_model
         self.selected_audiences = selected_audiences.copy()
-        self.available_audiences = self.get_available_audiences()
+
 
         self.setWindowTitle("Manage Target Audiences")
         self.setMinimumWidth(1200)
@@ -114,142 +114,95 @@ class TargetAudienceDialog(QDialog):
 
         form_layout_wrapper = QVBoxLayout(form_container)
 
-        group_box = QGroupBox("Define a new target audience")
+        self.group_box = QGroupBox("Define a new target audience")
         
-        form_layout = QGridLayout(group_box)
+        form_layout = QGridLayout(self.group_box)
         form_layout.setColumnStretch(1, 1)  # Stretch the second column to fill available space
 
-        # Row 0 - Sample Type
-        form_layout.addWidget(QLabel("Sample Type:"), 0, 0)
+        # Sample Type
+        create_combobox(form_layout, self, "sample_type", "Sample Type:", self.project_model.get_sample_types(), row=0, col=0)
 
-        self.sample_type = QComboBox()
-        self.sample_type.addItem("-- Select --")
-        self.sample_type.addItems(self.selected_sample_types)
-        self.sample_type.setCurrentIndex(0)
+        bind_combobox_handler(self, "sample_type", validator_func=self.validator.target_audience_validate)
 
-        # Set item đầu tiên là không thể chọn
-        self.sample_type.model().item(0).setEnabled(False)
+        self.validate_widgets["sample_type"] = self.sample_type_combobox
 
-        form_layout.addWidget(self.sample_type, 0, 1)
+        # Industry Name
+        create_combobox(form_layout, self, "industry_name", "Industry:", self.project_model.general.get('industries'), row=1, col=0)
 
-        # Row 1 - Name
-        form_layout.addWidget(QLabel("Target Audience:"), 1, 0)
+        bind_combobox_handler(self, "industry_name", validator_func=self.validator.target_audience_validate)
 
-        self.name_input = QLineEdit()
-        self.name_input.setPlaceholderText("Enter name...")
-        completer = QCompleter(self.available_audiences)
-        completer.setCaseSensitivity(Qt.CaseInsensitive)
-        self.name_input.setCompleter(completer)
+        self.industry_name_combobox.currentTextChanged.connect(self.on_industry_changed)
 
-        form_layout.addWidget(self.name_input, 1, 1)
+        self.validate_widgets["industry_name"] = self.industry_name_combobox
+
+        # Target Audience Name
+        create_input_field(form_layout, self, "target_audience_name", "Target Audience", row=2, col=0)
+
+        bind_input_handler(self, "target_audience_name", validator_func=self.validator.target_audience_validate)
+
+        self.validate_widgets["target_audience_name"] = self.target_audience_name_input
 
         # Row 2 - Gender
-        form_layout.addWidget(QLabel("Gender:"), 2, 0)
+        gender_items = [
+            { 'name': 'male', 'label': 'Male', 'checked': False},
+            { 'name': 'female', 'label': 'Female', 'checked': False},
+            { 'name': 'both', 'label': 'Both', 'checked': True}
+        ]
 
-        gender_layout = QHBoxLayout()
+        create_radiobuttons_group(form_layout, self, "gender", "Gender:", gender_items, row=3, col=0)
         
-        self.gender_group = QButtonGroup(self)
-        
-        self.male_radio = QRadioButton("Male")
-        self.female_radio = QRadioButton("Female")
-        self.both_radio = QRadioButton("Both")
-        
-        self.gender_group.addButton(self.male_radio)
-        self.gender_group.addButton(self.female_radio)
-        self.gender_group.addButton(self.both_radio)
-
-        gender_layout.addWidget(self.male_radio)
-        gender_layout.addWidget(self.female_radio)
-        gender_layout.addWidget(self.both_radio)
-        
-        # Set default selection
-        self.both_radio.setChecked(True)
-        
-        gender_widget = QWidget()
-        gender_widget.setLayout(gender_layout)
-
-        form_layout.addWidget(gender_widget, 2, 1)
-
         # Row 3 - Age Group
-        form_layout.addWidget(QLabel("Age Group:"), 3, 0)
+        age_group_label = QLabel("Age Group:")
+        age_group_label.setStyleSheet("margin-left: 10px;")
 
-        age_layout = QHBoxLayout()
-        self.age_from = QSpinBox()
-        self.age_to = QSpinBox()
-        self.age_from.setRange(0, 100)
-        self.age_to.setRange(0, 100)
+        form_layout.addWidget(age_group_label, 4, 0)
+
+        age_group_layout = QGridLayout()
+        age_group_layout.setColumnStretch(1, 1)
+        age_group_layout.setColumnStretch(1, 3)
+
+        create_spinbox_field(age_group_layout, self, "age_from", "From:", range=(0, 100), row=0, col=0)
+        create_spinbox_field(age_group_layout, self, "age_to", "To:", range=(0, 100), row=0, col=2)
+
+        form_layout.addLayout(age_group_layout, 4, 1)
+
+        # Income
+        househole_income = QLabel("Household Income:")
+        househole_income.setStyleSheet("margin-left: 10px;")
+
+        form_layout.addWidget(househole_income, 5, 0)
         
-        age_layout.addWidget(QLabel("From"))
-        age_layout.addWidget(self.age_from)
-        age_layout.addWidget(QLabel("To"))
-        age_layout.addWidget(self.age_to)
-        
-        age_widget = QWidget()
-        age_widget.setLayout(age_layout)
-        
-        form_layout.addWidget(age_widget, 3, 1)
+        household_income_layout = QGridLayout()
+        household_income_layout.setColumnStretch(1, 1)
+        household_income_layout.setColumnStretch(1, 3)
 
-        # Row 4 - Income
-        form_layout.addWidget(QLabel("Household Income:"), 4, 0)
-        
-        income_layout = QHBoxLayout()
-        self.income_from = QSpinBox()
-        self.income_to = QSpinBox()
-        self.income_from.setRange(0, 1000000000)
-        self.income_to.setRange(0, 1000000000)
-        
-        income_layout.addWidget(QLabel("From"))
-        income_layout.addWidget(self.income_from)
-        income_layout.addWidget(QLabel("To"))
-        income_layout.addWidget(self.income_to)
-        
-        income_widget = QWidget()
-        income_widget.setLayout(income_layout)
-        
-        form_layout.addWidget(income_widget, 4, 1)
+        create_spinbox_field(household_income_layout, self, "household_income_from", "From:", range=(0, 100), row=0, col=0)
+        create_spinbox_field(household_income_layout, self, "household_income_to", "To:", range=(0, 100), row=0, col=2)
 
-        # Row 5 - Incident Rate
-        form_layout.addWidget(QLabel("Incident Rate (IR):"), 5, 0)
-        self.incident_rate = QSpinBox()
-        self.incident_rate.setRange(0, 100)
-        self.incident_rate.setValue(100)
-        form_layout.addWidget(self.incident_rate, 5, 1)
+        form_layout.addLayout(household_income_layout, 5, 1)
 
-        # Row 6 - Complexity
-        form_layout.addWidget(QLabel("Complexity:"), 6, 0)
+        # Incident Rate
+        create_spinbox_field(form_layout, self, "incident_rate", "Incident Rate (IR):", range=(0, 100), value=100, suffix="%", row=6, col=0)
 
-        self.complexity = QComboBox()
-        self.complexity.addItems(COMPLEXITY)
-        self.complexity.setCurrentIndex(1)
+        # Complexity
+        create_combobox(form_layout, self, "complexity", "Complexity:", COMPLEXITY, current_index=1, row=7, col=0)
 
-        form_layout.addWidget(self.complexity, 6, 1)
+        # Description
+        create_textedit_field(form_layout, self, "description", "Description:", row=8, col=0, rowspan=1, colspan=2)
 
-        # Row 7 - Description
-        form_layout.addWidget(QLabel("Description:"), 7, 0)
-        self.description_input = QTextEdit()
-        form_layout.addWidget(self.description_input, 7, 1)
+        # Sample size
+        create_spinbox_field(form_layout, self, "sample_size", "Sample size (for each province):", range=(0, 10000), value=0, row=10, col=0)
 
-        # Row 8 - Sample size
-        form_layout.addWidget(QLabel("Sample size (for each province):"), 8, 0)
-        self.sample_size = QSpinBox()
-        self.sample_size.setRange(0, 10000000)
-        self.sample_size.setValue(0)
-        form_layout.addWidget(self.sample_size, 8, 1)
+        # Extra rate (for each province)
+        create_spinbox_field(form_layout, self, "extra_rate", "Extra rate (for each province):", range=(0, 100), value=0, suffix="%", row=11, col=0)
 
-        # Row 9 - Extra rate (for each province)
-        form_layout.addWidget(QLabel("Extra rate (for each province):"), 9, 0)
-        self.extra_rate = QSpinBox()
-        self.extra_rate.setRange(0, 100)
-        self.extra_rate.setValue(0)
-        form_layout.addWidget(self.extra_rate, 9, 1)
-
-        # Row 10 - Button
+        # Button
         self.add_btn = QPushButton("Add")
         self.add_btn.clicked.connect(self.add_target_audience)
-        form_layout.addWidget(self.add_btn, 10, 1, alignment=Qt.AlignRight)
+        form_layout.addWidget(self.add_btn, 12, 1, alignment=Qt.AlignRight)
 
-        group_box.setLayout(form_layout)
-        form_layout_wrapper.addWidget(group_box)
+        self.group_box.setLayout(form_layout)
+        form_layout_wrapper.addWidget(self.group_box)
 
         # --- Right side: Table ---
         self.table = QTableWidget(0, 11)  # Cần 9 cột vì có thêm "Actions"
@@ -273,145 +226,126 @@ class TargetAudienceDialog(QDialog):
 
         self.refresh_table()
     
-    def get_avaiable_price(self, audience_name, sample_type):
-        for industry in self.selected_industries:
-            industry_data = self.industries_data.get(industry, {})
+    def on_industry_changed(self, industry_name):
+        audiences = self.project_model.get_audiences(industry_name)
 
-            pricing = industry_data.get("default", {}).get("pricing", {})
-            target_for_interviewers = industry_data.get("default", {}).get("target_for_interviewers", 2)
-
-            for product in industry_data.values():
-                if isinstance(product, dict) and product.get("target_audience") == audience_name:
-                    pricing = product.get("pricing", {})
-                    target_for_interviewers = product.get("target_for_interviewers", 2)
-                    break
+        model = QStringListModel(audiences)
         
-        price_info = []
-        
-        if sample_type == "Pilot":
-            price_info = [self.make_price_entry(pricing.get("pilot", 0), 0, "pilot")]
-        elif sample_type == "Non":
-            price_info = [self.make_price_entry(pricing.get("non", 0), 0, "non")]
-        elif sample_type == "Main":
-            price_info = [
-                self.make_price_entry(pricing.get("main", {}).get("recruit", 0), 0, "recruit"),
-                self.make_price_entry(pricing.get("main", {}).get("location", 0), 0, "location")
-            ]
-        elif sample_type == "Booster":
-            price_info = [
-                self.make_price_entry(pricing.get("booster", {}).get("recruit", 0), 0, "recruit"),
-                self.make_price_entry(pricing.get("booster", {}).get("location", 0), 0, "location")
-            ]
+        completer = QCompleter()
+        completer.setModel(model)
+        completer.setFilterMode(Qt.MatchContains)
+        completer.setCaseSensitivity(Qt.CaseInsensitive)
+        self.target_audience_name_input.setCompleter(completer)
+        self.target_audience_name_input.resize(400, 30)
+        self.target_audience_name_input.show()
 
-        return price_info
+    def validate(self):
+        for key, widget in self.validate_widgets.items():
+            if isinstance(widget, QComboBox):
+                is_valid, error_message = self.validator.target_audience_validate(key, widget.currentText())
+            elif isinstance(widget, QLineEdit):
+                is_valid, error_message = self.validator.target_audience_validate(key, widget.text().strip())
+
+            warning_label = getattr(self, f"{key}_warning")
+
+            if not is_valid:
+                warning_label.setText(error_message)
+                warning_label.show()
+
+                return is_valid, error_message
+            else:
+                warning_label.setText("")
+                warning_label.hide()
+
+        return True, ""
+
+    def get_gender(self):
+        if self.male_radioitem.isChecked():
+            return "Male"
+        elif self.female_radioitem.isChecked():
+            return "Female"
+        else:
+            return "Both"
     
-    def make_price_entry(self, price, price_growth, type):
-        """Create a price entry dictionary."""
+    def get_age_group(self):
+        value_from = self.age_from_spinbox.value()
+        value_to = self.age_to_spinbox.value()
+        return (value_from, value_to)
+    
+    def get_household_income(self):
+        value_from = self.household_income_from_spinbox.value()
+        value_to = self.household_income_to_spinbox.value()
+        return (value_from, value_to)
+
+    def make_audience_entry(self):
         return {
-            "price": price,
-            "price_growth": price_growth,
-            "type": type,
-            "comment": {}
+            "sample_type": self.sample_type_combobox.currentText(),
+            "industry_name": self.industry_name_combobox.currentText(),
+            "target_audience_name": self.target_audience_name_input.text().strip(),
+            "gender": self.get_gender(),
+            "age_group": self.get_age_group(),
+            "household_income": self.get_household_income(),
+            "description": self.description_textedit.toPlainText().strip(),
+            "incident_rate": self.incident_rate_spinbox.value(),
+            "complexity": self.complexity_combobox.currentText(),
+            "sample_size": self.sample_size_spinbox.value(),
+            "extra_rate": self.extra_rate_spinbox.value()
         }
 
-    def get_available_audiences(self):
-        audiences = set()
-
-        for industry in self.selected_industries:
-            industry_data = self.industries_data.get(industry, {})
-
-            for ta_data in industry_data.values():
-                audiences.add(ta_data["target_audience"])
-        
-        return list(audiences)
-    
-    def get_available_audience(self, audience_name):
-        """Get the ID of an available target audience by name."""
-        audience = {}
-
-        for industry in self.selected_industries:
-            industry_data = self.industries_data.get(industry, {})
-
-            for key, ta_data in industry_data.items():
-                if ta_data["target_audience"] == audience_name:
-                    audience = ta_data
-                    break
-            
-            if audience:
-                break
-        
-        return audience
+    def is_duplicate_audience(self, new_data):
+        for audience in self.selected_audiences:
+            if (
+                audience["sample_type"] == new_data["sample_type"]
+                and audience["industry_name"].lower() == new_data["industry_name"].lower()
+                and audience["target_audience_name"].lower() == new_data["target_audience_name"].lower()
+                and audience["gender"] == new_data["gender"]
+                and audience["age_group"] == new_data["age_group"]
+                and audience["household_income"] == new_data["household_income"]
+            ):
+                return True
+        return False
     
     def add_target_audience(self):
         
-        sample_type = self.sample_type.currentText()
-        if sample_type == "-- Select --":
-            QMessageBox.warning(self, "Missing Sample Type", "Please choose a sample type.")
-            return
-
-        name = self.name_input.text().strip()
-        if not name:
-            QMessageBox.warning(self, "Missing Name", "Please enter a target audience name.")
-            return
-
-        audience_benchmark = self.get_available_audience(name)
-
-        id = audience_benchmark.get("id", None)
-        gender = "Male" if self.male_radio.isChecked() else "Female" if self.female_radio.isChecked() else "Both"
-        age_range = [self.age_from.value(), self.age_to.value()]
-        income_range = [self.income_from.value(), self.income_to.value()]
-        incident_rate = self.incident_rate.value()
-        complexity = self.complexity.currentText()
-        description = self.description_input.toPlainText().strip()
-        sample_size = self.sample_size.value()
-        extra_rate = self.extra_rate.value()
-        pricing = self.get_avaiable_price(name, sample_type)
-        target_for_interviewer = audience_benchmark.get("target_for_interviewer", 2)
-        daily_sup_target = audience_benchmark.get("daily_sup_target", 0)
-
-        audience_data = {
-            "id": id,
-            "sample_type": sample_type,
-            "name": name,
-            "gender": gender,
-            "age_range": age_range,
-            "income_range": income_range,
-            "incident_rate": incident_rate,
-            "complexity": complexity,
-            "description": description,
-            "sample_size": sample_size,
-            "extra_rate": extra_rate,
-            "pricing": pricing,
-            "target_for_interviewer": target_for_interviewer,
-            "daily_sup_target": daily_sup_target,
-            "comment": {},
-        }
-
-        if self.is_duplicate_audience(audience_data):
-            QMessageBox.warning(self, "Duplicate Audience", "This target audience already exists.")
-            return
+        is_valid, error_message = self.validate()
         
-        self.selected_audiences.append(audience_data)
-        self.refresh_table()
-        self.clear_form()
+        if is_valid:
+            new_audiance_data = self.make_audience_entry()
+            
+            if self.is_duplicate_audience(new_audiance_data):
+                QMessageBox.warning(self, "Duplicate Audience", "This target audience already exists.")
+                return
+            
+            selected_audience = self.project_model.get_audience(new_audiance_data)
+
+            self.selected_audiences.append(selected_audience)
+            self.refresh_table()
+            self.clear_form()
 
     def clear_form(self):
-        self.sample_type.setCurrentIndex(0)
-        self.name_input.clear()
-        self.gender_group.setExclusive(False)
-        self.male_radio.setChecked(False)
-        self.female_radio.setChecked(False)
-        self.both_radio.setChecked(True)
-        self.gender_group.setExclusive(True)
-        self.age_from.setValue(0)
-        self.age_to.setValue(0)
-        self.income_from.setValue(0)
-        self.income_to.setValue(0)
-        self.incident_rate.setValue(100)
-        self.complexity.setCurrentIndex(1)
-        self.description_input.clear()
-        self.sample_size.setValue(0)
-        self.extra_rate.setValue(0)
+        self.sample_type_combobox.setCurrentIndex(0)
+        self.industry_name_combobox.setCurrentIndex(0)
+        self.target_audience_name_input.clear()
+        self.gender_radiogroup.setExclusive(False)
+        self.male_radioitem.setChecked(False)
+        self.female_radioitem.setChecked(False)
+        self.both_radioitem.setChecked(True)
+        self.gender_radiogroup.setExclusive(True)
+        self.age_from_spinbox.setValue(0)
+        self.age_to_spinbox.setValue(0)
+        self.household_income_from_spinbox.setValue(0)
+        self.household_income_to_spinbox.setValue(0)
+        self.incident_rate_spinbox.setValue(100)
+        self.complexity_combobox.setCurrentIndex(1)
+        self.description_textedit.clear()
+        self.sample_size_spinbox.setValue(0)
+        self.extra_rate_spinbox.setValue(0)
+
+        for key, widget in self.validate_widgets.items():
+            warning_label = getattr(self, f"{key}_warning")
+
+            warning_label.setText("")
+            warning_label.hide()
 
     def refresh_table(self):
         
@@ -419,10 +353,10 @@ class TargetAudienceDialog(QDialog):
 
         for i, item in enumerate(self.selected_audiences):
             self.table.setItem(i, 0, QTableWidgetItem(item.get("sample_type", "")))
-            self.table.setItem(i, 1, QTableWidgetItem(item.get("name", "")))
+            self.table.setItem(i, 1, QTableWidgetItem(item.get("target_audience_name", "")))
             self.table.setItem(i, 2, QTableWidgetItem(item.get("gender", "")))
-            self.table.setItem(i, 3, QTableWidgetItem(f"{item.get('age_range', (0, 0))[0]} - {item.get('age_range', (0, 0))[1]}"))
-            self.table.setItem(i, 4, QTableWidgetItem(f"{item.get('income_range', (0, 0))[0]:,} - {item.get('income_range', (0, 0))[1]:,}"))
+            self.table.setItem(i, 3, QTableWidgetItem(f"{item.get('age_group', (0, 0))[0]} - {item.get('age_group', (0, 0))[1]}"))
+            self.table.setItem(i, 4, QTableWidgetItem(f"{item.get('household_income', (0, 0))[0]:,} - {item.get('household_income', (0, 0))[1]:,}"))
             self.table.setItem(i, 5, QTableWidgetItem(f"{item.get('incident_rate', 100)}%"))
             self.table.setItem(i, 6, QTableWidgetItem(f"{item.get('complexity', '')}"))
             self.table.setItem(i, 7, QTableWidgetItem(f"{item.get('sample_size', 0):,}"))
@@ -470,18 +404,6 @@ class TargetAudienceDialog(QDialog):
         # Cập nhật lại selected_audiences từ các checkbox, list, etc.
         self.selected_audiences = self.collect_selected_items()
         super().accept()
-
-    def is_duplicate_audience(self, new_data):
-        for audience in self.selected_audiences:
-            if (
-                audience["sample_type"] == new_data["sample_type"]
-                and audience["name"].lower() == new_data["name"].lower()
-                and audience["gender"] == new_data["gender"]
-                and audience["age_range"] == new_data["age_range"]
-                and audience["income_range"] == new_data["income_range"]
-            ):
-                return True
-        return False
 
     def resize_rows_to_contents(self):
         """Resize rows to fit content better, especially for rows with comments."""

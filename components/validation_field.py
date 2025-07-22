@@ -73,25 +73,20 @@ class FieldValidator:
                     "check" : lambda v: not (v == 0),
                     "error" : "Please enter a value greater than 0."
                 }
+            ],
+            "clt_concepts_per_respondent": [
+                {
+                    "condition": True,
+                    "check": lambda v: not (v == 0),
+                    "error": "Please enter a value greater than 0."
+                }
             ]
-            # "clt_sample_size_per_day" : [
-            #     {
-            #         "check" : lambda v: not (v == 0),
-            #         "error" : "Please enter a value greater than 0."
-            #     }
-            # ],
-            # "clt_desk_interviewers_count" : [
-            #     {
-            #         "check" : lambda v: not (v == 0),
-            #         "error" : "Please enter a value greater than 0."
-            #     }
-            # ]
         }
 
     def validate(self, field_name, value, condition=None):
         field_rules = self.rules.get(field_name, [])
 
-        if field_name in ["quota_description", "open_ended_main_count", "open_ended_booster_count"]:
+        if field_name in ["quota_description", "open_ended_main_count", "open_ended_booster_count", "clt_concepts_per_respondent"]:
             for rule in field_rules:
                 if condition and rule.get("condition") == condition:
                     if not rule["check"](value):
@@ -102,4 +97,33 @@ class FieldValidator:
                     return False, rule["error"]
         
         return True, ""
-    
+
+    def target_audience_validate(self, field_name, value, condition=None):
+        rules = {
+            "sample_type": [
+                {
+                    "check": lambda v: not (v == "-- Select --"),
+                    "error": "Please select a sample type"
+                }
+            ],
+            "industry_name": [
+                {
+                    "check": lambda v: not (v == "-- Select --"),
+                    "error": "Please enter a industry."
+                }
+            ],
+            "target_audience_name": [
+                {
+                    "check": lambda v: bool(v.strip()),
+                    "error": "Please enter a target audience."
+                }
+            ]
+        }
+
+        field_rules = rules.get(field_name, [])
+
+        for rule in field_rules:
+            if not rule["check"](value):
+                return False, rule["error"]
+        
+        return True, ""

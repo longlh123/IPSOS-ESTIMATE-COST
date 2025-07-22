@@ -121,34 +121,34 @@ class OperationsTab(QWidget):
         # Assistant Set Up Days - NEW FIELD
         create_spinbox_field(layout, self, "clt_assistant_setup_days", "Assistant set up needs:", range=(0, 30), suffix="", row=1, col=0)
 
-        bind_spinbox_handler(self, "clt_assistant_setup_days", validator=self.validator, update_func=self.project_model.update_clt_settings)
+        bind_spinbox_handler(self, "clt_assistant_setup_days", validator_func=self.validator.validate, update_func=self.project_model.update_clt_settings)
 
         # Failure Rate
         create_spinbox_field(layout, self, "clt_failure_rate", "Failure Rate:", range=(0, 999), suffix="%", row=2, col=0)
 
-        bind_spinbox_handler(self, "clt_failure_rate", validator=self.validator, update_func=self.project_model.update_clt_settings)
+        bind_spinbox_handler(self, "clt_failure_rate", validator_func=self.validator.validate, update_func=self.project_model.update_clt_settings)
 
         #--Số ngày dán mẫu
         create_spinbox_field(layout, self, "clt_dan_mau_days", "Số ngày dán mẫu:", range=(0, 30), suffix=" day(s)", row=3, col=0)
 
-        bind_spinbox_handler(self, "clt_dan_mau_days", validator=self.validator, update_func=self.project_model.update_clt_settings)
+        bind_spinbox_handler(self, "clt_dan_mau_days", validator_func=self.validator.validate, update_func=self.project_model.update_clt_settings)
 
         # Sample size target per day
         create_spinbox_field(layout, self, "clt_sample_size_per_day", "Sample Size Target per Day:", range=(0, 100), suffix="", row=4, col=0)
 
-        bind_spinbox_handler(self, "clt_sample_size_per_day", validator=self.validator, update_func=self.project_model.update_clt_settings)
+        bind_spinbox_handler(self, "clt_sample_size_per_day", validator_func=self.validator.validate, update_func=self.project_model.update_clt_settings)
 
         create_header_label(layout, "NGỒI BÀN Settings", row=5, col=0, rowspan=1, colspan=4)
 
         # Number of desk-based interviewers (NGỒI BÀN)
         create_spinbox_field(layout, self, "clt_desk_interviewers_count", "Số lượng PVV tham gia dự án (NGỒI BÀN):", range=(0, 999), suffix="", row=6, col=0)
 
-        bind_spinbox_handler(self, "clt_desk_interviewers_count", validator=self.validator, update_func=self.project_model.update_clt_settings)
+        bind_spinbox_handler(self, "clt_desk_interviewers_count", validator_func=self.validator.validate, update_func=self.project_model.update_clt_settings)
 
         # Number of provincial desk-based interviewers
         create_spinbox_field(layout, self, "clt_provincial_desk_interviewers_count", "Số lượng PVV đi tỉnh (NGỒI BÀN):", range=(0, 999), suffix="", row=6, col=2)
 
-        bind_spinbox_handler(self, "clt_provincial_desk_interviewers_count", validator=self.validator, update_func=self.project_model.update_clt_settings)
+        bind_spinbox_handler(self, "clt_provincial_desk_interviewers_count", validator_func=self.validator.validate, update_func=self.project_model.update_clt_settings)
 
         return group_box
     
@@ -163,47 +163,47 @@ class OperationsTab(QWidget):
         # BACKWHITE page count
         create_spinbox_field(layout, self, "bw_page_count", "Số trang photo trắng đen:", range=(0, 999), suffix=" (pages)", row=0, col=0)
         
-        bind_spinbox_handler(self, "bw_page_count", validator=self.validator, update_func=self.project_model.update_general)
+        bind_spinbox_handler(self, "bw_page_count", validator_func=self.validator.validate, update_func=self.project_model.update_general)
         
         # SHOWPHOTO page count
         create_spinbox_field(layout, self, "showphoto_page_count", "Số trang showphoto:", range=(0, 999), suffix=" (pages)", row=0, col=2)
         
-        bind_spinbox_handler(self, "showphoto_page_count", validator=self.validator, update_func=self.project_model.update_general)
+        bind_spinbox_handler(self, "showphoto_page_count", validator_func=self.validator.validate, update_func=self.project_model.update_general)
         
         # SHOWCARD page count
         create_spinbox_field(layout, self, "showcard_page_count", "Số trang showcard:", range=(0, 999), suffix=" (pages)", row=1, col=0)
         
-        bind_spinbox_handler(self, "showcard_page_count", validator=self.validator, update_func=self.project_model.update_general)
+        bind_spinbox_handler(self, "showcard_page_count", validator_func=self.validator.validate, update_func=self.project_model.update_general)
         
         # DROPCARD page count
         create_spinbox_field(layout, self, "dropcard_page_count", "Số trang dropcard:", range=(0, 999), suffix=" (pages)", row=1, col=2)
         
-        bind_spinbox_handler(self, "dropcard_page_count", validator=self.validator, update_func=self.project_model.update_general)
+        bind_spinbox_handler(self, "dropcard_page_count", validator_func=self.validator.validate, update_func=self.project_model.update_general)
         
         # COLOR page count
         create_spinbox_field(layout, self, "color_page_count", "Số trang in màu \ in concept:", range=(0, 999), suffix=" (pages)", row=2, col=0)
         
-        bind_spinbox_handler(self, "color_page_count", validator=self.validator, update_func=self.project_model.update_general)
+        bind_spinbox_handler(self, "color_page_count", validator_func=self.validator.validate, update_func=self.project_model.update_general)
         
         # DECAL page count
         create_spinbox_field(layout, self, "decal_page_count", "Số decal dán mẫu:", range=(0, 999), suffix=" (pages)", row=2, col=2)
         
-        bind_spinbox_handler(self, "decal_page_count", validator=self.validator, update_func=self.project_model.update_general)
+        bind_spinbox_handler(self, "decal_page_count", validator_func=self.validator.validate, update_func=self.project_model.update_general)
         
         # Laminated page count
         create_spinbox_field(layout, self, "laminated_page_count", "Số trang ép plastic:", range=(0, 999), suffix=" (pages)", row=3, col=0)
         
-        bind_spinbox_handler(self, "laminated_page_count", validator=self.validator, update_func=self.project_model.update_general)
+        bind_spinbox_handler(self, "laminated_page_count", validator_func=self.validator.validate, update_func=self.project_model.update_general)
 
         # Hồ sơ biểu mẫu
         create_spinbox_field(layout, self, "interview_form_package_count", "Hồ sơ biểu mẫu:", range=(0, 999), suffix=" (pages)", row=3, col=2)
         
-        bind_spinbox_handler(self, "interview_form_package_count", validator=self.validator, update_func=self.project_model.update_general)
+        bind_spinbox_handler(self, "interview_form_package_count", validator_func=self.validator.validate, update_func=self.project_model.update_general)
 
         # Đóng cuốn
         create_spinbox_field(layout, self, "stimulus_material_production_count", "Chi phí đóng cuốn:", range=(0, 999), suffix=" (pages)", row=4, col=0)
         
-        bind_spinbox_handler(self, "stimulus_material_production_count", validator=self.validator, update_func=self.project_model.update_general)
+        bind_spinbox_handler(self, "stimulus_material_production_count", validator_func=self.validator.validate, update_func=self.project_model.update_general)
 
         return group_box
     
@@ -246,12 +246,12 @@ class OperationsTab(QWidget):
         # Tablet/Laptop selection
         create_combobox(layout, self, "device_type", "Thuê tablet / laptop:", items=DEVIVE_TYPES, row=0, col=0)
 
-        bind_combobox_handler(self, "device_type", validator=self.validator, update_func=self.project_model.update_general)
+        bind_combobox_handler(self, "device_type", validator_func=self.validator.validate, update_func=self.project_model.update_general)
 
         # Tablet usage duration - only shown when "Tablet < 9 inch" is selected
         create_combobox(layout, self, "tablet_usage_duration", "Thời gian sử dụng tablet:", items=TABLET_USAGE_DURATIONS, row=0, col=2)
 
-        bind_combobox_handler(self, "tablet_usage_duration", validator=self.validator, update_func=self.project_model.update_general)
+        bind_combobox_handler(self, "tablet_usage_duration", validator_func=self.validator.validate, update_func=self.project_model.update_general)
 
         return group_box
     

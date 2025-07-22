@@ -1,6 +1,31 @@
 {
+    "default" : {
+        "target_audience": "Benchmark",
+        "gender": "Both", 
+        "age_group_from": 0, 
+        "age_group_to": 100, 
+        "household_income_from": 0,
+        "household_income_to": 100,
+        "description": "", 
+        "pricing" : {
+            "pilot" : 120000,
+            "non" : 10000,
+            "main" : {
+                "main" : 0, 
+                "recruit" : 84000,
+                "location" : 25000
+            },
+            "booster" : {
+                "booster" : 0, 
+                "recruit" : 84000,
+                "location" : 25000
+            }
+        },
+        "target_for_interviewer": 2, 
+        "daily_sup_target": 0
+    },
     "Thực phẩm - Đồ ăn nhẹ" : {
-        "default" : {
+        "ID0000001" : {
             "target_audience": "Người dùng Sản phẩm về bánh kẹo nói chung",
             "gender": "Both", 
             "age_group_from": 0, 
@@ -25,7 +50,7 @@
             "target_for_interviewer": 2, 
             "daily_sup_target": 0
         },
-        "ID0000001" : {
+        "ID0000002" : {
             "target_audience": "Người dùng Sản phẩm bánh Snack",
             "gender": "Both", 
             "age_group_from": 0, 

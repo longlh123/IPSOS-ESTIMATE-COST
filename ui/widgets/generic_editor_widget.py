@@ -10,6 +10,7 @@ from PySide6.QtGui import QFont
 
 from ui.events.wheelBlocker import WheelBlocker
 from config.predefined_values import COMPLEXITY, SAMPLE_TYPES
+from components.validation_field import FieldValidator
 
 class GenericEditorWidget(QWidget):
     selectionChanged = Signal(list)
@@ -21,7 +22,7 @@ class GenericEditorWidget(QWidget):
         self.field_config = field_config.copy()
 
         self.selected_items = []
-        
+
         font = QFont("Arial", 10)
         self.setFont(font)
 
@@ -43,6 +44,10 @@ class GenericEditorWidget(QWidget):
         self.select_button.clicked.connect(self.open_selection_dialog)
         layout.addWidget(self.select_button)
     
+    def set_enabled(self, enable):
+        self.selected_items_input.setEnabled(enable)
+        self.select_button.setEnabled(enable)
+
     def open_selection_dialog(self):
         dialog = GeneralEditorDialog(
             self.title, 
@@ -70,6 +75,8 @@ class GenericEditorWidget(QWidget):
                 names.append(item.get('qc_method', ""))
             if 'cost_type' in item.keys():
                 names.append(item.get('cost_type', ""))
+            if all(k in item.keys() for k in ['sample_type', 'sampling_method']):
+                names.append(f"{item.get('sample_type', '')} [{item.get('sampling_method', '')}]")
 
         names = list(set(names))
         display = ", ".join(names[:4]) + (f" +{len(names)-4} more" if len(names) > 4 else "")
@@ -84,6 +91,8 @@ class GeneralEditorDialog(QDialog):
 
         self.selected_items = selected_items.copy()
         self.field_config = field_config.copy()
+
+        self.validator = FieldValidator()
 
         self.widgets = {}
 
@@ -123,9 +132,25 @@ class GeneralEditorDialog(QDialog):
                 widget.addItems(options)
                 widget.setCurrentIndex(0)
                 widget.model().item(0).setEnabled(False)
+            elif field["widget"] == QTextEdit:
+                widget = QTextEdit()
+
+            container = QWidget()
+            container_layout = QVBoxLayout(container)
+            container_layout.setContentsMargins(0, 0, 0, 0)
+
+            container_layout.addWidget(widget)
+
+            warning_label = QLabel("")
+            warning_label.setStyleSheet("color: red; font-size: 12px")
+            warning_label.setVisible(False)
+
+            container_layout.addWidget(warning_label)
+
+            setattr(self, f'{field["name"]}_warning', warning_label)
 
             self.widgets[field["name"]] = widget
-            grid_layout.addWidget(widget, i, 1)
+            grid_layout.addWidget(container, i, 1)
 
         self.add_button = QPushButton("Add")
         self.add_button.clicked.connect(self.add_entry)
@@ -150,6 +175,8 @@ class GeneralEditorDialog(QDialog):
                 widget.setValue(0)
             elif isinstance(widget, QComboBox):
                 widget.setCurrentIndex(0)
+            elif isinstance(widget, QTextEdit):
+                widget.clear()
 
     def get_selected_items(self):
         return self.selected_items
@@ -159,56 +186,77 @@ class GeneralEditorDialog(QDialog):
 
         for field in self.field_config:
             widget = self.widgets[field["name"]]
+
             if isinstance(widget, QLineEdit):
                 entry[field["name"]] = widget.text().strip()
             elif isinstance(widget, QSpinBox):
                 entry[field["name"]] = widget.value()
             elif isinstance(widget, QComboBox):
                 entry[field["name"]] = widget.currentText()
+            elif isinstance(widget, QTextEdit):
+                entry[field["name"]] = widget.toPlainText().strip()
 
-        result, message = self.validate(entry)
+        if self.validate(entry):
+            # Add the entry to the selected items
+            self.selected_items.append(entry)
 
-        if not result:
-            QMessageBox.warning(self, "Input Error", message)
-            return
-
-        # Add the entry to the selected items
-        self.selected_items.append(entry)
-
-        # Refresh the table to show the new entry
-        self.refresh_table()
-        # Clear the form for the next entry
-        self.clear_form()
+            # Refresh the table to show the new entry
+            self.refresh_table()
+            # Clear the form for the next entry
+            self.clear_form()
 
     def validate(self, new_item):
         
         for field in self.field_config:
-            if field.get('required', False):
-                field_name = field.get('name', '')
+            field_name = field.get('name', '')
+            label = field.get('label', '')
+            required = field.get('required', False)
+            min_range = field.get('min_range', None)
+
+            if required:
                 widget = self.widgets[field_name]
 
-                if isinstance(widget, QLineEdit):
-                    if new_item.get(field_name, ''): 
-                        return False, f"{field_name} should not be blank."
-                elif isinstance(widget, QComboBox):
-                    if new_item.get(field_name, '-- Select --') == '-- Select --':
-                        return False, f"{field_name} is required."
-                elif isinstance(widget, QSpinBox):
-                    if "min_range" in field.keys():
-                        if new_item.get(field_name, 0) < field.get('min_range', 0):
-                            return False, f"{field_name} must be >= {field['min_range']}."
+                value = new_item.get(field_name)
+                warning_label = getattr(self, f'{field_name}_warning', None)
+
+                if warning_label:
+                    warning_label.hide()
+                
+                if isinstance(widget, QLineEdit) and not value.strip():
+                    if warning_label:
+                        warning_label.setText(f"{label} should not be blank.")
+                        warning_label.show()
+                    return False
+                elif isinstance(widget, QComboBox) and value == '-- Select --':
+                    if warning_label:
+                        warning_label.setText(f"{label} is required.")
+                        warning_label.show()
+                    return False
+                elif isinstance(widget, QSpinBox) and min_range is not None:
+                    if value < min_range:
+                        if warning_label:
+                            warning_label.setText(f"{label} must be >= {field['min_range']}.")
+                            warning_label.show()
+                        return False
 
         # 2. Kiểm tra trùng lặp
-        if len(self.selected_items) > 0:
-            duplicated_fields = [f['name'] for f in self.field_config if f.get('duplicated')]
+        duplicated_fields = [f['name'] for f in self.field_config if f.get('duplicated')]
+
+        if duplicated_fields and self.selected_items:
             
             for item in self.selected_items:
                 if all(
-                    new_item.get(f_name) == item.get(f_name) for f_name in duplicated_fields
+                    [new_item.get(f_name) == item.get(f_name) for f_name in duplicated_fields]
                 ):
-                    return False, "Duplicated item detected."
-        
-        return True, ""
+                    field_name = duplicated_fields[0]
+                    warning_label = getattr(self, f'{field_name}_warning', None)
+                    
+                    if warning_label:
+                        warning_label.setText("Duplicated item detected.")
+                        warning_label.show()
+                    return False
+
+        return True
     
     def refresh_table(self):
         self.table.setRowCount(len(self.selected_items))
@@ -223,6 +271,8 @@ class GeneralEditorDialog(QDialog):
                     item = QTableWidgetItem(f'{entry.get(field_name, 0):,}')
                 elif isinstance(widget, QComboBox):
                     item = QTableWidgetItem(f'{entry.get(field_name, "")}')
+                elif isinstance(widget, QTextEdit):
+                    item = QTableWidgetItem(entry.get(field_name, "").strip())
 
                 self.table.setItem(row_index, col_index, item)
 
@@ -260,5 +310,9 @@ class GeneralEditorDialog(QDialog):
         del self.selected_items[index]
         self.refresh_table()
     
-    
+    def accept(self):
+        if len(self.selected_items) > 0:
+            QMessageBox.warning(self, "Validation Error", "You must add at least one valid item.")
+            return
+        super().accept()
     
