@@ -1,0 +1,274 @@
+{
+  "general": {
+    "internal_job": "2025-999",
+    "symphony": "999999",
+    "project_name": "Vista Round 2",
+    "project_type": "CLT",
+    "clients": [],
+    "project_objectives": "Hi anh chị, \n  \nKhách muốn làm tiếp Round 2 cho dự án Vista đánh giá bao bì. Nhờ anh chị giúp báo giá và timing trong hôm nay dùm em với nhé. \n  \nMục tiêu: Đánh giá thiết kế bao bì phiên bản đặc biệt của Tiger sau khi điều chỉnh từ Vista round 1, mở rộng thêm đối tượng cho nữ. . \n  \nĐối tượng: \nThành Phố Hồ Chí Minh \n50% Nam, 50% Nữ, 25-45 tuổi, class ABC, BUMO theo tỉ lệ thị trường \nLà người có uống bia đóng chai/lon có nhãn hiệu ít nhất 1 lần/ tháng trong 3 tháng qua \nLà người quyết định nhãn hiệu cho bản thân sử dụng \nKhông từ chối sử dụng thức uống có cồn trong tương lai \n  \nPhương pháp: \nSample size: N=200 \nCLT, F2F interview, purposive sampling \nMỗi ĐV sẽ đánh giá toàn bộ thiết kế lon & thùng & chai cho Tiger LE (Phiên bản giới hạn), Tiger (bản thường), đối thủ. \nLOI = 60 mins; OE = 6 câu/ĐV; Code khác = 10 câu \nCó phần HotZone (tick chọn yếu tố trên bao bì) \niQuote: iQuote # 1471566-B1 \nCảm ơn anh chị, \n  \nDuyen Nguyen | Ipsos – Researcher \nMobile: +84 378190303 ",
+    "platform": "iField",
+    "interview_methods": [
+      "CAPI"
+    ],
+    "sampling_method": "Purposive sampling",
+    "recruit_method": [
+      "FW free find/ FW connection"
+    ],
+    "type_of_quota_control": "Parallel Flexible Quota",
+    "quota_description": [],
+    "service_line": "INNO",
+    "provinces": [
+      "Hồ Chí Minh"
+    ],
+    "sample_types": [
+      "Main"
+    ],
+    "industries": [
+      "Đồ uống - Bia"
+    ],
+    "target_audiences": [
+      {
+        "age_range": [
+          25,
+          45
+        ],
+        "comment": {},
+        "complexity": "Standard",
+        "daily_sup_target": 0,
+        "description": "",
+        "extra_rate": 0,
+        "gender": "Both",
+        "id": null,
+        "incident_rate": 50,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Beer Drinkers",
+        "pricing": [
+          {
+            "comment": {},
+            "price": 180000,
+            "price_growth": 0,
+            "type": "recruit"
+          },
+          {
+            "comment": {},
+            "price": 52000,
+            "price_growth": 0,
+            "type": "location"
+          }
+        ],
+        "sample_size": 200,
+        "sample_type": "Main",
+        "target_for_interviewer": 2
+      }
+    ],
+    "interview_length": 60,
+    "questionnaire_length": 0,
+    "device_type": "",
+    "tablet_usage_duration": "",
+    "bw_page_count": 0,
+    "showphoto_page_count": 0,
+    "showcard_page_count": 0,
+    "dropcard_page_count": 0,
+    "color_page_count": 0,
+    "decal_page_count": 0,
+    "laminated_page_count": 0,
+    "interview_form_package_count": 0,
+    "stimulus_material_production_count": 0,
+    "scripting": true,
+    "data_processing": true,
+    "coding": true,
+    "data_entry": false,
+    "open_ended_main_count": 6,
+    "open_ended_booster_count": 0,
+    "data_processing_method": []
+  },
+  "clt_settings": {
+    "clt_test_products": 4,
+    "clt_respondent_visits": 0,
+    "clt_failure_rate": 0,
+    "clt_sample_recruit_idi": 0,
+    "clt_assistant_setup_days": 1,
+    "clt_number_of_samples_to_label": 0,
+    "clt_description_howtolabelthesample": "",
+    "clt_dan_mau_days": 0,
+    "clt_sample_size_per_day": 0,
+    "clt_desk_interviewers_count": 0,
+    "clt_provincial_desk_interviewers_count": 0
+  },
+  "hut_settings": {
+    "hut_test_products": 0,
+    "hut_usage_duration": 0
+  },
+  "cost_toggles": {
+    "device_rental_costs": {
+      "Chi phí thuê tablet < 9 inch": true,
+      "Chi phí thuê tablet >= 9 inch": true,
+      "Chi phí thuê laptop": true
+    },
+    "idi_costs": {
+      "Chi phí Tuyển đáp viên IDI": false,
+      "Chi phí Quản lý IDI": false,
+      "Chi phí QC - IDI": false,
+      "Quà Phiếu PV - IDI": false
+    },
+    "failure_rate_costs": {
+      "Chi phí Phiếu PV - Bài rớt giữa chừng": false
+    },
+    "qc_method_costs": {
+      "Chi phí QC - In home": false,
+      "Chi phí QC - In Location": false,
+      "Chi phí QC - DP": false,
+      "Chi phí thuê laptop": false,
+      "Chi phí Quản lý - On-field": false
+    },
+    "qc_communication_costs": {
+      "Chi phí Card điện thoại": true
+    },
+    "dp_costs": {
+      "Chi phí Coding": true,
+      "Chi phí Input": false,
+      "Chi phí Quản lý - On-field": true
+    },
+    "incentive_costs": {
+      "Quà Phiếu PV - Pilot": false,
+      "Quà Phiếu PV - Main": true,
+      "Quà Phiếu PV - Booster": false,
+      "Quà Phiếu PV - Non": false
+    },
+    "stationary_costs": {
+      "Photo trắng đen": false,
+      "Showphoto": false,
+      "Showcard": false,
+      "Dropcard": false,
+      "In màu \\ In concept": false,
+      "Decal": false,
+      "Ép Plastic": false,
+      "Hồ sơ biểu mẫu": false,
+      "Chi phí đóng cuốn": false
+    }
+  },
+  "settings": {
+    "interviewers_per_supervisor": 10,
+    "parking_fee": 5000,
+    "distant_district_fee": 5000,
+    "stationary": {
+      "Hồ Chí Minh": {
+        "bw_page_fee": 350,
+        "showphoto_page_fee": 2500,
+        "showcard_page_fee": 4000,
+        "dropcard_page_fee": 9000,
+        "color_page_fee": 2500,
+        "decal_page_fee": 3500,
+        "laminated_page_fee": 6000,
+        "interview_form_package_fee": 350,
+        "stimulus_material_production_fee": 4000
+      },
+      "Hà Nội": {
+        "bw_page_fee": 400,
+        "showphoto_page_fee": 3000,
+        "showcard_page_fee": 6000,
+        "dropcard_page_fee": 9000,
+        "color_page_fee": 3000,
+        "decal_page_fee": 2500,
+        "laminated_page_fee": 5000,
+        "interview_form_package_fee": 400,
+        "stimulus_material_production_fee": 4000
+      },
+      "Đà Nẵng": {
+        "bw_page_fee": 450,
+        "showphoto_page_fee": 2500,
+        "showcard_page_fee": 4000,
+        "dropcard_page_fee": 9000,
+        "color_page_fee": 3500,
+        "decal_page_fee": 3500,
+        "laminated_page_fee": 7000,
+        "interview_form_package_fee": 450,
+        "stimulus_material_production_fee": 4000
+      },
+      "Cần Thơ": {
+        "bw_page_fee": 400,
+        "showphoto_page_fee": 2500,
+        "showcard_page_fee": 3500,
+        "dropcard_page_fee": 9000,
+        "color_page_fee": 2500,
+        "decal_page_fee": 3500,
+        "laminated_page_fee": 6000,
+        "interview_form_package_fee": 400,
+        "stimulus_material_production_fee": 4000
+      },
+      "Others": {
+        "bw_page_fee": 350,
+        "showphoto_page_fee": 2500,
+        "showcard_page_fee": 4000,
+        "dropcard_page_fee": 9000,
+        "color_page_fee": 2500,
+        "decal_page_fee": 3500,
+        "laminated_page_fee": 6000,
+        "interview_form_package_fee": 400,
+        "stimulus_material_production_fee": 4000
+      }
+    },
+    "transportation": {
+      "Others": {
+        "flight": 1000000,
+        "train": 400000
+      }
+    },
+    "travel_junior_hotel": 500000,
+    "travel_junior_food": 500000,
+    "travel_senior_hotel": 1000000,
+    "travel_senior_food": 800000,
+    "travel_manager_hotel": 2000000,
+    "travel_manager_food": 1000000,
+    "travel_director_hotel": 3000000,
+    "travel_director_food": 1200000
+  },
+  "samples": {
+    "Hồ Chí Minh": {
+      "Main - Beer Drinkers": {
+        "age_range": [
+          25,
+          45
+        ],
+        "comment": {},
+        "complexity": "Standard",
+        "daily_sup_target": 10.0,
+        "description": "",
+        "extra_rate": 0,
+        "gender": "Both",
+        "id": null,
+        "incident_rate": 50,
+        "income_range": [
+          0,
+          0
+        ],
+        "name": "Beer Drinkers",
+        "pricing": [
+          {
+            "comment": {},
+            "price": 180000,
+            "price_growth": 0,
+            "type": "recruit"
+          },
+          {
+            "comment": {},
+            "price": 52000,
+            "price_growth": 0,
+            "type": "location"
+          }
+        ],
+        "sample_size": 200,
+        "sample_type": "Main",
+        "target_for_interviewer": 2
+      }
+    }
+  },
+  "qc_methods": [],
+  "travel": {},
+  "assignments": [],
+  "additional_costs": [],
+  "subcontracts": []
+}
