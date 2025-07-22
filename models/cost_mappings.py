@@ -4,13 +4,13 @@ def get_cost_tablet_small(project, element):
     return 5000 if tablet_duration == "<= 15 phút" else 8000
 
 def get_cost_tablet_large(project, element):
-    return element.get('costs', {}).get('L1', {}).get('< 30 phút', 0)
+    return element.get('cost', 0)
 
 def get_cost_laptop(project, element):    
-    return element.get('costs', {}).get('L1', {}).get('< 30 phút', 0)
+    return element.get('cost', 0)
 
 def get_default_cost(project, element):
-    return element.get('costs', {}).get('L1', {}).get('< 30 phút', 0)
+    return element.get('cost', 0)
 
 def get_cost_parking_fee(project, element):
     return project.settings.get('parking_fee', 5000)
