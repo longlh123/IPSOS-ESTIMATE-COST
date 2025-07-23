@@ -96,6 +96,7 @@ class MainWindow(QMainWindow):
         # self.project_model.element_costs.costsChanged.connect(self.update_status)
         
         self.general_tab.projectTypeChanged.connect(self.operations_tab.handle_project_type_changed)
+        self.general_tab.interviewLengthChanged.connect(self.operations_tab.handle_interview_length_changed)
 
     def create_menu_bar(self):
         """Create the application menu bar."""

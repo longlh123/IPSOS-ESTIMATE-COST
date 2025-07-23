@@ -34,6 +34,7 @@ class GeneralTab(QWidget):
     """
     
     projectTypeChanged = Signal(str)
+    interviewLengthChanged = Signal(int)
 
     def __init__(self, project_model):
         super().__init__()
@@ -126,6 +127,9 @@ class GeneralTab(QWidget):
 
     def on_project_type_changed(self, value: str):
         self.projectTypeChanged.emit(value)
+    
+    def on_interview_length_changed(self, value: int):
+        self.interviewLengthChanged.emit(value)
 
     def create_region_general_information(self):
         """Create the General Information region."""
@@ -257,6 +261,8 @@ class GeneralTab(QWidget):
         create_spinbox_field(layout, self, "interview_length", "Length of Interview", range=(0, 999), suffix=" (minutes)", row=19, col=0)
         
         bind_spinbox_handler(self, "interview_length", validator_func=self.validator.validate, update_func=self.project_model.update_general)
+
+        self.interview_length_spinbox.valueChanged.connect(self.on_interview_length_changed)
 
         ### Length of Questionnaire
         create_spinbox_field(layout, self, "questionnaire_length", "Length of Questionnaire", range=(0, 999), suffix=" (pages)", row=19, col=2)
@@ -625,11 +631,11 @@ class GeneralTab(QWidget):
         self.open_ended_main_count_spinbox.blockSignals(True)
         self.open_ended_booster_count_spinbox.blockSignals(True)
 
-        is_check = self.project_model.general["coding"] and "Main" in self.project_model.general["sample_types"]
+        is_check = self.project_model.general["coding"] and "Main" in sample_types
         self.open_ended_main_count_spinbox.setEnabled(is_check)
         self.open_ended_main_count_spinbox.setValue(self.project_model.general["open_ended_main_count"])
 
-        is_check = self.project_model.general["coding"] and "Booster" in self.project_model.general["sample_types"]
+        is_check = self.project_model.general["coding"] and "Booster" in sample_types
         self.open_ended_booster_count_spinbox.setEnabled(is_check)
         self.open_ended_booster_count_spinbox.setValue(self.project_model.general["open_ended_booster_count"])
 

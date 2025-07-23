@@ -264,7 +264,7 @@ class HierarchicalCostResultsDialog(QDialog):
         item.setText(2, data[3])                #Target Audience
         item.setText(3, data[5] if data[5] != "0" else "-")                #Unit
         
-        if current_parent.text(0) in ["SUPERVISOR/ ASSISTANT", "QC", "DP"]:
+        if data[0] in ["SUPERVISOR/ ASSISTANT", "QC", "DP"]:
             item.setText(4, f"{data[7]:,.2f}") #Qty
         else:               
             item.setText(4, f"{data[7]:,.0f}") #Qty     
@@ -280,6 +280,9 @@ class HierarchicalCostResultsDialog(QDialog):
         item.setTextAlignment(5, Qt.AlignRight | Qt.AlignVCenter)
         item.setTextAlignment(6, Qt.AlignRight | Qt.AlignVCenter)
         item.setTextAlignment(7, Qt.AlignLeft)
+
+         # Set tooltips with formulas
+        item.setToolTip(4, "Formular")  # Qty
 
         return item
     

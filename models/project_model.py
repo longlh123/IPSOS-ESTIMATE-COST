@@ -508,7 +508,7 @@ class ProjectModel(QObject):
             "comment": {}
         }
 
-    def make_audience_entry(self, new_audience_data, audience_id, pricing, target):
+    def _make_audience_entry(self, new_audience_data, audience_id, pricing, target):
         audience_entry = {
             "audience_id": audience_id,
             "sample_type": new_audience_data.get('sample_type'),
@@ -562,22 +562,36 @@ class ProjectModel(QObject):
             "interviewers_per_supervisor" : rate_card.get('interviewers_per_supervisor'),
         }
 
-    def _get_rate_card(self, sample_type, interview_length):
+    def _get_rate_card(self, sample_type, interview_length, incident_rate):
         project_type = self.general['project_type']
 
         if project_type not in self.rate_card_settings.keys():
             raise ValueError(f"[RateCard Error] Project type {project_type} isn't defined in rate card settings.")
         
-        levels = list([level for level in self.rate_card_settings[project_type].keys()])
+        levels = list(reversed([level for level in self.rate_card_settings[project_type].keys()]))
 
         #Determine the level based on total number of levels
         interval = 100 / len(levels)
-        level = int(100 // interval) + 1
 
-        rate_cards = self.rate_card_settings[project_type].get(f"L{level}")
+        current_level = "L1"
+        start_interval = 0
+        end_interval = interval
+
+        for i, level in enumerate(levels):
+            
+            if start_interval <= incident_rate <= end_interval:
+                current_level = level
+                break
+            
+            start_interval = end_interval
+            end_interval += interval + (0 if i < len(levels) else 1)
+
+        # level = int(incident_rate // interval) + 1
+
+        rate_cards = self.rate_card_settings[project_type].get(f"{current_level}")
 
         if not rate_cards:
-            raise ValueError(f"[RateCard Error] No rate cards found for level {level} in project type {project_type}.")
+            raise ValueError(f"[RateCard Error] No rate cards found for level {current_level} in project type {project_type}.")
 
         for rate_card in rate_cards:
             min_len, max_len = rate_card['interview_length_range']
@@ -593,28 +607,71 @@ class ProjectModel(QObject):
             
         raise ValueError(
             f"[RateCard Error] No rate card found for interview_length = {interview_length} "
-            f"in project_type '{project_type}', level {level}."
+            f"in project_type '{project_type}', level {current_level}."
         )
     
     def get_audience(self, new_audience_data):
         try:
-            rate_card_pricing, rate_card_target  = self._get_rate_card(new_audience_data.get('sample_type'), self.general.get('interview_length', 0))
+            rate_card_pricing, rate_card_target  = self._get_rate_card(new_audience_data.get('sample_type'), self.general.get('interview_length', 0), new_audience_data.get('incident_rate', 100))
             
-            rate_card_audience_data = self.make_audience_entry(new_audience_data, "default", rate_card_pricing, rate_card_target)
+            rate_card_audience_data = self._make_audience_entry(new_audience_data, "default", rate_card_pricing, rate_card_target)
 
             industry_data = self.industries_data.get(new_audience_data.get('industry_name'), {})
 
             for ta_id, ta_data in industry_data.items():
                 if ta_data["target_audience"] == new_audience_data.get('target_audience_name'):
                     pricing = self._make_pricing_entry(new_audience_data.get('sample_type'), ta_data.get('pricing', {}))
-                    audience_data = self.make_audience_entry(new_audience_data, ta_id, pricing, rate_card_target)
+                    audience_data = self._make_audience_entry(new_audience_data, ta_id, pricing, rate_card_target)
                     return audience_data
             
             return rate_card_audience_data
         
         except ValueError as e:
             raise str(e)
-                    
+
+    def get_daily_interview_target_by_rate_card(self, interview_length):
+        project_type = self.general['project_type']
+
+        if project_type not in self.rate_card_settings.keys():
+            raise ValueError(f"[RateCard Error] Project type {project_type} isn't defined in rate card settings.")
+        
+        levels = list([level for level in self.rate_card_settings[project_type].keys()])
+
+        #Determine the level based on total number of levels
+        interval = 100 / len(levels)
+        
+        current_level = "L1"
+        # start_interval = 0
+        # end_interval = interval
+
+        # for i, level in enumerate(levels):
+            
+        #     if start_interval <= incident_rate <= end_interval:
+        #         current_level = level
+        #         break
+            
+        #     start_interval = end_interval
+        #     end_interval += interval + (0 if i < len(levels) else 1)
+
+        rate_cards = self.rate_card_settings[project_type].get(f"{current_level}")
+
+        if not rate_cards:
+            raise ValueError(f"[RateCard Error] No rate cards found for level {current_level} in project type {project_type}.")
+
+        for rate_card in rate_cards:
+            min_len, max_len = rate_card['interview_length_range']
+
+            if min_len <= interview_length <= max_len:
+                try:
+                    return rate_card.get('daily_interview_target')
+                except ValueError as e:
+                    raise str(e)
+            
+        raise ValueError(
+            f"[RateCard Error] No rate card found for interview_length = {interview_length} "
+            f"in project_type '{project_type}', level {level}."
+        )
+
     def to_dict(self):
         """Convert model to dictionary for saving."""
         data = {

@@ -37,7 +37,7 @@ def get_sample_size(project, element, province, excluding_items=list()):
     for key, target_audience in project.samples[province].items():
         if target_audience.get('sample_type') not in excluding_items:
             sample_size += calculate_sample_size(target_audience.get('sample_size', 0), target_audience.get('extra_rate', 0))
-
+    
     return sample_size
 
 def get_sample_size_by_sample_type(project, element, province, title=""):
@@ -278,8 +278,6 @@ def get_tien_setup_location(project, element, province, title=""):
 def get_tien_nuocuong_khangiay_banhlat(project, element, province, title=""):
     sample_size = get_sample_size(project, element, province, excluding_items=["Pilot", "Non"])
     return sample_size
-
-
 
 QUANTY_MAPPINGS = {
     "default" : get_sample_size,

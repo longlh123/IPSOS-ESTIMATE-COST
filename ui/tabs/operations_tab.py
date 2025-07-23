@@ -108,6 +108,10 @@ class OperationsTab(QWidget):
     def handle_project_type_changed(self, value: str):
         self.region_clt.setVisible("CLT" in value)
 
+    def handle_interview_length_changed(self, value: int):
+        daily_target_interview = self.project_model.get_daily_interview_target_by_rate_card(value)
+        self.clt_sample_size_per_day_spinbox.setValue(daily_target_interview)
+
     def create_region_clt(self):
         """Create the CLT (Central Location Test) region."""
         group_box = QGroupBox("CLT (Central Location Test)")
