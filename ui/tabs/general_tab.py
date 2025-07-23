@@ -35,6 +35,7 @@ class GeneralTab(QWidget):
     
     projectTypeChanged = Signal(str)
     interviewLengthChanged = Signal(int)
+    numberOfSamplesToLabelChanged = Signal(int)
 
     def __init__(self, project_model):
         super().__init__()
@@ -84,10 +85,16 @@ class GeneralTab(QWidget):
         for widget in self.region_hut.findChildren(QSpinBox) + self.region_hut.findChildren(QComboBox):
             widget.installEventFilter(self.wheel_blocker)
 
+        self.region_qc = self.create_region_qc()
+
+        for widget in self.region_qc.findChildren(QSpinBox) + self.region_qc.findChildren(QComboBox):
+            widget.installEventFilter(self.wheel_blocker)
+
         # Add regions to layout
         scroll_layout.addWidget(self.region_general_information)
         scroll_layout.addWidget(self.region_clt)
         scroll_layout.addWidget(self.region_hut)
+        scroll_layout.addWidget(self.region_qc)
         scroll_layout.addWidget(self.region_dp)
         scroll_layout.addWidget(self.region_subcontract)
         
@@ -130,6 +137,9 @@ class GeneralTab(QWidget):
     
     def on_interview_length_changed(self, value: int):
         self.interviewLengthChanged.emit(value)
+    
+    def on_number_of_samples_to_label_changed(self, value: int):
+        self.numberOfSamplesToLabelChanged.emit(value)
 
     def create_region_general_information(self):
         """Create the General Information region."""
@@ -233,7 +243,7 @@ class GeneralTab(QWidget):
         bind_combobox_handler(self, "service_line", validator_func=self.validator.validate, update_func=self.project_model.update_general)
 
         ### Industries
-        create_multiselected_field(layout, self, "industries", "Industries:", self.project_model.get_industries(), allow_adding=False, row=16, col=0, rowspan=1, colspan=3)
+        create_multiselected_field(layout, self, "industries", "Industries:", self.project_model.get_industries(), allow_adding=True, row=16, col=0, rowspan=1, colspan=3)
 
         bind_multiselection_handler(self, "industries", validator_func=self.validator.validate, update_func=self.project_model.update_general)
 
@@ -280,10 +290,12 @@ class GeneralTab(QWidget):
             self.project_model.update_general("data_processing_method", [])
 
     def handle_coding_checkbox(self, is_check: bool):
+        sample_types = self.project_model.get_sample_types()
+
         self.project_model.update_general("coding", is_check)
 
-        self.open_ended_main_count.setEnabled(bool("Main" in self.project_model.general["sample_types"]))
-        self.open_ended_booster_count.setEnabled(bool("Booster" in self.project_model.general["sample_types"]))
+        self.open_ended_main_count.setEnabled(bool("Main" in sample_types))
+        self.open_ended_booster_count.setEnabled(bool("Booster" in sample_types))
 
         if not is_check:
             self.project_model.update_general("open_ended_main_count", 0)
@@ -431,6 +443,8 @@ class GeneralTab(QWidget):
 
         bind_spinbox_handler(self, "clt_number_of_samples_to_label", validator_func=self.validator.validate, update_func=self.project_model.update_clt_settings)
 
+        self.clt_number_of_samples_to_label_spinbox.valueChanged.connect(self.on_number_of_samples_to_label_changed)
+        
         ### Description of label application method
         create_textedit_field(layout, self, "clt_description_howtolabelthesample", "Description of how to label the sample:", placeholder="Enter your text here...", row=6, col=0, rowspan=1, colspan=4)
         
@@ -497,13 +511,103 @@ class GeneralTab(QWidget):
 
         bind_spinbox_handler(self, "clt_concepts_per_respondent", validator_func=self.validator.validate, update_func=self.project_model.update_clt_settings)
 
-        # Sample Recruit IDI
-        create_header_label(layout, "Recruit IDI", row=24, col=0, rowspan=1, colspan=4)
+        self.clt_printer_concept_label = QLabel("Print concept on page:")
 
-        create_spinbox_field(layout, self, "clt_sample_recruit_idi", "Sample Recruit IDI:", range=(0, 999), suffix="", row=25, col=0)
+        # In concept giấy
+        layout.addWidget(self.clt_printer_concept_label, 24, 0)
+
+        self.print_concept_in_black_white_checkbox = QCheckBox("In Black & White")
+
+        self.print_concept_in_black_white_checkbox.stateChanged.connect(
+            lambda state: self.project_model.update_clt_settings("print_concept_in_black_white", bool(state)) 
+        )
+
+        self.print_concept_in_color_checkbox = QCheckBox("In color")
+
+        self.print_concept_in_color_checkbox.stateChanged.connect(
+            lambda state: self.project_model.update_clt_settings("print_concept_in_color", bool(state)) 
+        )
+
+        self.print_concept_laminated_in_plastic_checkbox = QCheckBox("Laminated in plastic")
+
+        self.print_concept_laminated_in_plastic_checkbox.stateChanged.connect(
+            lambda state: self.project_model.update_clt_settings("print_concept_laminated_in_plastic", bool(state)) 
+        )
+
+        clt_printer_concept_items = QHBoxLayout()
+
+        clt_printer_concept_items.addWidget(self.print_concept_in_black_white_checkbox)
+        clt_printer_concept_items.addWidget(self.print_concept_in_color_checkbox)
+        clt_printer_concept_items.addWidget(self.print_concept_laminated_in_plastic_checkbox)
+        
+        layout.addLayout(clt_printer_concept_items, 24, 1)
+        
+        # In Showphoto / Showdrop
+        self.show_concept_settings_label = QLabel("Print Showphoto/ Showdrop:")
+
+        layout.addWidget(self.show_concept_settings_label, 25, 0)
+
+        self.print_showphoto_checkbox = QCheckBox("Print Showphoto")
+
+        self.print_showphoto_checkbox.stateChanged.connect(
+            lambda state: self.project_model.update_clt_settings("print_showphoto", bool(state)) 
+        )
+
+        self.print_showdrop_checkbox = QCheckBox("Print Showdrop")
+
+        self.print_showdrop_checkbox.stateChanged.connect(
+            lambda state: self.project_model.update_clt_settings("print_showdrop", bool(state)) 
+        )
+
+        clt_printer_showphoto_showdrop_items = QHBoxLayout()
+
+        clt_printer_showphoto_showdrop_items.addWidget(self.print_showphoto_checkbox)
+        clt_printer_showphoto_showdrop_items.addWidget(self.print_showdrop_checkbox)
+        
+        layout.addLayout(clt_printer_showphoto_showdrop_items, 25, 1)
+
+        # Sample Recruit IDI
+        create_header_label(layout, "Recruit IDI", row=26, col=0, rowspan=1, colspan=4)
+
+        create_spinbox_field(layout, self, "clt_sample_recruit_idi", "Sample Recruit IDI:", range=(0, 999), suffix="", row=27, col=0)
 
         bind_spinbox_handler(self, "clt_sample_recruit_idi", validator_func=self.validator.validate, update_func=self.project_model.update_clt_settings)
         
+
+        return group_box
+
+    def create_region_qc(self):
+        """Create the Quality Control Requirements."""
+        group_box = QGroupBox("Quality Control Requirements")
+        
+        layout = QGridLayout(group_box)
+        layout.setColumnStretch(1, 1)
+        layout.setColumnStretch(3, 1)
+
+        # Sampling
+        create_textedit_field(layout, self, "qc_sampling_requirements", "Sampling requirements:", placeholder="Tiêu chuẩn/ CS yêu cầu thêm", row=0, col=0, rowspan=1, colspan=4)
+
+        bind_textedit_handler(self, "qc_sampling_requirements", update_func=self.project_model.update_general)
+
+        # % số bài/PVV
+        create_spinbox_field(layout, self, "qc_pvv_ratio", "Percentage of interviews per interviewer:", range=(0, 100), suffix="%", row=2, col=0)
+
+        bind_spinbox_handler(self, "qc_pvv_ratio", update_func=self.project_model.update_general)
+
+        # Check OE
+        yesno_items = [
+            { 'name': 'qc_check_oe_yes', 'label': 'Yes', 'checked': True},
+            { 'name': 'qc_check_oe_no', 'label': 'No', 'checked': False}
+        ]
+
+        create_radiobuttons_group(layout, self, "qc_check_oe", "Open-Ended (OE) question check:", radio_items=yesno_items, row=3, col=0)
+
+        bind_radiogroup_handler(self, "qc_check_oe", update_func=self.project_model.update_general)
+
+        # Yêu cầu khác về QC
+        create_textedit_field(layout, self, "qc_others_requirements", "Other QC requirements:", placeholder="Chi tiết yêu cầu", row=4, col=0, rowspan=1, colspan=4)
+
+        bind_textedit_handler(self, "qc_others_requirements", update_func=self.project_model.update_general)
 
         return group_box
 
@@ -780,9 +884,59 @@ class GeneralTab(QWidget):
         self.clt_concepts_per_respondent_spinbox.setValue(self.project_model.clt_settings.get('clt_concepts_per_respondent', 0))
         self.clt_concepts_per_respondent_spinbox.setEnabled(self.project_model.clt_settings.get('clt_total_concepts', 0) != 0)
 
+        self.print_concept_in_black_white_checkbox.setCheckState(Qt.CheckState.Checked if self.project_model.clt_settings["print_concept_in_black_white"] else Qt.CheckState.Unchecked)
+        self.print_concept_in_color_checkbox.setCheckState(Qt.CheckState.Checked if self.project_model.clt_settings["print_concept_in_color"] else Qt.CheckState.Unchecked)
+        self.print_concept_laminated_in_plastic_checkbox.setCheckState(Qt.CheckState.Checked if self.project_model.clt_settings["print_concept_laminated_in_plastic"] else Qt.CheckState.Unchecked)
+        self.print_showphoto_checkbox.setCheckState(Qt.CheckState.Checked if self.project_model.clt_settings["print_showphoto"] else Qt.CheckState.Unchecked)
+        self.print_showdrop_checkbox.setCheckState(Qt.CheckState.Checked if self.project_model.clt_settings["print_showdrop"] else Qt.CheckState.Unchecked)
+
+        self.print_concept_in_black_white_checkbox.setEnabled(self.project_model.clt_settings.get('clt_total_concepts', 0) != 0)
+        self.print_concept_in_color_checkbox.setEnabled(self.project_model.clt_settings.get('clt_total_concepts', 0) != 0)
+        self.print_concept_laminated_in_plastic_checkbox.setEnabled(self.project_model.clt_settings.get('clt_total_concepts', 0) != 0)
+        self.print_showphoto_checkbox.setEnabled(self.project_model.clt_settings.get('clt_total_concepts', 0) != 0)
+        self.print_showdrop_checkbox.setEnabled(self.project_model.clt_settings.get('clt_total_concepts', 0) != 0)
+
         self.clt_sample_recruit_idi_spinbox.setValue(self.project_model.clt_settings.get("clt_sample_recruit_idi", 0))
         self.project_model.set_selected_idi_costs(self.project_model.clt_settings.get("clt_sample_recruit_idi", 0) != 0)
         
+        # QC Requirements
+        ## Sampling
+        self.qc_sampling_requirements_textedit.blockSignals(True)
+        
+        cursor = self.qc_sampling_requirements_textedit.textCursor()
+        pos = cursor.position()
+
+        self.qc_sampling_requirements_textedit.setPlainText(self.project_model.general["qc_sampling_requirements"])
+
+        cursor.setPosition(min(pos, len(self.project_model.general["qc_sampling_requirements"])))
+        self.qc_sampling_requirements_textedit.setTextCursor(cursor)
+
+        self.qc_sampling_requirements_textedit.blockSignals(False)
+
+        ## % PVV/bai
+        self.qc_pvv_ratio_spinbox.setValue(self.project_model.general.get("qc_pvv_ratio", 0))
+
+        ## Check OE
+        yes_or_no = self.project_model.general.get("qc_check_oe", "No")
+
+        if yes_or_no == "Yes":
+            self.qc_check_oe_yes_radioitem.setChecked(True)
+        else:
+            self.qc_check_oe_no_radioitem.setChecked(True)
+
+        ## Other QC Requirements
+        self.qc_others_requirements_textedit.blockSignals(True)
+        
+        cursor = self.qc_others_requirements_textedit.textCursor()
+        pos = cursor.position()
+
+        self.qc_others_requirements_textedit.setPlainText(self.project_model.general["qc_others_requirements"])
+
+        cursor.setPosition(min(pos, len(self.project_model.general["qc_others_requirements"])))
+        self.qc_others_requirements_textedit.setTextCursor(cursor)
+
+        self.qc_others_requirements_textedit.blockSignals(False)
+
         # Incentive
         self.project_model.set_selected_incentive_costs()
 

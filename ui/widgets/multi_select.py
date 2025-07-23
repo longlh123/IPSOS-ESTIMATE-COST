@@ -10,7 +10,7 @@ Version with extensive debugging and robust handling of checkbox state changes.
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QListWidget, QPushButton,
     QListWidgetItem, QLineEdit, QLabel, QDialog, QDialogButtonBox,
-    QCheckBox, QScrollArea, QFrame, QMessageBox
+    QCheckBox, QScrollArea, QFrame, QMessageBox, QApplication
 )
 from PySide6.QtCore import Qt, Signal, QSize
 from PySide6.QtGui import QFont
@@ -190,6 +190,8 @@ class MultiSelectDialog(QDialog):
         self.setWindowTitle("Select Items")
         self.resize(400, 500)
         
+        QApplication.setStyle("Fusion")
+
         # Debug
         print(f"Dialog initialized with items: {len(self.items)}")
         print(f"Selected items at init: {self.selected_items}")
@@ -262,6 +264,7 @@ class MultiSelectDialog(QDialog):
             checkbox = QCheckBox(item_text)
             is_checked = item_text in self.selected_items
             checkbox.setChecked(is_checked)
+            checkbox.style().polish(checkbox)
             
             item.setSizeHint(checkbox.sizeHint())
 

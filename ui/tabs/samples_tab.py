@@ -15,7 +15,6 @@ from PySide6.QtGui import QIcon, QColor
 from PySide6.QtWidgets import QStyledItemDelegate
 
 from models.project_model import ProjectModel
-from config.predefined_values import TARGET_AUDIENCE_INTERVIEWER_TARGETS
 from ui.dialogs.sample_edit_dialog import SampleEditDialog
 from utils import utils
 from config.predefined_values import SAMPLE_TYPES
@@ -300,11 +299,11 @@ class SamplesTable(QWidget):
             if selected_province != 'All' and province != selected_province:
                 continue
             
-            for audience in province_data.values():
+            for audience_data in province_data.values():
                 if selected_sample_type != 'All' and audience_data.get('sample_type') != selected_sample_type:
                     continue
 
-                row_count += len(audience.get("pricing", []))
+                row_count += len(audience_data.get("pricing", []))
 
         self.table.setRowCount(row_count)
         self.table.setColumnCount(len(headers.keys()))  # Target Audience, Sample Type, Sample Size, Price Growth Rate, Target for Interviewer, Daily SUP Target, Comment, Actions

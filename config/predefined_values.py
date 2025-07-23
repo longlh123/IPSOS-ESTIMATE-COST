@@ -21,10 +21,10 @@ DATA_PROCESSING_METHOD = [
 
 # Project types
 PROJECT_TYPES = [
-"F2F/D2D",
-"HUT",
-"CLT",
-"CATI"
+    "F2F/D2D",
+    "HUT",
+    "CLT",
+    "CATI"
 ]
 
 SAMPLE_TYPES = [
@@ -36,10 +36,10 @@ SAMPLE_TYPES = [
 
 # Sampling methods
 SAMPLING_METHODS = [
-"Random sampling",
-"Purposive sampling",
-"Intercept",
-"Other"
+    "Random sampling",
+    "Purposive sampling",
+    "Intercept",
+    "Other"
 ]
 
 # Type Of Quota Control
@@ -90,10 +90,10 @@ CLIENTS = [
     "TÂN HIỆP PHÁT"
 ]
 
-# Industries by service line (dependency relationship)
-INDUSTRIES_BY_SERVICE_LINE = [
-    "Alcohol drinks", "Automotive", "Baby Diaper", "Banking", "Beauty", "Beer", "Beverage (Energy drink)", "Beverage (LRB)", "BFSI", "Biscuit", "Cider", "Cigarette", "Cigarettes / Tobacco", "CMB", "CMB & drinking yogurt", "Confectionery", "Confectionery (Bánh kẹo)", "Deodorant", "diary based milk", "Dishwashing", "Doctor - Normal disease", "Doctor - Rare disease", "Drinking yogurt", "Ecommerce", "Electrical", "Energy drink", "Fabric Softener", "Facial Cleanser", "Femcare", "Floor Cleaner", "Food", "Fresh Milk", "HCPs - Board of Management", "Healthcare", "Home applicance", "Ice-cream", "Infant Milk", "Insurance", "Liquid Detergent", "Liquid milk", "Milk", "Milk & dairy products", "Others", "Paint/ Chemical", "Patient - Rx Medicine", "Patient - Supplements & OTC Medicine", "Personal care", "Pharmacist", "Probiotic drinks", "Probiotics drinking yogurt", "Purified Water", "RTD Tea", "RTDT", "Seasoning (nước tương, nước mắm,…)", "Shampoo & Conditioner", "Shower Gel", "Snack", "Soya Milk", "Spoon Yogurt", "Stationary and School Supply", "Sterilized drinking yogurt", "Tabacco", "Tobacco", "Toothpaste", "Total FMCG", "yogurt"
-]
+# # Industries by service line (dependency relationship)
+# INDUSTRIES_BY_SERVICE_LINE = [
+#     "Alcohol drinks", "Automotive", "Baby Diaper", "Banking", "Beauty", "Beer", "Beverage (Energy drink)", "Beverage (LRB)", "BFSI", "Biscuit", "Cider", "Cigarette", "Cigarettes / Tobacco", "CMB", "CMB & drinking yogurt", "Confectionery", "Confectionery (Bánh kẹo)", "Deodorant", "diary based milk", "Dishwashing", "Doctor - Normal disease", "Doctor - Rare disease", "Drinking yogurt", "Ecommerce", "Electrical", "Energy drink", "Fabric Softener", "Facial Cleanser", "Femcare", "Floor Cleaner", "Food", "Fresh Milk", "HCPs - Board of Management", "Healthcare", "Home applicance", "Ice-cream", "Infant Milk", "Insurance", "Liquid Detergent", "Liquid milk", "Milk", "Milk & dairy products", "Others", "Paint/ Chemical", "Patient - Rx Medicine", "Patient - Supplements & OTC Medicine", "Personal care", "Pharmacist", "Probiotic drinks", "Probiotics drinking yogurt", "Purified Water", "RTD Tea", "RTDT", "Seasoning (nước tương, nước mắm,…)", "Shampoo & Conditioner", "Shower Gel", "Snack", "Soya Milk", "Spoon Yogurt", "Stationary and School Supply", "Sterilized drinking yogurt", "Tabacco", "Tobacco", "Toothpaste", "Total FMCG", "yogurt"
+# ]
 
 # Vietnam provinces
 VIETNAM_PROVINCES = [
@@ -123,33 +123,33 @@ TABLET_USAGE_DURATIONS = [
 ]
 
 # Common target audiences (examples, can be expanded)
-TARGET_AUDIENCES = [
-    "Bác sĩ chuyên khoa",
-    "Bác sĩ đa khoa",
-    "Chủ/ quản lý cửa hàng",
-    "Dược sĩ nhà thuốc chuỗi",
-    "Dược sĩ nhà thuốc lẻ",
-    "HSSV, NVVP, Công nhân, Nội trợ",
-    "N/A",
-    "Nhân viên công ty bảo hiểm thuộc công ty KH",
-    "Nhân viên y tế cấp quản lý"
-]
+# TARGET_AUDIENCES = [
+#     "Bác sĩ chuyên khoa",
+#     "Bác sĩ đa khoa",
+#     "Chủ/ quản lý cửa hàng",
+#     "Dược sĩ nhà thuốc chuỗi",
+#     "Dược sĩ nhà thuốc lẻ",
+#     "HSSV, NVVP, Công nhân, Nội trợ",
+#     "N/A",
+#     "Nhân viên công ty bảo hiểm thuộc công ty KH",
+#     "Nhân viên y tế cấp quản lý"
+# ]
 
-# Default Target for Interviewers by target audience
-TARGET_AUDIENCE_INTERVIEWER_TARGETS = {
-    "Bác sĩ chuyên khoa": 2,
-    "Bác sĩ đa khoa": 2,
-    "Chủ/ quản lý cửa hàng": 2,
-    "Dược sĩ nhà thuốc chuỗi": 2,
-    "Dược sĩ nhà thuốc lẻ": 2,
-    "HSSV, NVVP, Công nhân, Nội trợ": 2,
-    "N/A": 2,
-    "Nhân viên công ty bảo hiểm thuộc công ty KH": 2,
-    "Nhân viên y tế cấp quản lý": 2
-}
+# # Default Target for Interviewers by target audience
+# TARGET_AUDIENCE_INTERVIEWER_TARGETS = {
+#     "Bác sĩ chuyên khoa": 2,
+#     "Bác sĩ đa khoa": 2,
+#     "Chủ/ quản lý cửa hàng": 2,
+#     "Dược sĩ nhà thuốc chuỗi": 2,
+#     "Dược sĩ nhà thuốc lẻ": 2,
+#     "HSSV, NVVP, Công nhân, Nội trợ": 2,
+#     "N/A": 2,
+#     "Nhân viên công ty bảo hiểm thuộc công ty KH": 2,
+#     "Nhân viên y tế cấp quản lý": 2
+# }
 
 TEAMS = [
-    "FW", "QC", "DP"
+    "RESEARCH", "FW", "QC", "DP"
 ]
 
 # QC Methods

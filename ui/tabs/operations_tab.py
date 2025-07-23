@@ -111,6 +111,9 @@ class OperationsTab(QWidget):
     def handle_interview_length_changed(self, value: int):
         daily_target_interview = self.project_model.get_daily_interview_target_by_rate_card(value)
         self.clt_sample_size_per_day_spinbox.setValue(daily_target_interview)
+    
+    def handle_number_of_samples_to_label_changed(self, value: int):
+        self.clt_dan_mau_days_spinbox.setEnabled(value != 0)
 
     def create_region_clt(self):
         """Create the CLT (Central Location Test) region."""
