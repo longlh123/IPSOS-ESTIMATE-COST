@@ -97,6 +97,7 @@ class MainWindow(QMainWindow):
         
         self.general_tab.projectTypeChanged.connect(self.operations_tab.handle_project_type_changed)
         self.general_tab.interviewLengthChanged.connect(self.operations_tab.handle_interview_length_changed)
+        self.general_tab.numberOfSamplesToLabelChanged.connect(self.operations_tab.handle_number_of_samples_to_label_changed)
 
     def create_menu_bar(self):
         """Create the application menu bar."""

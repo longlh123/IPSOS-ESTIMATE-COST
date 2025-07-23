@@ -85,6 +85,12 @@ class ProjectModel(QObject):
             "interview_form_package_count" : 0,
             "stimulus_material_production_count" : 0,
 
+            # Region QC
+            "qc_sampling_requirements": "",
+            "qc_pvv_ratio": 0,
+            "qc_check_oe": "No",
+            "qc_others_requirements": "",
+
             # Region - Data & Processing
             "scripting": False,
             "data_processing": False,
@@ -114,6 +120,11 @@ class ProjectModel(QObject):
 
             "clt_total_concepts": 0,
             "clt_concepts_per_respondent": 0,
+            "print_concept_laminated_in_plastic": False,
+            "print_concept_in_black_white" : False,
+            "print_concept_in_color": False,
+            "print_showphoto": False,
+            "print_showdrop": False,
 
             "clt_dan_mau_days": 0,
             "clt_sample_size_per_day": 0,
@@ -586,8 +597,6 @@ class ProjectModel(QObject):
             start_interval = end_interval
             end_interval += interval + (0 if i < len(levels) else 1)
 
-        # level = int(incident_rate // interval) + 1
-
         rate_cards = self.rate_card_settings[project_type].get(f"{current_level}")
 
         if not rate_cards:
@@ -821,12 +830,18 @@ class ProjectModel(QObject):
             if value == 0:
                 self.clt_settings["clt_description_howtolabelthesample"] = ""
                 self.clt_settings["clt_sample_split_method"] = ""
+                self.clt_settings["clt_dan_mau_days"] = 0
         if field == "clt_test_products":
             if value == 0:
                 self.clt_settings["clt_respondent_visits"] = 0
         if field == "clt_total_concepts":
             if value == 0:
                 self.clt_settings["clt_concepts_per_respondent"] = 0
+                self.clt_settings["print_concept_laminated_in_plastic"] = False
+                self.clt_settings["print_concept_in_black_white"] = False
+                self.clt_settings["print_concept_in_color"] = False
+                self.clt_settings["print_showphoto"] = False
+                self.clt_settings["print_showdrop"] = False
 
         self.clt_settings[field] = value
 
@@ -840,6 +855,8 @@ class ProjectModel(QObject):
                 self.clt_settings[key] = ""
             elif key in ["clt_return_unused_samples", "clt_return_used_samples"]:
                 self.clt_settings[key] = "Yes"
+            elif key in ["print_concept_laminated_in_plastic", "print_concept_in_black_white", "print_concept_in_color", "print_showphoto", "print_showdrop"]:
+                self.clt_settings[key] = False
             else:
                 self.clt_settings[key] = 0
 

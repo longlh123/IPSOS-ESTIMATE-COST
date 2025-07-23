@@ -459,9 +459,13 @@ class HierarchicalCostResultsDialog(QDialog):
         
         for province, target_audiences in project_model.samples.items():
             for key, target_audience in target_audiences.items():
+                total = 0
+                daily_interview_target = target_audience.get('target', {}).get('daily_interview_target', 0)
+                target_for_interviewer = target_audience.get('target', {}).get('target_for_interviewer', 0) 
+
                 for _col, header in enumerate(headers):
                     cell = sheet.cell(row=row, column=column + _col)
-                    total = 0
+                    
                     if header == "Location":
                         cell.value = f"{province} - {target_audience.get('sample_type')}"
                     elif header == "Target Audience":
@@ -474,10 +478,29 @@ class HierarchicalCostResultsDialog(QDialog):
                         total += cell.value
                     else:
                         cell.value = total
-            
+
+                    cell.border = Border(
+                        left=Side(style='thin'),
+                        right=Side(style='thin'),
+                        top=Side(style='thin'),
+                        bottom=Side(style='thin')
+                    )
                 row += 1
 
         row = 9 if row < 9 else row
+
+        cell = sheet.cell(row=row, column=5)
+        cell.value = "Daily Interview Target:"
+
+        cell = sheet.cell(row=row, column=6)
+        cell.value = daily_interview_target
+
+        cell = sheet.cell(row=row, column=5)
+        cell.value = "Daily Interview Target:"
+
+        cell = sheet.cell(row=row, column=6)
+        cell.value = daily_interview_target
+
         
         for key, properties in estimate_cost_sheet['table']['headers'].items():
             column_dimension = properties.get('column_dimension')

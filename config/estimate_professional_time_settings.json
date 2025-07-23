@@ -1,0 +1,46 @@
+{
+    "RESEARCH": {
+        "Director": 3762097.00,
+        "Associate Director": 2149842.00,
+        "Senior Manager": 1024013.00,
+        "Associate Manager": 816309.00,
+        "Manager": 816309.00,
+        "Senior Executive": 496098.00,
+        "Executive": 496098.00,
+        "Assistant": 295266.00,
+        "Intern": 147633.00
+    },
+    "FW": {
+        "Director": 1017068.00,
+        "Associate Director": 1017068.00,
+        "Senior Manager": 612878.00,
+        "Associate Manager": 374799.00,
+        "Manager": 374799.00,
+        "Senior Executive": 242599.00,
+        "Executive": 242599.00,
+        "Assistant": 181690.00,
+        "Intern": 181690.00
+    },
+    "QC": {
+        "Director": 1017068.00,
+        "Associate Director": 1017068.00,
+        "Senior Manager": 612878.00,
+        "Associate Manager": 374799.00,
+        "Manager": 374799.00,
+        "Senior Executive": 242599.00,
+        "Executive": 242599.00,
+        "Assistant": 181690.00,
+        "Intern": 181690.00
+    },
+    "DP": {
+        "Director": 0.00,
+        "Associate Director": 0.00,
+        "Senior Manager": 0.00,
+        "Associate Manager": 0.00,
+        "Manager": 0.00,
+        "Senior Executive": 242599.00,
+        "Executive": 242599.00,
+        "Assistant": 181690.00,
+        "Intern": 181690.00
+    }
+}
