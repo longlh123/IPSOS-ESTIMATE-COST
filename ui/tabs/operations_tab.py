@@ -108,10 +108,6 @@ class OperationsTab(QWidget):
     def handle_project_type_changed(self, value: str):
         self.region_clt.setVisible("CLT" in value)
 
-    def handle_interview_length_changed(self, value: int):
-        daily_target_interview = self.project_model.get_daily_interview_target_by_rate_card(value)
-        self.clt_sample_size_per_day_spinbox.setValue(daily_target_interview)
-    
     def handle_number_of_samples_to_label_changed(self, value: int):
         self.clt_dan_mau_days_spinbox.setEnabled(value != 0)
 
@@ -141,9 +137,9 @@ class OperationsTab(QWidget):
         bind_spinbox_handler(self, "clt_dan_mau_days", validator_func=self.validator.validate, update_func=self.project_model.update_clt_settings)
 
         # Sample size target per day
-        create_spinbox_field(layout, self, "clt_sample_size_per_day", "Sample Size Target per Day:", range=(0, 100), suffix="", row=4, col=0)
+        # create_spinbox_field(layout, self, "clt_sample_size_per_day", "Sample Size Target per Day:", range=(0, 100), suffix="", row=4, col=0)
 
-        bind_spinbox_handler(self, "clt_sample_size_per_day", validator_func=self.validator.validate, update_func=self.project_model.update_clt_settings)
+        # bind_spinbox_handler(self, "clt_sample_size_per_day", validator_func=self.validator.validate, update_func=self.project_model.update_clt_settings)
 
         create_header_label(layout, "NGỒI BÀN Settings", row=5, col=0, rowspan=1, colspan=4)
 
@@ -272,7 +268,7 @@ class OperationsTab(QWidget):
         self.project_model.set_selected_failure_rate_costs(self.project_model.clt_settings.get("clt_failure_rate", 0) != 0)
 
         self.clt_dan_mau_days_spinbox.setValue(self.project_model.clt_settings["clt_dan_mau_days"])
-        self.clt_sample_size_per_day_spinbox.setValue(self.project_model.clt_settings["clt_sample_size_per_day"])
+        # self.clt_sample_size_per_day_spinbox.setValue(self.project_model.clt_settings["clt_sample_size_per_day"])
 
         #QC Method
         self.qc_methods.set_selected_items(self.project_model.qc_methods)

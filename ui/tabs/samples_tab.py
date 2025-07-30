@@ -355,6 +355,7 @@ class SamplesTable(QWidget):
         price_growth = price_item.get("price_growth", 0.0)
         interviewer_target = audience_data.get('target', {}).get("target_for_interviewer", 0)
         daily_sup_target = audience_data.get('target', {}).get("daily_sup_target", 0.0)
+        daily_interview_target = audience_data.get('target', {}).get('daily_interview_target', 0)
         comment = audience_data.get("comment", {})
         price_comment = price_item.get("comment", {})
 
@@ -423,7 +424,8 @@ class SamplesTable(QWidget):
         titles = {
             "price_growth": "Price Growth",
             "target_for_interviewer": "Target for Interviewer",
-            "interviewers_per_supervisor": "Interviewers per Supervisor" 
+            "interviewers_per_supervisor": "Interviewers per Supervisor",
+            "daily_interview_target": "Daily Interview Target" 
         }
 
         comment_parts = []
@@ -438,7 +440,8 @@ class SamplesTable(QWidget):
         titles = {
             "price_growth": "Price Growth",
             "target_for_interviewer": "Target for Interviewer",
-            "interviewers_per_supervisor": "Interviewers per Supervisor" 
+            "interviewers_per_supervisor": "Interviewers per Supervisor",
+            "daily_interview_target": "Daily Interview Target"  
         }
 
         tooltip_parts = []
@@ -472,12 +475,14 @@ class SamplesTable(QWidget):
         province = self.table.item(row, 0).data(Qt.UserRole)
         audience_data = self.table.item(row, 1).data(Qt.UserRole)
         price_type = self.table.item(row, 2).data(Qt.UserRole)
+        rate_card_target = self.project_model.get_rate_card_target(audience_data.get('incident_rate', 100))
         
         # Open edit dialog
         dialog = SampleEditDialog(
             province,
             audience_data,
             price_type,
+            rate_card_target,
             self
         )
         

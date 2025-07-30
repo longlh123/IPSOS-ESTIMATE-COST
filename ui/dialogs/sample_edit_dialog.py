@@ -12,8 +12,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QColor
 from formulars.pricing_formulas import (
-    calculate_daily_sup_target,
-    has_custom_daily_sup_target
+    calculate_daily_sup_target
 )
 from ui.helpers.form_helpers import (create_header_label, create_input_field, create_combobox, create_multiselected_field, create_textedit_field, 
                                      create_radiobuttons_group, create_spinbox_field, create_generic_editor_field
@@ -27,11 +26,12 @@ class SampleEditDialog(QDialog):
     """
     Dialog for editing a row in the samples table.
     """
-    def __init__(self, province, audience_data, price_type, parent=None):
+    def __init__(self, province, audience_data, price_type, rate_card_target, parent=None):
         super().__init__(parent)
         self.province = province
         self.audience_data = audience_data.copy()
         self.price_type = price_type
+        self.rate_card_target = rate_card_target
         
         self.setWindowTitle(f"Edit Sample: {self.audience_data.get('sample_type')} - {self.audience_data.get('name')}")
         self.setMinimumWidth(500)
@@ -176,6 +176,9 @@ class SampleEditDialog(QDialog):
         
         if "interviewers_per_supervisor" in self.audience_data.get('comment', {}) and not self.interviewers_per_supervisor_comment.toPlainText().strip():
             return False, "Interviewers per Supervisor"
+        
+        if "daily_interview_target" in self.audience_data.get('comment', {}) and not self.daily_interview_target_comment.toPlainText().strip():
+            return False, "Daily Interview Target"
 
         return True, ""
     
@@ -190,8 +193,8 @@ class SampleEditDialog(QDialog):
         sample_size = self.audience_data['sample_size']
         target_for_interviewer = self.audience_data['target']['target_for_interviewer']
         interviewers_per_supervisor = self.audience_data['target']['interviewers_per_supervisor']
+        daily_interview_target = self.audience_data['target']['daily_interview_target']
         daily_sup_target = calculate_daily_sup_target(sample_size, target_for_interviewer, interviewers_per_supervisor)
-
 
         # Sample Size
         create_spinbox_field(form_layout, self, "sample_size", "Sample Size:", range=(0, 9999), value=sample_size, row=0, col=0)
@@ -213,7 +216,7 @@ class SampleEditDialog(QDialog):
         self.target_for_interviewer_spinbox.valueChanged.connect(
             lambda value: (
                 self.handle_daily_sup_target_changed("target_for_interviewer"),
-                self.update_comment_highlight("target_for_interviewer", self.target_for_interviewer_comment, required=value != 0)
+                self.update_comment_highlight("target_for_interviewer", self.target_for_interviewer_comment, required=value != self.rate_card_target['target_for_interview'])
             ) 
         )
 
@@ -223,8 +226,17 @@ class SampleEditDialog(QDialog):
         self.interviewers_per_supervisor_spinbox.valueChanged.connect(
             lambda value: (
                     self.handle_daily_sup_target_changed("interviewers_per_supervisor"),
-                    self.update_comment_highlight("interviewers_per_supervisor", self.interviewers_per_supervisor_comment, required=value != 0)
+                    self.update_comment_highlight("interviewers_per_supervisor", self.interviewers_per_supervisor_comment, required=value != self.rate_card_target['interviewers_per_supervisor'])
                 )
+        )
+
+        # Daily Interview Target
+        create_spinbox_field(form_layout, self, "daily_interview_target", "Daily Interview Target:", range=(0, 100), value=daily_interview_target, row=4, col=0)
+
+        self.daily_interview_target_spinbox.valueChanged.connect(
+            lambda value: (
+                self.update_comment_highlight("daily_interview_target", self.daily_interview_target_comment, required=value != self.rate_card_target['daily_interview_target'])
+            )
         )
         
         # Add form layout to sample group
@@ -256,10 +268,17 @@ class SampleEditDialog(QDialog):
         
         # Daily SUP Target Comment
         self.interviewers_per_supervisor_comment = QTextEdit()
-        self.interviewers_per_supervisor_comment.setPlaceholderText("Enter comment for Interviewers per Supervisor values...")
+        self.interviewers_per_supervisor_comment.setPlaceholderText("Enter comment for Interviewers per Supervisor changes...")
         self.interviewers_per_supervisor_comment.setText(self.get_audience_comment("interviewers_per_supervisor"))
         
         comment_tabs.addTab(self.interviewers_per_supervisor_comment, "Interviewers per Supervisor")
+
+        # Daily Interview Target Comment
+        self.daily_interview_target_comment = QTextEdit()
+        self.daily_interview_target_comment.setPlaceholderText("Enter comment for Daily Interview Target changes...")
+        self.daily_interview_target_comment.setText(self.get_audience_comment("daily_interview_target"))
+
+        comment_tabs.addTab(self.daily_interview_target_comment, "Daily Interview Target")
         
         comments_layout.addWidget(comment_tabs)
         sample_layout.addLayout(comments_layout)
@@ -297,21 +316,6 @@ class SampleEditDialog(QDialog):
 
         self.update_comment_highlight("interviewers_per_supervisor", self.interviewers_per_supervisor_comment, daily_sup_target != old_daily_syp_target)
 
-    def check_daily_sup_target_change(self):
-        """Highlight comment field if daily supervisor target is custom."""
-        sample_size = self.sample_size.value()
-        target_for_interviewer = self.target_for_interviewer.value()
-        daily_sup_target = self.daily_sup_target.value()
-
-        is_custom = has_custom_daily_sup_target(
-            daily_sup_target, sample_size, target_for_interviewer, self.interviewers_per_supervisor
-        )
-
-        # Highlight hoặc reset comment
-        self.update_comment_highlight("daily_sup_target", self.daily_sup_target_comment, is_custom)
-
-        self.custom_value_label.setText("* Custom value - comment required" if is_custom else "")
-
     def validate_and_accept(self):
         """Validate inputs and accept dialog if valid."""
         missing_comments = []
@@ -335,6 +339,7 @@ class SampleEditDialog(QDialog):
         self.audience_data['extra_rate'] = self.extra_rate_spinbox.value()
         self.audience_data['target']['target_for_interviewer'] = self.target_for_interviewer_spinbox.value()
         self.audience_data['target']['interviewers_per_supervisor'] = self.interviewers_per_supervisor_spinbox.value()
+        self.audience_data['target']['daily_interview_target'] = self.daily_interview_target_spinbox.value()
 
         daily_sup_target = calculate_daily_sup_target(self.sample_size_spinbox.value(), self.target_for_interviewer_spinbox.value(), self.interviewers_per_supervisor_spinbox.value())
         
@@ -345,6 +350,7 @@ class SampleEditDialog(QDialog):
 
         self.set_audience_comment('target_for_interviewer', self.target_for_interviewer_comment.toPlainText().strip())
         self.set_audience_comment('interviewers_per_supervisor', self.interviewers_per_supervisor_comment.toPlainText().strip())
+        self.set_audience_comment('daily_interview_target', self.daily_interview_target_comment.toPlainText().strip())
         
         super().accept()
     
