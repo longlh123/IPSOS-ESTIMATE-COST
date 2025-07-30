@@ -96,9 +96,7 @@ class MainWindow(QMainWindow):
         # self.project_model.element_costs.costsChanged.connect(self.update_status)
         
         self.general_tab.projectTypeChanged.connect(self.operations_tab.handle_project_type_changed)
-        self.general_tab.interviewLengthChanged.connect(self.operations_tab.handle_interview_length_changed)
-        self.general_tab.numberOfSamplesToLabelChanged.connect(self.operations_tab.handle_number_of_samples_to_label_changed)
-
+        
     def create_menu_bar(self):
         """Create the application menu bar."""
         # Create menu bar
@@ -433,9 +431,9 @@ class MainWindow(QMainWindow):
             
             self.statusBar().showMessage("Hierarchical cost calculation completed")
         except Exception as e:
-            self.logger.error(f"Failed to calculate hierarchical project cost: {str(e)}")
+            self.logger.error(f"{str(e)}")
             QMessageBox.critical(
                 self, 
                 "Calculation Error", 
-                f"Failed to calculate hierarchical project cost: {str(e)}"
+                f"{str(e)}"
             )

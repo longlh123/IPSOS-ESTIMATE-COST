@@ -45,25 +45,26 @@
         "industry_name": "Thực phẩm - Đồ ăn nhẹ",
         "pricing": [
           {
-            "comment": {},
-            "price": 115000,
+            "price": 84000,
             "price_growth": 0,
-            "type": "recruit"
+            "type": "recruit",
+            "comment": {}
           },
           {
-            "comment": {},
-            "price": 41000,
+            "price": 25000,
             "price_growth": 0,
-            "type": "location"
+            "type": "location",
+            "comment": {}
           }
         ],
         "sample_size": 100,
         "sample_type": "Main",
         "target": {
-          "daily_interview_target": 55,
-          "daily_sup_target": 3.33,
+          "daily_interview_target": 65,
+          "daily_sup_target": 2.0,
           "interviewers_per_supervisor": 10,
-          "target_for_interviewer": 3
+          "target_for_interviewer": 5,
+          "objectives_classification": "L1 (46 - 60 minutes)"
         },
         "target_audience_name": "Người dùng Sản phẩm bánh Snack"
       }
@@ -74,7 +75,7 @@
     "tablet_usage_duration": "<= 15 phút",
     "bw_page_count": 10,
     "showphoto_page_count": 0,
-    "showcard_page_count": 10,
+    "showcard_page_count": 6,
     "dropcard_page_count": 0,
     "color_page_count": 0,
     "decal_page_count": 0,
@@ -85,11 +86,11 @@
     "qc_pvv_ratio": 0,
     "qc_check_oe": "No",
     "qc_others_requirements": "Chỉ cần đi địa bàn, hay CATI",
-    "scripting": false,
-    "data_processing": false,
-    "coding": false,
+    "scripting": true,
+    "data_processing": true,
+    "coding": true,
     "data_entry": false,
-    "open_ended_main_count": 0,
+    "open_ended_main_count": 5,
     "open_ended_booster_count": 0,
     "data_processing_method": [],
     "sampling_method": "Purposive sampling",
@@ -156,19 +157,20 @@
       "Chi phí Phiếu PV - Bài rớt giữa chừng": true
     },
     "qc_method_costs": {
-      "Chi phí QC - In home": false,
+      "Chi phí QC - In home": true,
       "Chi phí QC - In Location": false,
       "Chi phí QC - DP": false,
-      "Chi phí thuê laptop": false,
-      "Chi phí Quản lý - On-field": false
+      "Chi phí thuê laptop": true,
+      "Chi phí Quản lý - On-field": true
     },
     "qc_communication_costs": {
       "Chi phí Card điện thoại": true
     },
     "dp_costs": {
-      "Chi phí Coding": false,
+      "Chi phí Coding": true,
       "Chi phí Input": false,
-      "Chi phí Quản lý - On-field": false
+      "Chi phí Quản lý - On-field": true,
+      "Chi phí Quản lý - Hỗ trợ clean data": true
     },
     "incentive_costs": {
       "Quà Phiếu PV - Pilot": false,
@@ -186,6 +188,22 @@
       "Ép Plastic": false,
       "Hồ sơ biểu mẫu": false,
       "Chi phí đóng cuốn": false
+    },
+    "travel_costs": {
+      "Vé máy bay": false,
+      "Vé xe/ tàu": false,
+      "Taxi từ nhà ra sân bay, về nhà": false,
+      "Taxi từ sân bay về Hà Nội": false,
+      "Chi phí đi lại tại nơi công tác": false,
+      "Chi phí ăn uống": false,
+      "Chi phí Khách sạn": false,
+      "Chi phí điện thoại": false,
+      "Chi phí tiếp khách": false,
+      "Chi phí thuê chổ Brief, Pilot (áp dụng cho Fieldwork team)": false,
+      "Chi phí trợ cấp đi công tác (khoán trọn gói)": false
+    },
+    "charge_client_costs": {
+      "Chi phí dán mã, in mã": false
     }
   },
   "settings": {
@@ -285,25 +303,26 @@
         "industry_name": "Thực phẩm - Đồ ăn nhẹ",
         "pricing": [
           {
-            "comment": {},
-            "price": 115000,
+            "price": 84000,
             "price_growth": 0,
-            "type": "recruit"
+            "type": "recruit",
+            "comment": {}
           },
           {
-            "comment": {},
-            "price": 41000,
+            "price": 25000,
             "price_growth": 0,
-            "type": "location"
+            "type": "location",
+            "comment": {}
           }
         ],
         "sample_size": 100,
         "sample_type": "Main",
         "target": {
-          "daily_interview_target": 55,
-          "daily_sup_target": 3.33,
+          "daily_interview_target": 65,
+          "daily_sup_target": 2.0,
           "interviewers_per_supervisor": 10,
-          "target_for_interviewer": 3
+          "target_for_interviewer": 5,
+          "objectives_classification": "L1 (46 - 60 minutes)"
         },
         "target_audience_name": "Người dùng Sản phẩm bánh Snack"
       }
@@ -328,31 +347,38 @@
         "industry_name": "Thực phẩm - Đồ ăn nhẹ",
         "pricing": [
           {
-            "comment": {},
-            "price": 115000,
+            "price": 84000,
             "price_growth": 0,
-            "type": "recruit"
+            "type": "recruit",
+            "comment": {}
           },
           {
-            "comment": {},
-            "price": 41000,
+            "price": 25000,
             "price_growth": 0,
-            "type": "location"
+            "type": "location",
+            "comment": {}
           }
         ],
         "sample_size": 100,
         "sample_type": "Main",
         "target": {
-          "daily_interview_target": 55,
-          "daily_sup_target": 3.33,
+          "daily_interview_target": 65,
+          "daily_sup_target": 2.0,
           "interviewers_per_supervisor": 10,
-          "target_for_interviewer": 3
+          "target_for_interviewer": 5,
+          "objectives_classification": "L1 (46 - 60 minutes)"
         },
         "target_audience_name": "Người dùng Sản phẩm bánh Snack"
       }
     }
   },
-  "qc_methods": [],
+  "qc_methods": [
+    {
+      "qc_method": "QC - In home",
+      "qc_rate": 10,
+      "team": "QC"
+    }
+  ],
   "travel": {
     "Hồ Chí Minh": {
       "fulltime": {

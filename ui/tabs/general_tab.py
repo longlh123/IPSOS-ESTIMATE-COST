@@ -34,7 +34,6 @@ class GeneralTab(QWidget):
     """
     
     projectTypeChanged = Signal(str)
-    interviewLengthChanged = Signal(int)
     numberOfSamplesToLabelChanged = Signal(int)
 
     def __init__(self, project_model):
@@ -134,9 +133,6 @@ class GeneralTab(QWidget):
 
     def on_project_type_changed(self, value: str):
         self.projectTypeChanged.emit(value)
-    
-    def on_interview_length_changed(self, value: int):
-        self.interviewLengthChanged.emit(value)
     
     def on_number_of_samples_to_label_changed(self, value: int):
         self.numberOfSamplesToLabelChanged.emit(value)
@@ -271,8 +267,6 @@ class GeneralTab(QWidget):
         create_spinbox_field(layout, self, "interview_length", "Length of Interview", range=(0, 999), suffix=" (minutes)", row=19, col=0)
         
         bind_spinbox_handler(self, "interview_length", validator_func=self.validator.validate, update_func=self.project_model.update_general)
-
-        self.interview_length_spinbox.valueChanged.connect(self.on_interview_length_changed)
 
         ### Length of Questionnaire
         create_spinbox_field(layout, self, "questionnaire_length", "Length of Questionnaire", range=(0, 999), suffix=" (pages)", row=19, col=2)

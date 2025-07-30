@@ -22,7 +22,7 @@ class HierarchicalCostResultsDialog(QDialog):
     def __init__(self, cost_data, parent=None):
         super().__init__(parent)
         self.cost_data = cost_data
-        self.df = pd.DataFrame(cost_data, columns=["Subtitle", 
+        self.data = pd.DataFrame(cost_data, columns=["Subtitle", 
                                                     "Province", 
                                                     "Description", 
                                                     "Target_Audience",
@@ -115,8 +115,8 @@ class HierarchicalCostResultsDialog(QDialog):
         # layout.addWidget(total_label)
         
         # Create tree widget for costs
-        tree = QTreeWidget()
-        tree.setHeaderLabels([
+        self.tree = QTreeWidget()
+        self.tree.setHeaderLabels([
             "Subtitle / Component", 
             "Province", 
             "Target Audience", 
@@ -129,42 +129,42 @@ class HierarchicalCostResultsDialog(QDialog):
         # tree.setAlternatingRowColors(True)
         
         # Set column widths
-        tree.header().setSectionResizeMode(0, QHeaderView.ResizeToContents)  # Subtitle / Component
-        tree.header().setSectionResizeMode(1, QHeaderView.ResizeToContents)  # Province
-        tree.header().setSectionResizeMode(2, QHeaderView.ResizeToContents)  # Target Audience
-        tree.header().setSectionResizeMode(3, QHeaderView.ResizeToContents)  # Unit
-        tree.header().setSectionResizeMode(4, QHeaderView.ResizeToContents)  # Qty
-        tree.header().setSectionResizeMode(5, QHeaderView.ResizeToContents)  # Unit Cost
-        tree.header().setSectionResizeMode(6, QHeaderView.ResizeToContents)  # Total Cost
-        tree.header().setSectionResizeMode(7, QHeaderView.ResizeToContents)  # Comment
+        self.tree.header().setSectionResizeMode(0, QHeaderView.ResizeToContents)  # Subtitle / Component
+        self.tree.header().setSectionResizeMode(1, QHeaderView.ResizeToContents)  # Province
+        self.tree.header().setSectionResizeMode(2, QHeaderView.ResizeToContents)  # Target Audience
+        self.tree.header().setSectionResizeMode(3, QHeaderView.ResizeToContents)  # Unit
+        self.tree.header().setSectionResizeMode(4, QHeaderView.ResizeToContents)  # Qty
+        self.tree.header().setSectionResizeMode(5, QHeaderView.ResizeToContents)  # Unit Cost
+        self.tree.header().setSectionResizeMode(6, QHeaderView.ResizeToContents)  # Total Cost
+        self.tree.header().setSectionResizeMode(7, QHeaderView.ResizeToContents)  # Comment
         
         # Set minimum column widths
-        tree.setColumnWidth(1, 80)  
-        tree.setColumnWidth(2, 80)  
-        tree.setColumnWidth(3, 150)  
-        tree.setColumnWidth(4, 100) 
-        tree.setColumnWidth(5, 100)  
-        tree.setColumnWidth(6, 100)  
-        tree.setColumnWidth(7, 200)  
+        self.tree.setColumnWidth(1, 80)  
+        self.tree.setColumnWidth(2, 80)  
+        self.tree.setColumnWidth(3, 150)  
+        self.tree.setColumnWidth(4, 100) 
+        self.tree.setColumnWidth(5, 100)  
+        self.tree.setColumnWidth(6, 100)  
+        self.tree.setColumnWidth(7, 200)  
         
         # Add cost hierarchy
-        self.add_cost_hierarchy(tree, self.cost_data)
+        self.add_cost_hierarchy(self.tree, self.cost_data)
         
-        layout.addWidget(tree)
+        layout.addWidget(self.tree)
         
         # Expand top-level items
-        tree.expandAll()
+        self.tree.expandAll()
         
         # Enable custom tooltip handling
-        tree.setMouseTracking(True)
+        self.tree.setMouseTracking(True)
         
         return widget
     
     def calculate_total_cost(self, titles=list(), province=""):
         if province:
-            df = self.df[self.df["Province"] == province]
+            df = self.data[self.data["Province"] == province]
         else:
-            df = self.df
+            df = self.data
 
         condition = True
 
@@ -182,9 +182,6 @@ class HierarchicalCostResultsDialog(QDialog):
         for i, row in enumerate(hierachy):
             subtitle = row[0]
             province_title = row[1]
-
-            if "TRAVEL" in subtitle:
-                a = ""
 
             subtitles = row[0].split(' / ')
             title_root = subtitles[0]
@@ -264,7 +261,7 @@ class HierarchicalCostResultsDialog(QDialog):
         item.setText(2, data[3])                #Target Audience
         item.setText(3, data[5] if data[5] != "0" else "-")                #Unit
         
-        if data[0] in ["SUPERVISOR/ ASSISTANT", "QC", "DP"]:
+        if data[0] in ["SUPERVISOR/ ASSISTANT", "QC", "DP", "COMMUNICATION / FW", "COMMUNICATION / QC"]:
             item.setText(4, f"{data[7]:,.2f}") #Qty
         else:               
             item.setText(4, f"{data[7]:,.0f}") #Qty     
@@ -313,17 +310,6 @@ class HierarchicalCostResultsDialog(QDialog):
             project_model = self.parent().project_model
         
         self.create_estimate_cost_sheet(wb, project_model=project_model)
-
-        # Create Project Information sheet
-        # self.create_project_info_sheet(wb, project_model)
-        
-        # # Create Summary sheet
-        # self.create_summary_sheet(wb, project_model)
-        
-        # # Create sheets for each province
-        # provinces = self.cost_data.get("provinces", {})
-        # for province, province_data in provinces.items():
-        #     self.create_province_sheet(wb, province, province_data)
         
         # Remove default sheet
         if "Sheet" in wb.sheetnames:
@@ -367,16 +353,16 @@ class HierarchicalCostResultsDialog(QDialog):
                         "align": "right",   # align cell
                         "visible": False
                     }, 
-                    "Unit" : {
-                        'column_dimension' : 'C',
-                        'width' : 10,
+                    "Target Audience" : {
+                        'column_dimension' : 'D',
+                        'width' : 20,
                         "format": "",  # format Excel
                         "align": "right",   # align cell
                         "visible": False  
                     },
-                    "Target Audience" : {
-                        'column_dimension' : 'D',
-                        'width' : 20,
+                    "Unit" : {
+                        'column_dimension' : 'C',
+                        'width' : 10,
                         "format": "",  # format Excel
                         "align": "right",   # align cell
                         "visible": False  
@@ -421,7 +407,6 @@ class HierarchicalCostResultsDialog(QDialog):
         cell.value = "ESTIMATE COST"
         cell.font = Font(bold=True, size=28)
         cell.alignment = Alignment(horizontal='center', vertical='center')
-        estimate_cost_sheet['table']['headers']
         sheet.merge_cells(f'{column_dimensions[0]}{row}:{column_dimensions[-1]}{row}')
 
         # Thông tin dự án
@@ -485,22 +470,25 @@ class HierarchicalCostResultsDialog(QDialog):
                         top=Side(style='thin'),
                         bottom=Side(style='thin')
                     )
-                row += 1
+                row += 1        
 
         row = 9 if row < 9 else row
 
-        cell = sheet.cell(row=row, column=5)
+        cell = sheet.cell(row=row, column=7)
         cell.value = "Daily Interview Target:"
 
-        cell = sheet.cell(row=row, column=6)
+        cell = sheet.cell(row=row, column=8)
         cell.value = daily_interview_target
 
-        cell = sheet.cell(row=row, column=5)
-        cell.value = "Daily Interview Target:"
+        row += 1
 
-        cell = sheet.cell(row=row, column=6)
-        cell.value = daily_interview_target
+        cell = sheet.cell(row=row, column=7)
+        cell.value = "Target For Interviewer:"
 
+        cell = sheet.cell(row=row, column=8)
+        cell.value = target_for_interviewer
+
+        row += 2
         
         for key, properties in estimate_cost_sheet['table']['headers'].items():
             column_dimension = properties.get('column_dimension')
@@ -521,6 +509,7 @@ class HierarchicalCostResultsDialog(QDialog):
                 bottom=Side(style='thin')
             )
 
+        self.add_cost_hierarchy_to_sheet(sheet, row + 1, table_properties=estimate_cost_sheet['table'])
         
         
         # # Add title
@@ -604,6 +593,59 @@ class HierarchicalCostResultsDialog(QDialog):
         # self.add_combined_hierarchy_totals_to_sheet(sheet, combined_hierarchy, row, 0, provinces)
         
         return sheet
+
+    def add_cost_hierarchy_to_sheet(self, sheet, row, table_properties: dict):
+        
+        root = self.tree.invisibleRootItem()
+        provinces = self.data['Province'].unique().tolist()
+        table_properties = table_properties
+
+        def add_subtitle(sheet: any, row: int, column: int, title: str):
+            cell = sheet.cell(row=row, column=column)
+            cell.value = title
+            cell.font = Font(bold=True)
+            cell.alignment = Alignment(horizontal='left', vertical='center')
+            cell.border = Border(left=Side(style='dotted'),
+                                right=Side(style='dotted'),
+                                top=Side(style='dotted'),
+                                bottom=Side(style='dotted'))
+            
+        def add_cell(sheet: any, row: int, column: int, value: any):
+            cell = sheet.cell(row=row, column=column)
+            cell.value = value
+            cell.alignment = Alignment(horizontal='right', vertical='center')
+            cell.border = Border(left=Side(style='dotted'),
+                                right=Side(style='dotted'),
+                                top=Side(style='dotted'),
+                                bottom=Side(style='dotted'))
+        
+        def traverse(sheet: any, root: any, row: int, province: str):
+            for i in range(root.childCount()):
+                node = root.child(i)
+
+                if node.childCount() == 0:
+                    for j in range(node.columnCount()):
+                        add_cell(sheet, row, j + 1, node.text(j))
+                    row += 1
+                else:
+                    if node.text(0) not in provinces:
+                        province = ""
+                        add_subtitle(sheet, row, 1, node.text(0))
+                        row += 1
+                    else:
+                        province = node.text(0)
+
+                    row = traverse(sheet, node, row, province=province)
+            
+            return row
+                    
+        traverse(sheet, root, row, province="")
+        
+
+
+    
+    
+    
 
     # def create_summary_tab(self):
     #     """Create a summary tab showing total costs for all provinces."""

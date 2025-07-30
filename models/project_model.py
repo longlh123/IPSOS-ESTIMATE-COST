@@ -37,6 +37,9 @@ class ProjectModel(QObject):
     
     def __init__(self):
         super().__init__()
+
+        self.logger = logging.getLogger(__name__)
+
         self.reset()
         
         # Initialize element costs model
@@ -169,7 +172,8 @@ class ProjectModel(QObject):
             "dp_costs" : {
                 "Chi phí Coding" : False,
                 "Chi phí Input" : False,
-                "Chi phí Quản lý - On-field" : False
+                "Chi phí Quản lý - On-field" : False,
+                "Chi phí Quản lý - Hỗ trợ clean data" : False,
             },
             "incentive_costs": {
                 "Quà Phiếu PV - Pilot": False,
@@ -187,6 +191,22 @@ class ProjectModel(QObject):
                 "Ép Plastic" : False,
                 "Hồ sơ biểu mẫu" : False,
                 "Chi phí đóng cuốn" : False
+            },
+            "travel_costs" : {
+                "Vé máy bay" : False,
+                "Vé xe/ tàu" : False,
+                "Taxi từ nhà ra sân bay, về nhà" : False,
+                "Taxi từ sân bay về Hà Nội" : False,
+                "Chi phí đi lại tại nơi công tác" : False,
+                "Chi phí ăn uống" : False,
+                "Chi phí Khách sạn" : False,
+                "Chi phí điện thoại" : False,
+                "Chi phí tiếp khách" : False,
+                "Chi phí thuê chổ Brief, Pilot (áp dụng cho Fieldwork team)" : False,
+                "Chi phí trợ cấp đi công tác (khoán trọn gói)" : False
+            },
+            "charge_client_costs": {
+                "Chi phí dán mã, in mã" : False
             }
         }
 
@@ -318,15 +338,17 @@ class ProjectModel(QObject):
     ### Validate
     def validate(self) -> bool:
         validator = FieldValidator()
+        sample_types = self.get_sample_types()
+
         is_valid, error_message = True, ""
 
         for field_name, value in self.general.items():
             if field_name == "quota_description":
                 is_valid, error_message = validator.validate(field_name, value, condition=self.general["type_of_quota_control"])
             elif field_name == "open_ended_main_count":
-                is_valid, error_message = validator.validate(field_name, value, condition=self.general["coding"] and "Main" in self.general["sample_types"])
+                is_valid, error_message = validator.validate(field_name, value, condition=self.general["coding"] and "Main" in sample_types)
             elif field_name == "open_ended_booster_count":
-                is_valid, error_message = validator.validate(field_name, value, condition=self.general["coding"] and "Booster" in self.general["sample_types"])
+                is_valid, error_message = validator.validate(field_name, value, condition=self.general["coding"] and "Booster" in sample_types)
             else:
                 is_valid, error_message = validator.validate(field_name, value)
 
@@ -372,10 +394,12 @@ class ProjectModel(QObject):
             self.cost_toggles['stationary_costs'][cost_name] = self.general.get(field_name, 0) != 0
 
     def set_selected_incentive_costs(self):
-        for sample_type in SAMPLE_TYPES:
+        sample_types = self.get_sample_types()
+
+        for sample_type in sample_types:
             cost_name = f"Quà Phiếu PV - {sample_type}"
 
-            self.cost_toggles['incentive_costs'][cost_name] = sample_type in self.general.get('sample_types', [])
+            self.cost_toggles['incentive_costs'][cost_name] = True
 
     def set_selected_qc_method_costs(self):
         qc_methods = [item.get('qc_method') for item in self.qc_methods if item.get('team') == 'QC']
@@ -401,6 +425,7 @@ class ProjectModel(QObject):
         self.cost_toggles['dp_costs']["Chi phí Input"] = self.general.get('data_entry', False)
 
         self.cost_toggles['dp_costs']["Chi phí Quản lý - On-field"] = any([self.general.get('coding', False), self.general.get('data_entry', False)])
+        self.cost_toggles['dp_costs']["Chi phí Quản lý - Hỗ trợ clean data"] = any([self.general.get('coding', False), self.general.get('data_entry', False)])
 
     def is_enabled(self, cost_name: str, cost_group=''):
         if cost_group:
@@ -566,36 +591,37 @@ class ProjectModel(QObject):
         else:
             raise ValueError(f"[RateCard Error] Sample type {sample_type} isn't defined in rate card settings.")
 
-    def _make_target_rate_card(self, rate_card):
+    def _make_target_rate_card(self, objectives_classification: str, rate_card: dict):
         return {
-            "daily_interview_target" : rate_card.get('daily_interview_target'),
-            "target_for_interviewer" : rate_card.get('target_for_interviewer'),
-            "interviewers_per_supervisor" : rate_card.get('interviewers_per_supervisor'),
+            "objectives_classification": objectives_classification,
+            "daily_interview_target": rate_card.get('daily_interview_target'),
+            "target_for_interviewer": rate_card.get('target_for_interviewer'),
+            "interviewers_per_supervisor": rate_card.get('interviewers_per_supervisor'),
         }
 
-    def _get_rate_card(self, sample_type, interview_length, incident_rate):
+    def _get_rate_card(self, sample_type, interview_length: int, incident_rate: int):
         project_type = self.general['project_type']
 
         if project_type not in self.rate_card_settings.keys():
             raise ValueError(f"[RateCard Error] Project type {project_type} isn't defined in rate card settings.")
         
-        levels = list(reversed([level for level in self.rate_card_settings[project_type].keys()]))
+        levels = list([level for level in self.rate_card_settings[project_type].keys()])
 
         #Determine the level based on total number of levels
         interval = 100 / len(levels)
 
         current_level = "L1"
-        start_interval = 0
-        end_interval = interval
+        start_interval = 100
+        end_interval = 100 - interval
 
         for i, level in enumerate(levels):
             
-            if start_interval <= incident_rate <= end_interval:
+            if start_interval >= incident_rate >= end_interval:
                 current_level = level
                 break
             
             start_interval = end_interval
-            end_interval += interval + (0 if i < len(levels) else 1)
+            end_interval -= interval + (0 if i < len(levels) else 1)
 
         rate_cards = self.rate_card_settings[project_type].get(f"{current_level}")
 
@@ -607,10 +633,60 @@ class ProjectModel(QObject):
 
             if min_len <= interview_length <= max_len:
                 try:
+                    objectives_classification = f"{current_level} ({min_len} - {max_len} minutes)"
+
                     rate_card_pricing = self._make_pricing_entry(sample_type, rate_card.get('pricing', {}))
-                    rate_card_target = self._make_target_rate_card(rate_card)
+                    rate_card_target = self._make_target_rate_card(objectives_classification, rate_card)
 
                     return rate_card_pricing, rate_card_target
+                except ValueError as e:
+                    raise str(e)
+        
+        raise ValueError(
+            f"[RateCard Error] No rate card found for interview_length = {interview_length} "
+            f"in project_type '{project_type}', level {current_level}."
+        )
+    
+    def get_rate_card_target(self, incident_rate):
+        project_type = self.general['project_type']
+
+        if project_type not in self.rate_card_settings.keys():
+            raise ValueError(f"[RateCard Error] Project type {project_type} isn't defined in rate card settings.")
+        
+        levels = list([level for level in self.rate_card_settings[project_type].keys()])
+
+        #Determine the level based on total number of levels
+        interval = 100 / len(levels)
+
+        current_level = "L1"
+        start_interval = 100
+        end_interval = 100 - interval
+
+        for i, level in enumerate(levels):
+            
+            if start_interval <= incident_rate <= end_interval:
+                current_level = level
+                break
+            
+            start_interval = end_interval
+            end_interval -= interval + (0 if i < len(levels) else 1)
+
+        rate_cards = self.rate_card_settings[project_type].get(f"{current_level}")
+
+        if not rate_cards:
+            raise ValueError(f"[RateCard Error] No rate cards found for level {current_level} in project type {project_type}.")
+
+        for rate_card in rate_cards:
+            min_len, max_len = rate_card['interview_length_range']
+            interview_length = self.general['interview_length']
+
+            if min_len <= interview_length <= max_len:
+                try:
+                    objectives_classification = f"{current_level} ({min_len} - {max_len} minutes)"
+
+                    rate_card_target = self._make_target_rate_card(objectives_classification, rate_card)
+
+                    return rate_card_target
                 except ValueError as e:
                     raise str(e)
             
@@ -637,49 +713,6 @@ class ProjectModel(QObject):
         
         except ValueError as e:
             raise str(e)
-
-    def get_daily_interview_target_by_rate_card(self, interview_length):
-        project_type = self.general['project_type']
-
-        if project_type not in self.rate_card_settings.keys():
-            raise ValueError(f"[RateCard Error] Project type {project_type} isn't defined in rate card settings.")
-        
-        levels = list([level for level in self.rate_card_settings[project_type].keys()])
-
-        #Determine the level based on total number of levels
-        interval = 100 / len(levels)
-        
-        current_level = "L1"
-        # start_interval = 0
-        # end_interval = interval
-
-        # for i, level in enumerate(levels):
-            
-        #     if start_interval <= incident_rate <= end_interval:
-        #         current_level = level
-        #         break
-            
-        #     start_interval = end_interval
-        #     end_interval += interval + (0 if i < len(levels) else 1)
-
-        rate_cards = self.rate_card_settings[project_type].get(f"{current_level}")
-
-        if not rate_cards:
-            raise ValueError(f"[RateCard Error] No rate cards found for level {current_level} in project type {project_type}.")
-
-        for rate_card in rate_cards:
-            min_len, max_len = rate_card['interview_length_range']
-
-            if min_len <= interview_length <= max_len:
-                try:
-                    return rate_card.get('daily_interview_target')
-                except ValueError as e:
-                    raise str(e)
-            
-        raise ValueError(
-            f"[RateCard Error] No rate card found for interview_length = {interview_length} "
-            f"in project_type '{project_type}', level {level}."
-        )
 
     def to_dict(self):
         """Convert model to dictionary for saving."""
@@ -740,15 +773,15 @@ class ProjectModel(QObject):
             if self.general[field] != "Interlocked Quota":
                 self.general["quota_description"] = []
 
-        if field in ["provinces", "target_audiences"]:
+        if field in ["provinces", "target_audiences", "interview_length"]:
             # Update samples structure when any of these fields change
             self.update_samples_structure()
             # Update travel structure when provinces change
             if field == "provinces":
                 self.update_travel_structure()
-            
-        self.dataChanged.emit()
         
+        self.dataChanged.emit()
+    
     def update_samples_structure(self):
         """
         Update the structure of the samples dictionary based on chosen provinces,
@@ -763,6 +796,12 @@ class ProjectModel(QObject):
 
         for audience in target_audiences:
             if audience.get('sample_type') in sample_types:
+                rate_card_pricing, rate_card_target  = self._get_rate_card(audience.get('sample_type'), self.general.get('interview_length', 0), audience.get('incident_rate', 100))
+
+                if audience['target'].get('objectives_classification', "") != rate_card_target.get('objectives_classification', ""):
+                    audience['pricing'] = rate_card_pricing
+                    audience['target'].update(rate_card_target) 
+                
                 new_target_audiences.append(audience)
 
         self.general["target_audiences"] = new_target_audiences
@@ -773,29 +812,36 @@ class ProjectModel(QObject):
         for province in provinces:
             new_samples[province] = {}
 
-            for audience in new_target_audiences:
-                audience_name = audience.get("target_audience_name")
-                sample_type = audience.get("sample_type")
-                sample_size = audience.get("sample_size", audience.get("sample_size", 0))
-                target_for_interviewer = audience.get('target', {}).get('target_for_interviewer', 0)
-                interviewers_per_supervisor = audience.get('target', {}).get('interviewers_per_supervisor', 0)
-
+            for new_audience in new_target_audiences:
+                audience_name = new_audience.get("target_audience_name")
+                sample_type = new_audience.get("sample_type")
+                target = new_audience.get('target')
                 if sample_type in sample_types:
-                    
-                    daily_sup_target = calculate_daily_sup_target(sample_size, 
-                                                                 target_for_interviewer, 
-                        
-                    
-                                                             interviewers_per_supervisor)
+                    if f"{sample_type} - {audience_name}" in self.samples[province].keys():
+                        audience_data = self.samples[province][f"{sample_type} - {audience_name}"]
+
+                        if audience_data['target']['objectives_classification'] != target['objectives_classification']:
+                            audience_data['pricing'] = new_audience['pricing']
+                            audience_data['target'].update(new_audience['target']) 
+                    else:
+                        audience_data = new_audience
+
+                sample_size = audience_data['sample_size']
+                target_for_interviewer = audience_data.get('target', {}).get('target_for_interviewer', 0)
+                interviewers_per_supervisor = audience_data.get('target', {}).get('interviewers_per_supervisor', 0)
+                
+                daily_sup_target = calculate_daily_sup_target(sample_size, 
+                                                                target_for_interviewer,
+                                                                interviewers_per_supervisor)
                     
                     # Construct audience entry
-                    audience_entry = {
-                        **audience
-                    }
+                audience_entry = {
+                    **audience_data
+                }
 
-                    audience_entry["target"]["daily_sup_target"] = daily_sup_target
-                    
-                    new_samples[province][f"{sample_type} - {audience_name}"] = audience_entry
+                audience_entry["target"]["daily_sup_target"] = daily_sup_target
+                
+                new_samples[province][f"{sample_type} - {audience_name}"] = audience_entry
 
         self.samples = new_samples
         self.dataChanged.emit()
@@ -933,10 +979,16 @@ class ProjectModel(QObject):
     
         def create_element_from_pricing(current_title, province, target_audience):
             
-            for price in target_audience.get('pricing', {}):
+            for price in target_audience.get('pricing', []):
                 cost = price.get('price', 0) * abs(1 + price.get('price_growth', 0) / 100) 
                 quanty = map_quanty_for_price(self, price, province, target_audience)
-                total_cost = quanty * cost
+                
+                try:
+                    total_cost = cost * quanty
+                except Exception as e:
+                    logging.critical(f"[Error] Failed to calculate total for {price.get('type')} in {current_title}")
+                    raise Exception(f"[Error] Failed to calculate total for {price.get('type')} in {current_title}")
+                
                 comment = get_comment(price.get('comment', {}))
 
                 row = [
@@ -999,8 +1051,13 @@ class ProjectModel(QObject):
                     if self.is_enabled(cost_description, cost_group=cost_group):
                         cost = map_cost_for_element(self, element)
                         quanty = map_quanty_for_element(self, element, province, title=current_title)
-                        total_cost = cost * quanty
                         
+                        try:
+                            total_cost = cost * quanty
+                        except Exception as e:
+                            logging.critical(f"[Error] Failed to calculate total for {element.get('description')} in {current_title}")
+                            raise Exception(f"[Error] Failed to calculate total for {element.get('description')} in {current_title}")
+
                         row = [
                             element.get("name", current_title),
                             province,

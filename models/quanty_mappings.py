@@ -1,6 +1,8 @@
 import re
 from formulars.pricing_formulas import (
-    calculate_sample_size
+    calculate_sample_size,
+    calculate_total_of_sample_size,
+    calculate_total_daily_sup_target
 )
 
 MAPPING_STATIONARY = {
@@ -31,14 +33,20 @@ def get_chi_phi_phieu_pv_title(type):
     else:
         return None
 
-def get_sample_size(project, element, province, excluding_items=list()):
-    sample_size = 0
+def get_default_quanty(project, element, province, title=""):
+    quanty = calculate_total_of_sample_size(project.samples[province])
 
-    for key, target_audience in project.samples[province].items():
-        if target_audience.get('sample_type') not in excluding_items:
-            sample_size += calculate_sample_size(target_audience.get('sample_size', 0), target_audience.get('extra_rate', 0))
-    
-    return sample_size
+def get_quaphieu_phongvan(project, element, province, title=""):
+    description = element.get('description', '')
+
+    audience_data = [
+        (key, value)
+        for key, value in project.samples[province].items()
+        if re.match(pattern=rf"^Q.+PV\s-\s{value.get('sample_type')}$", string=description)
+    ]
+
+    quanty = calculate_total_of_sample_size(dict(audience_data))
+    return quanty
 
 def get_sample_size_by_sample_type(project, element, province, title=""):
     sample_size = 0
@@ -53,7 +61,7 @@ def get_sample_size_by_sample_type(project, element, province, title=""):
     return sample_size
 
 def get_chiphithue_thietbi(project, element, province, title=""):
-    sample_size = get_sample_size(project, element, province, excluding_items=["Pilot", "Non"])
+    sample_size = calculate_total_of_sample_size(project.samples[province], excluding_items=["Pilot", "Non"])
 
     if "INTERVIEWER" in title:
         return sample_size    
@@ -64,18 +72,22 @@ def get_chiphithue_thietbi(project, element, province, title=""):
         return quanty
     
 def get_quanty_parking_fee(project, element, province, title=""):
-    sample_size = get_sample_size(project, element, province, excluding_items=["Pilot", "Non"])
+    sample_size = calculate_total_of_sample_size(project.samples[province], excluding_items=["Pilot", "Non"])
     return sample_size
+
+def get_chiphi_tuyendapvien_idi(project, element, province, title=""):
+    sample_recruit_idi = project.clt_settings.get('clt_sample_recruit_idi')
+    return sample_recruit_idi
 
 def get_failure_rate(project, element, province, title=""):
     failure_rate = project.clt_settings.get('clt_failure_rate', 0)
-    sample_size = get_sample_size(project, element, province)
+    sample_size = calculate_total_of_sample_size(project.samples[province])
     quanty = round(sample_size * failure_rate / 100, 1)
     return round(quanty, 2) 
 
 def get_chiphi_ql_on_field(project, element, province, title=""):
     quanty = 1
-    sample_size = get_sample_size(project, element, province, excluding_items=["Pilot", "Non"])
+    sample_size = calculate_total_of_sample_size(project.samples[province], excluding_items=["Pilot", "Non"])
 
     if "SUPERVISOR/ ASSISTANT" in title:
         quanty = 1
@@ -116,48 +128,88 @@ def get_chiphi_ql_recruit_on_field(project, element, province, title=""):
     Chi phi quan ly - on field = 2 + daily_sup_target 
     """
     if "SUPERVISOR/ ASSISTANT" in title:
-        daily_sup_target = 0.0
-
-        for key, target_audience in project.samples.get(province, {}).items():
-            if target_audience.get('sample_type', '') in ["Main", "Booster"]:
-                daily_sup_target += target_audience.get('target', {}).get('daily_sup_target', 0)
-
-        return round(daily_sup_target, 2) + 2
+        daily_sup_target = calculate_total_daily_sup_target(project.samples.get(province, {}))
+        quanty = round(daily_sup_target, 2) + 2
+        return quanty
     if "QC" in title:
-        return 1
+        sample_size = calculate_total_of_sample_size(project.samples[province], excluding_items=["Pilot", "Non"])
+        quanty = round((sample_size / 50)) + 1
+        return quanty
 
 def get_chiphi_ql_ngoiban_on_field(project, element, province, title=""):
     """
     Chi phi quan ly ngoi ban - on field = 2 + (sample_size / sample_size_target_per_day)
     """
-    sample_size = get_sample_size(project, element, province, excluding_items=["Pilot", "Non"])
-    sample_size_target_per_day = project.clt_settings.get("clt_sample_size_per_day", 0)
+    quanty = 0.0
 
-    quanty = 2 + round(sample_size / sample_size_target_per_day, 2)
+    for key, target_audience in project.samples[province].items():
+        if target_audience.get('sample_type') not in ["Pilot", "Non"]:
+            sample_size = calculate_sample_size(target_audience.get('sample_size', 0), target_audience.get('extra_rate', 0))
+            daily_interview_target = target_audience['target']['daily_interview_target']
 
-    return quanty
+            quanty = round(sample_size / daily_interview_target, 2)
+    
+    return 2 + quanty
 
 def get_chiphi_ql_idi(project, element, province, title=""):
     sample_recruit_idi = project.clt_settings.get('clt_sample_recruit_idi')
     return round(sample_recruit_idi / 15, 2)
 
 def get_chiphi_qc_in_home(project, element, province, title=""):
-    return 1
+    """
+    Formular: Sample * 20%
+    """
+    sample_size = calculate_total_of_sample_size(project.samples[province], excluding_items=["Pilot", "Non"])
+    quanty = round(sample_size * 20 / 100, 2)
+    return quanty
 
 def get_chiphi_qc_in_location(project, element, province, title=""):
+    """
+    Formular: Sample / Daily Interview Target 
+    """
+
     return 1
 
 def get_chiphi_coding(project, element, province, title=""):
-    quanty = project.general.get('open_ended_main_count', 0) + project.general.get('open_ended_booster_count', 0)
+    sample_size = calculate_total_of_sample_size(project.samples[province], excluding_items=["Pilot", "Non"])
+    number_of_openendeds = project.general.get('open_ended_main_count', 0) + project.general.get('open_ended_booster_count', 0)
+    quanty = 0
+
+    if sample_size < 100:
+        if 1 <= number_of_openendeds <= 5:
+            quanty = 1
+        else:
+            quanty = round(sample_size / 100, 0)
+    elif 101 <= number_of_openendeds <= 200:
+        if 1 <= number_of_openendeds <= 2:
+            quanty = 1
+        elif 3 <= number_of_openendeds <= 8:
+            quanty = round(sample_size / 100, 0)
+        else:
+            quanty = round(sample_size / 100, 0)
+    else:
+        if 1 <= number_of_openendeds <= 2:
+            quanty = round(sample_size / 200, 0)
+        elif 3 <= number_of_openendeds <= 5:
+            quanty = round(sample_size / 150, 0)
+        elif 6 <= number_of_openendeds <= 8:
+            quanty = round(sample_size / 100, 0)
+        else:
+            quanty = round(sample_size / 100, 0)
+
     return quanty
 
 def get_chiphi_input(project, element, province, title=""):
-    quanty = get_sample_size(project, element, province, excluding_items=["Pilot"])
+    quanty = calculate_total_of_sample_size(project.samples[province], excluding_items=["Pilot"])
+    return quanty
+
+def get_chiphi_hotrocleandata(project, element, province, title=""):
+    quanty = 1
     return quanty
 
 def get_chiphi_cuocdienthoaicodinh(project, element, province, title=""):
     project_type = project.general.get("project_type")
-    sample_size = get_sample_size(project, element, province, excluding_items=["Pilot", "Non"])
+    sample_size = calculate_total_of_sample_size(project.samples[province], excluding_items=["Pilot", "Non"])
 
     if project_type == "CATI":
         return sample_size
@@ -166,18 +218,24 @@ def get_chiphi_cuocdienthoaicodinh(project, element, province, title=""):
 
 def get_chiphi_carddienthoai(project, element, province, title=""):
     project_type = project.general.get("project_type")
-    sample_size = get_sample_size(project, element, province, excluding_items=["Pilot", "Non"])
+    sample_size = calculate_total_of_sample_size(project.samples[province], excluding_items=["Pilot", "Non"])
+    quanty = 0
 
     if project_type == "CLT":
         titles = title.split(' / ')
 
         if titles[len(titles) - 1] == "FW":
-            return round(sample_size / 75, 2)
+            quanty = round(sample_size / 75, 2)
         if titles[len(titles) - 1] == "QC":
-            return round(sample_size / 150, 2)
+            quanty = round(sample_size / 150, 2)
+
+    return quanty
 
 def get_photo_trangden(project, element, province, title=""):
-    sample_size = get_sample_size(project, element, province, excluding_items=["Pilot", "Non"])
+    """
+    Formular = sample_size * 130% * Số trang photo trắng đen
+    """
+    sample_size = calculate_total_of_sample_size(project.samples[province], excluding_items=["Pilot", "Non"])
     bw_page_count = project.general.get('bw_page_count', 0)
     quanty = sample_size * 1.3 * bw_page_count
     return quanty
@@ -206,7 +264,7 @@ def get_inmau_inconcept(project, element, province, title=""):
     return quanty
 
 def get_decal(project, element, province, title=""):
-    sample_size = get_sample_size(project, element, province, excluding_items=["Pilot", "Non"])
+    sample_size = calculate_total_of_sample_size(project.samples[province], excluding_items=["Pilot", "Non"])
     decal_page_count = project.general.get("decal_page_count", 0)
     quanty = (sample_size / decal_page_count) if decal_page_count > 0 else 0
     return quanty
@@ -218,7 +276,7 @@ def get_ep_flastic(project, element, province, title=""):
     return quanty
 
 def get_hosobieumau(project, element, province, title=""):
-    sample_size = get_sample_size(project, element, province, excluding_items=["Pilot", "Non"])
+    sample_size = calculate_total_of_sample_size(project.samples[province], excluding_items=["Pilot", "Non"])
     quanty = sample_size
     return quanty
 
@@ -235,11 +293,17 @@ def get_chiphi_assistant_set_up(project, element, province, title=""):
 
 def get_chiphi_assistant_on_field(project, element, province, title=""):
     """
-    Chi phí Assistant - On-field = Sample Size / Sample Size per day
+    Chi phí Assistant - On-field = round(sample_size / daily_interview_target, 2)
     """
-    sample_size = get_sample_size(project, element, province, excluding_items=["Pilot", "Non"])
-    sample_size_per_day = project.clt_settings.get('clt_sample_size_per_day', 0)
-    quanty = round(sample_size / sample_size_per_day, 2)
+    quanty = 0.0
+
+    for key, target_audience in project.samples[province].items():
+        if target_audience.get('sample_type') not in ["Pilot", "Non"]:
+            sample_size = calculate_sample_size(target_audience.get('sample_size', 0), target_audience.get('extra_rate', 0))
+            daily_interview_target = target_audience['target']['daily_interview_target']
+
+            quanty = round(sample_size / daily_interview_target, 2)
+    
     return quanty
 
 def get_other_default(project, element, province, title=""):
@@ -249,25 +313,25 @@ def get_tienvanchuyen(project, element, province, title=""):
     return 2
 
 def get_tienthue_location(project, element, province, title=""):
-    sample_size = get_sample_size(project, element, province, excluding_items=["Pilot", "Non"])
+    sample_size = calculate_total_of_sample_size(project.samples[province], excluding_items=["Pilot", "Non"])
     clt_sample_size_per_day = project.clt_settings.get('clt_sample_size_per_day', 0)
     quanty = round(sample_size / clt_sample_size_per_day, 2)
     return quanty
 
 def get_tienthue_tulanh(project, element, province, title=""):
-    sample_size = get_sample_size(project, element, province, excluding_items=["Pilot", "Non"])
+    sample_size = calculate_total_of_sample_size(project.samples[province], excluding_items=["Pilot", "Non"])
     clt_sample_size_per_day = project.clt_settings.get('clt_sample_size_per_day', 0)
     quanty = round(sample_size / clt_sample_size_per_day, 2)
     return quanty
 
 def get_tienthue_tivi(project, element, province, title=""):
-    sample_size = get_sample_size(project, element, province, excluding_items=["Pilot", "Non"])
+    sample_size = calculate_total_of_sample_size(project.samples[province], excluding_items=["Pilot", "Non"])
     clt_sample_size_per_day = project.clt_settings.get('clt_sample_size_per_day', 0)
     quanty = round(sample_size / clt_sample_size_per_day, 2)
     return quanty
 
 def get_tienthue_partition(project, element, province, title=""):
-    sample_size = get_sample_size(project, element, province, excluding_items=["Pilot", "Non"])
+    sample_size = calculate_total_of_sample_size(project.samples[province], excluding_items=["Pilot", "Non"])
     clt_sample_size_per_day = project.clt_settings.get('clt_sample_size_per_day', 0)
     quanty = round(sample_size / clt_sample_size_per_day, 2)
     return quanty
@@ -276,18 +340,18 @@ def get_tien_setup_location(project, element, province, title=""):
     return 2
 
 def get_tien_nuocuong_khangiay_banhlat(project, element, province, title=""):
-    sample_size = get_sample_size(project, element, province, excluding_items=["Pilot", "Non"])
+    sample_size = calculate_total_of_sample_size(project.samples[province], excluding_items=["Pilot", "Non"])
     return sample_size
 
 QUANTY_MAPPINGS = {
-    "default" : get_sample_size,
+    "default" : get_default_quanty,
     "Chi phí thuê tablet < 9 inch" : get_chiphithue_thietbi,
     "Chi phí thuê tablet >= 9 inch" : get_chiphithue_thietbi,
     "Chi phí thuê laptop" : get_chiphithue_thietbi,
 
     "Chi phí gửi xe" : get_quanty_parking_fee,
     "Chi phí Phiếu PV - Bài rớt giữa chừng" : get_failure_rate,
-
+    "Chi phí Tuyển đáp viên IDI" : get_chiphi_tuyendapvien_idi,
     #--SUPERVISOR / ASSISTANT
     "Chi phí Quản lý - On-field" : get_chiphi_ql_on_field,
     "Chi phí Quản lý recruit - On-field" : get_chiphi_ql_recruit_on_field,
@@ -305,12 +369,13 @@ QUANTY_MAPPINGS = {
     #--DP
     "Chi phí Coding" : get_chiphi_coding,
     "Chi phí Input" : get_chiphi_input,
+    "Chi phí Quản lý - Hỗ trợ clean data" : get_chiphi_hotrocleandata,
 
     #--INCENTIVE
-    "Quà Phiếu PV - Pilot": get_sample_size_by_sample_type,
-    "Quà Phiếu PV - Main": get_sample_size_by_sample_type,
-    "Quà Phiếu PV - Booster": get_sample_size_by_sample_type,
-    "Quà Phiếu PV - Non": get_sample_size_by_sample_type,
+    "Quà Phiếu PV - Pilot": get_quaphieu_phongvan,
+    "Quà Phiếu PV - Main": get_quaphieu_phongvan,
+    "Quà Phiếu PV - Booster": get_quaphieu_phongvan,
+    "Quà Phiếu PV - Non": get_quaphieu_phongvan,
     "Quà Phiếu PV - IDI" : get_sample_recruit_idi,
     
     #--COMMUNICATION
